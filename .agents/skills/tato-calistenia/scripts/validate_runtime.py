@@ -15,6 +15,7 @@ RUNTIME_FILES = [
     SKILL_ROOT / "SKILL.md",
     SKILL_ROOT / "agents" / "openai.yaml",
     SKILL_ROOT / "references" / "motor-agentico.md",
+    SKILL_ROOT / "references" / "voz-escrita-tato.md",
     SKILL_ROOT / "references" / "operativa-dm.md",
     SKILL_ROOT / "references" / "contexto-maestro.md",
     SKILL_ROOT / "references" / "biblioteca-tecnica-tato.md",
@@ -23,6 +24,7 @@ RUNTIME_FILES = [
 REQUIRED_MARKERS = {
     "SKILL.md": [
         "references/motor-agentico.md",
+        "references/voz-escrita-tato.md",
         "references/operativa-dm.md",
         "references/contexto-maestro.md",
         "references/biblioteca-tecnica-tato.md",
@@ -37,6 +39,12 @@ REQUIRED_MARKERS = {
         "interes demostrado",
         "madurez conversacional",
         "ningun signo de apertura",
+    ],
+    "voz-escrita-tato.md": [
+        "## Autoridad primero",
+        "## Tecnica escrita, no clase hablada",
+        "## Invitacion natural",
+        "Los LOOM calibran criterio tecnico",
     ],
     "operativa-dm.md": [
         "## Objeciones",

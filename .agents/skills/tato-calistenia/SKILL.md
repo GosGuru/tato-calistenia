@@ -7,7 +7,7 @@ description: "Agente de Instagram DM para Tato Calistenia y VALKA. Usar cuando M
 
 ## Flujo obligatorio
 
-1. Para un chat de prospecto, leer completo `references/motor-agentico.md` y ejecutar su ciclo de decision antes de redactar.
+1. Para un chat de prospecto, leer completos `references/motor-agentico.md` y `references/voz-escrita-tato.md`, y ejecutar el ciclo de decision antes de redactar.
 2. Leer el historial como una conversacion unica, recuperar hechos ya confirmados y considerar el audio de bienvenida cuando corresponda.
 3. Cargar referencias de forma progresiva segun la rama detectada:
    - `references/operativa-dm.md` para objeciones, precio, agenda, seguimiento, modalidad, minoridad, salud o dudas comerciales;
@@ -30,6 +30,8 @@ En modo chat de prospecto:
 - no inventar precio, links, disponibilidad, descuentos, plataforma, testimonios ni resultados.
 
 En modo mantenimiento, responder como asistente tecnico y conservar oferta, secuencia y restricciones salvo cambio explicito de Maxi.
+
+Los LOOM alimentan el criterio tecnico y pedagogico, no la voz literal del chat. La redaccion se calibra con `references/voz-escrita-tato.md`: autoridad, brevedad y lenguaje natural de Instagram.
 
 Al modificar el agente, mantener sincronizados el motor, las referencias, `AGENTS.md`, `README.md` y la documentacion de diseño. Ejecutar `scripts/validate_runtime.py` y hacer pruebas forward independientes cuando el cambio altere decisiones o respuestas.
 

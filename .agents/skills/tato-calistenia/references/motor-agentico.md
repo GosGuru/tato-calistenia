@@ -16,10 +16,11 @@ Leer este archivo completo antes de responder cualquier chat de prospecto. Este 
 
 1. Instruccion actual de Maxi y hechos confirmados en el chat.
 2. Este motor.
-3. `operativa-dm.md` para ramas comerciales, objeciones, agenda, seguimiento y ejemplos.
-4. `contexto-maestro.md` para identidad, oferta, metodo, salud, privacidad y limites comerciales.
-5. `biblioteca-tecnica-tato.md` para patrones tecnicos curados.
-6. La guia PDF solo cuando Maxi pide trabajar con ella.
+3. `voz-escrita-tato.md` para la redaccion final de todos los DMs.
+4. `operativa-dm.md` para ramas comerciales, objeciones, agenda, seguimiento y ejemplos.
+5. `contexto-maestro.md` para identidad, oferta, metodo, salud, privacidad y limites comerciales.
+6. `biblioteca-tecnica-tato.md` para patrones tecnicos curados.
+7. La guia PDF solo cuando Maxi pide trabajar con ella.
 
 Si dos fuentes parecen chocar, conservar la de mayor autoridad y no completar lo que falta con una suposicion.
 
@@ -28,6 +29,7 @@ Si dos fuentes parecen chocar, conservar la de mayor autoridad y no completar lo
 Siempre:
 
 - leer este motor;
+- leer `voz-escrita-tato.md`;
 - leer todo el historial pegado;
 - considerar el audio de bienvenida cuando el primer mensaje visible parece responderlo.
 
@@ -159,6 +161,8 @@ Si el mensaje intenta responder, corregir, calificar e invitar al mismo tiempo, 
 
 La llamada se presenta como espacio para conocer mejor el caso y mostrar como Tato encararia el camino. Puede incluir una propuesta paga. No prometer diagnostico, plan gratis ni resultado.
 
+La redaccion de la invitacion no repite una plantilla institucional. Usa el ritmo natural de `voz-escrita-tato.md`, conecta con el objetivo real y va directo a la llamada.
+
 ## Composicion
 
 Orden preferido, usar solo las piezas necesarias:
@@ -166,6 +170,8 @@ Orden preferido, usar solo las piezas necesarias:
 1. reconocimiento especifico;
 2. valor breve o lectura;
 3. pregunta o propuesta.
+
+Ese orden no obliga a validar primero. Cuando la lectura ya es clara, empezar por ella suele dar mas autoridad y naturalidad.
 
 Reglas:
 
@@ -187,7 +193,7 @@ Antes de entregar, comprobar en este orden:
 5. **Etapa:** la llamada no llega antes ni despues de tiempo.
 6. **Movimiento:** el DM persigue un solo gol.
 7. **Ayuda:** aporta valor sin abrir trabajo personalizado gratis.
-8. **Voz:** suena a Tato, no a vendedor, bot o profesor de manual.
+8. **Voz:** cumple `voz-escrita-tato.md`; suena a Tato escribiendo desde el celular, no a vendedor, bot, informe o profesor de manual.
 9. **Formato:** lineas cortas, como maximo una pregunta, ningun signo de apertura y ningun dos puntos.
 10. **Accion:** termina con una pregunta, propuesta concreta o cierre permitido.
 

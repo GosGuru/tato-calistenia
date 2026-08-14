@@ -6,6 +6,7 @@ Runtime local del agente de Instagram DM de Tato Calistenia y VALKA. Recibe el h
 
 - [Skill principal](.agents/skills/tato-calistenia/SKILL.md) — entrada y enrutamiento de recursos.
 - [Motor agentico](.agents/skills/tato-calistenia/references/motor-agentico.md) — estado interno, prioridades, ciclo de decision y revision final.
+- [Voz escrita de Tato](.agents/skills/tato-calistenia/references/voz-escrita-tato.md) — autoridad, brevedad y ritmo humano de Instagram; separada de la voz oral de los LOOM.
 - [Operativa de DM](.agents/skills/tato-calistenia/references/operativa-dm.md) — ramas comerciales, objeciones, agenda, seguimiento y ejemplos.
 - [Contexto maestro](.agents/skills/tato-calistenia/references/contexto-maestro.md) — identidad, oferta, metodo, seguridad y limites.
 - [Biblioteca tecnica](.agents/skills/tato-calistenia/references/biblioteca-tecnica-tato.md) — patrones curados de Tato para dominadas, escapulas, muscle-up, empujes, pino y piernas.
@@ -19,7 +20,7 @@ Runtime local del agente de Instagram DM de Tato Calistenia y VALKA. Recibe el h
 2. Construir un estado interno con hechos, X, encaje, etapa, interes, excepciones y gol del turno.
 3. Resolver primero salud, minoridad, llamada aceptada, objeciones o cierres.
 4. Cargar solamente las referencias necesarias para la rama.
-5. Elegir un unico movimiento y redactar el DM.
+5. Redactar con la voz escrita de Tato, sin trasladar la cadencia oral de los LOOM.
 6. Revisar historial, certeza, etapa, ayuda gratuita, voz y formato antes de entregar.
 
 El agente no expone ese razonamiento. La salida operativa contiene unicamente el DM final.
@@ -37,6 +38,7 @@ Los cambios de comportamiento tambien se prueban con casos forward independiente
 ## Mantenimiento
 
 - Curar los LOOM en reglas o patrones generalizables; no copiar transcripciones completas.
+- Usar los LOOM para criterio tecnico y pedagogico, no como plantilla de redaccion.
 - Mantener hechos, hipotesis y personalizacion como niveles distintos de certeza.
 - Conservar un solo movimiento y como maximo una pregunta por DM.
 - Actualizar skill, motor, referencias y documentacion como una unidad cuando cambia el flujo.

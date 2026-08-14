@@ -15,7 +15,7 @@ Producir el mejor siguiente DM posible para cada conversacion sin depender de un
 - El conocimiento tecnico inicial era demasiado chico para reflejar una traba concreta antes de la llamada.
 - Las transcripciones nuevas podian tentar a copiar rutinas o explicaciones individuales sin distinguir certeza ni alcance.
 
-La arquitectura actual separa motor, reglas comerciales, contexto maestro y conocimiento tecnico.
+La arquitectura actual separa motor, voz escrita, reglas comerciales, contexto maestro y conocimiento tecnico.
 
 ## Componentes del runtime
 
@@ -35,6 +35,10 @@ Se carga para todo chat. Define:
 - seleccion de un solo gol del turno;
 - composicion y revision silenciosa.
 
+### `voz-escrita-tato.md`
+
+Referencia obligatoria para todo DM. Convierte el criterio interno en una respuesta breve, directa y humana. Separa la voz escrita de Instagram de la cadencia oral de los LOOM y evita formulas de agente como `por lo que contas`, `hay algo concreto para trabajar` o `te propongo una llamada corta`.
+
 ### `operativa-dm.md`
 
 Referencia detallada para objeciones, precio, agenda, seguimiento, modalidad, minoridad, salud, ejemplos y dudas comerciales.
@@ -46,6 +50,8 @@ Fuente de identidad, oferta, metodo, seguridad, privacidad y limites comerciales
 ### `biblioteca-tecnica-tato.md`
 
 Patrones curados desde LOOM reales. Separa hecho, hipotesis y personalizacion; contiene señales de uso, cue, para que, informacion faltante, limite y casos de calibracion.
+
+Los LOOM calibran la mirada tecnica y pedagogica. No se usan para imitar literalmente la forma hablada de Tato en un chat.
 
 ## Estado interno
 
@@ -136,6 +142,8 @@ Entiende la secuencia general de sentir, construir fuerza, integrar la primera d
 - Un mensaje detallado de alta intencion puede invitar sin filtros extra.
 - Una consulta tecnica recibe una sola prioridad y no una clase.
 - Una causa no observada aparece como hipotesis prudente.
+- La prudencia tecnica no convierte el DM en un informe lleno de salvedades.
+- La respuesta prioriza la lectura concreta y usa vocabulario natural de Tato escrito.
 - Una barra baja se reconoce como limitacion del entorno sin diagnosticar escapulas.
 - Una pausa entre retraccion y tiron recibe un cue de continuidad.
 - Una tercera dominada deformada se interpreta como calidad que no resiste la fatiga, sin regalar programacion.
@@ -167,3 +175,4 @@ La validacion local demuestra coherencia, no conversion. La efectividad comercia
 - 2026-08-14: se separaron hechos, hipotesis y personalizacion.
 - 2026-08-14: se incorporo el mapa de las primeras cinco dominadas sin trasladar rutinas o dosis al DM.
 - 2026-08-14: se agrego un motor agentico obligatorio y carga progresiva de referencias.
+- 2026-08-14: se separo la voz escrita de Tato de la cadencia oral de los LOOM y se priorizo autoridad concisa en DM.

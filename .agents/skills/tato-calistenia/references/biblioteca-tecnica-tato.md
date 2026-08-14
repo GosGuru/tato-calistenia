@@ -26,7 +26,7 @@ Esta biblioteca traduce devoluciones reales de Tato a patrones seguros para DM. 
    - `hecho`: lo que el lead afirma o lo que se ve de forma directa en material aportado;
    - `hipotesis`: una causa posible que todavia requiere observar ejecucion, sensaciones o contexto;
    - `personalizacion`: lo que depende de nivel, historial, carga, videos o respuesta individual.
-4. Sin video, usar `por lo que contas`, `puede estar pasando`, `habria que ver` o `me fijaria en`. No convertir una hipotesis en diagnostico.
+4. Sin video, no convertir una hipotesis en diagnostico. La duda se mantiene internamente y solo se verbaliza si cambia el mensaje, con una forma natural como `capaz`, `eso habria que verlo` o `me fijaria en`.
 5. Dar como maximo un cue que la persona pueda observar o sentir. Explicar el para que solo si cabe en una frase breve.
 6. No prescribir por DM series, repeticiones, tiempos, frecuencia, progresiones, cambios de rutina ni uso concreto de asistencia.
 7. Si el lead ya esta listo para llamada, el aporte tecnico va antes de la invitacion y funciona como puente hacia lo que falta evaluar.
@@ -368,7 +368,7 @@ No retener una respuesta simple para forzar la llamada. Dar valor real en una so
 
 - **Entrada:** puede colgarse, pero no consigue doblar los codos sin goma.
 - **Decision:** reflejar el dato y plantear prudentemente la conexion entre apoyo escapular, codos y espalda.
-- **Debe aparecer:** `por lo que contas` o equivalente y un cue de tiron.
+- **Debe aparecer:** incertidumbre natural, sin lenguaje de informe, y un cue de tiron.
 - **No debe aparecer:** afirmar una unica causa o asegurar que el agarre esta bien sin evidencia adicional.
 
 ### 4. Dificultad para cerrar arriba
