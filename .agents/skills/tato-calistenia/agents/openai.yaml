@@ -1,6 +1,6 @@
 interface:
   display_name: "Tato Calistenia"
-  short_description: "DMs de Instagram con el método VALKA"
+  short_description: "DMs agenticos de Instagram para VALKA"
   default_prompt: "Usá $tato-calistenia para responder el próximo chat de Instagram con un único DM listo para enviar."
 policy:
   allow_implicit_invocation: true

@@ -1,166 +1,169 @@
-# Madurez conversacional para llamadas en DMs de Tato Calistenia
+# Arquitectura agentica para DMs de Tato Calistenia
 
-Fecha: 2026-08-05
-Estado: implementado y validado localmente
+Fecha: 2026-08-14
+Estado: implementado localmente
 
-## Problema y resultado de usuario
+## Objetivo
 
-El flujo anterior obligaba a recorrer preguntas sobre traba, tiempo, intentos, prioridad, disposicion y modalidad antes de invitar. La primera correccion elimino esa redundancia, pero llevo el criterio al extremo opuesto: objetivo concreto mas encaje disparaban una llamada casi ante cualquier mensaje.
+Producir el mejor siguiente DM posible para cada conversacion sin depender de un embudo fijo. El agente debe leer historial, objetivo, interes, madurez, tecnica y excepciones como un solo sistema; aportar valor con la voz de Tato y llevar a llamada solamente cuando sea consecuencia natural del intercambio.
 
-Maxi probo ese runtime y confirmo la regresion. El resultado buscado es que el agente conserve el ritmo comercial y evite filtros rutinarios, pero lea la etapa, cuanto se hablo y el interes que el lead demostro. La llamada debe sentirse como consecuencia de una conversacion, no como respuesta automatica a la primera mencion de un objetivo.
+## Problemas resueltos
 
-## Evidencia del estado actual
+- La primera version preguntaba demasiados filtros antes de invitar.
+- La version call-first corrigio ese exceso, pero podia invitar apenas aparecia un objetivo.
+- La operativa crecio hasta mezclar orquestacion, conocimiento, excepciones y ejemplos en un unico archivo largo.
+- El conocimiento tecnico inicial era demasiado chico para reflejar una traba concreta antes de la llamada.
+- Las transcripciones nuevas podian tentar a copiar rutinas o explicaciones individuales sin distinguir certeza ni alcance.
 
-- El audio de Tato del 2026-08-05 pide reducir las preguntas filtro y aumentar las llamadas cuando exista un objetivo en el que Tato pueda ayudar.
-- La primera implementacion tradujo esa instruccion como dos puertas suficientes: objetivo concreto y aporte honesto.
-- La prueba real de Maxi mostro que esa regla llevaba a llamada una primera respuesta breve y una consulta tecnica aislada.
-- El feedback actual pide criterio segun etapa, historial e interes demostrado, sin volver a un interrogatorio fijo.
-- El historial completo sigue siendo necesario para no contradecir una oferta, precio o modalidad presencial previa.
+La arquitectura actual separa motor, reglas comerciales, contexto maestro y conocimiento tecnico.
 
-## Objetivos
+## Componentes del runtime
 
-- Requerir cuatro condiciones para invitar: objetivo concreto, aporte honesto de Tato, interes demostrado y madurez conversacional.
-- Diferenciar `inicio`, `desarrollo` y `lista para llamada` usando todo el historial relevante.
-- Responder y profundizar naturalmente cuando el objetivo esta claro pero la charla aun es temprana.
-- Permitir que un mensaje detallado o de alta intencion acelere la invitacion sin exigir turnos artificiales.
-- Evitar una lista fija de preguntas sobre tiempo, intentos, urgencia, pago u online.
-- Mantener una sola pregunta por DM y leer cada respuesta antes de decidir el siguiente movimiento.
-- Conservar los limites de salud, privacidad, veracidad, agenda y ayuda gratuita.
+### `SKILL.md`
 
-## No objetivos
+Punto de entrada. Mantiene el contrato, las invariantes y las reglas de carga progresiva. No contiene el detalle de todas las ramas.
 
-- No maximizar llamadas a costa de invitar a todo lead en el primer intercambio.
-- No restaurar el embudo largo ni una cantidad obligatoria de preguntas.
-- No convertir dos aportes sustantivos en una cuota mecanica.
-- No prometer resultados ni un plan gratis en la llamada.
-- No inventar precios, horarios, disponibilidad ni una oferta presencial vigente.
-- No cerrar la venta por DM ni usar el perfil visual para inferir edad, dinero, ubicacion o modalidad.
+### `motor-agentico.md`
 
-## Requisitos funcionales
+Se carga para todo chat. Define:
 
-1. El agente lee todo el historial y recupera datos ya confirmados antes de evaluar el ultimo mensaje.
-2. Define el objetivo y decide internamente si Tato puede aportar desde tecnica, progresion, estructura, feedback o control corporal.
-3. Ubica la charla en `inicio`, `desarrollo` o `lista para llamada`.
-4. Considera interes demostrado cuando el lead se explaya, responde con contenido sobre el mismo objetivo, cuenta una traba o intento, pide ayuda personalizada o pregunta por forma de trabajo, precio o siguiente paso.
-5. No considera suficiente por si solo aceptar la guia, nombrar un objetivo, reaccionar, agradecer, decir `si` o hacer una consulta tecnica aislada.
-6. Si objetivo y encaje estan claros pero la charla sigue en inicio, responde a lo dicho y hace como maximo una pregunta natural sobre la situacion. No invita todavia.
-7. Como referencia, una charla nueva suele madurar con al menos dos aportes sustantivos del lead sobre el mismo objetivo. No se cuentan mensajes mecanicamente.
-8. Un unico mensaje que ya desarrolla objetivo, dificultad e intento, o que pide de forma explicita ayuda, seguimiento, precio, forma de trabajo o siguiente paso, puede satisfacer interes y madurez.
-9. Una duda tecnica recibe como maximo una correccion puntual. Solo lleva a llamada si el historial tambien satisface las cuatro condiciones.
-10. Tiempo, nivel, traba, intentos, prioridad, pago y online pueden aparecer de a uno cuando nacen del contexto, pero ninguno forma un peaje fijo.
-11. Cuando estan claras las cuatro condiciones y no existe una excepcion, la invitacion menciona el X real y propone conocer mejor el caso y mostrar como Tato encararia el camino.
-12. La llamada puede incluir una propuesta paga y no se disfraza como asesoria neutral.
-13. Si el lead acepta, el agente pasa directamente a agenda con dos opciones reales o dos ventanas.
-14. Si existe una señal concreta de minoridad, se aclara edad; un menor confirmado no se agenda.
-15. Si el historial confirma una oferta o precio presencial previo, el agente no fuerza online ni afirma disponibilidad actual sin confirmacion.
+- orden de autoridad;
+- estado interno;
+- puertas prioritarias;
+- ciclo de decision;
+- condiciones de llamada;
+- seleccion de un solo gol del turno;
+- composicion y revision silenciosa.
 
-## Flujos y casos limite
+### `operativa-dm.md`
 
-### Ruta normal
+Referencia detallada para objeciones, precio, agenda, seguimiento, modalidad, minoridad, salud, ejemplos y dudas comerciales.
 
-`objetivo -> conversacion util -> interes demostrado -> invitacion -> agenda -> seguimiento`
+### `contexto-maestro.md`
 
-El encaje se evalua internamente durante toda la ruta. La conversacion util no es un checklist: responde a lo que el lead trae y elige un unico dato contextual cuando haga falta.
+Fuente de identidad, oferta, metodo, seguridad, privacidad y limites comerciales. Los datos internos no quedan autorizados para el DM por el solo hecho de existir en este archivo.
 
-### Inicio con objetivo claro
+### `biblioteca-tecnica-tato.md`
 
-Una primera respuesta breve como `quiero sacar el muscle up` o `quiero mis primeras cinco dominadas` no dispara llamada. El agente reconoce el objetivo y pregunta naturalmente por la situacion actual.
+Patrones curados desde LOOM reales. Separa hecho, hipotesis y personalizacion; contiene señales de uso, cue, para que, informacion faltante, limite y casos de calibracion.
 
-### Desarrollo
+## Estado interno
 
-Cada aporte sustantivo del lead se lee en conjunto con el historial. Si explica una traba, un intento o por que necesita ayuda, puede completar interes y madurez. Si responde con un monosilabo o una reaccion, el agente no inventa disposicion a llamada.
+Antes de redactar, el agente resuelve sin mostrar:
 
-### Alta intencion temprana
+- instruccion actual de Maxi;
+- hechos confirmados y datos no confirmados;
+- X del lead;
+- encaje real;
+- etapa conversacional;
+- evidencia de interes;
+- rama tecnica y certeza;
+- excepciones activas;
+- gol del turno;
+- siguiente movimiento.
 
-Si el primer mensaje es detallado o pregunta expresamente como trabaja Tato, cuanto sale, si puede ayudar o cual es el siguiente paso, no se fuerza otro turno por cumplir una cantidad. Con objetivo y encaje claros puede invitarse.
+El historial completo tiene memoria dentro de la conversacion: un dato confirmado no se repregunta ni se contradice.
 
-### Pregunta tecnica
+## Precedencia de ramas
 
-Se entrega una sola correccion util y segura. Una consulta aislada no habilita llamada ni otra ronda gratuita. Si el historial ya era maduro, la continuacion puede ser la invitacion.
+1. Riesgo clinico que exige derivacion.
+2. Minoridad confirmada.
+3. Llamada ya aceptada.
+4. Objecion activa.
+5. Segundo rechazo o incompatibilidad confirmada.
+6. Pregunta operativa.
+7. Rama tecnica, comercial o conversacional normal.
 
-### Objetivo vago o adyacente
+Esta precedencia evita seguir calificando despues de una aceptacion, vender durante una derivacion o ignorar una objecion para abrir otra pregunta.
 
-Se pregunta una vez por el movimiento o puente real con calistenia. Sin puente se cierra; no se inventa encaje.
+## Madurez e invitacion
 
-### Preferencia presencial
+La llamada requiere cuatro condiciones:
 
-Se revisa el historial completo. Un antecedente confirmado se respeta; sin opcion respaldada, se explica online una vez y se valida si puede servir.
+1. objetivo concreto;
+2. aporte honesto de Tato;
+3. interes demostrado;
+4. madurez conversacional.
 
-### Salud y rechazo
+Aceptar la guia, nombrar un objetivo, agradecer o hacer una consulta tecnica aislada no alcanzan por si solos. Una respuesta detallada, una traba sostenida, un pedido de ayuda o una pregunta comercial pueden acelerar la madurez sin cumplir una cantidad fija de mensajes.
 
-Una molestia ambigua conserva la pregunta neutral de capacidad. Dolor persistente o intenso, sintomas graves, incapacidad para entrenar o pedido clinico mantienen la derivacion. No se presiona despues de un segundo no claro.
+La ruta normal es:
 
-## Requisitos no funcionales
+`objetivo -> conversacion util -> interes demostrado -> invitacion -> agenda`
 
-- Respuesta breve, rioplatense, humana y adaptable al X.
+Tiempo, intentos, urgencia, prioridad, pago y online son datos opcionales, nunca un formulario obligatorio.
+
+## Integracion tecnica y comercial
+
+Ante una mencion tecnica, el agente:
+
+1. identifica movimiento y hecho observable;
+2. elige un solo patron respaldado;
+3. distingue causa posible de hecho confirmado;
+4. aporta una lectura o cue breve;
+5. decide la salida por madurez, no por el mero hecho de hablar de tecnica.
+
+Una charla temprana recibe ayuda puntual y, si hace falta, una pregunta natural. Una charla madura recibe esa misma muestra de valor y una invitacion conectada con lo que falta personalizar.
+
+La ayuda gratuita termina antes de analizar videos, prescribir ejercicios, asistencia, series, repeticiones, frecuencia, progresiones o cambios de rutina.
+
+## Primeras cinco dominadas
+
+El agente distingue entre:
+
+- entorno o seteo;
+- control escapular;
+- fuerza de traccion;
+- coordinacion;
+- practica especifica;
+- fatiga.
+
+Entiende la secuencia general de sentir, construir fuerza, integrar la primera dominada y consolidar repeticiones limpias. La goma puede servir para practicar tecnica aun despues de la primera repeticion libre. Estos principios orientan la lectura; no autorizan a entregar la rutina general del LOOM por DM.
+
+## Contrato de salida
+
+- Solo el DM listo para enviar.
 - Un movimiento y como maximo una pregunta.
-- Sin dos puntos en el DM final.
-- Sin inferencias por apariencia ni afirmaciones comerciales no verificadas.
-- La fuente operativa debe quedar sin reglas del antiguo embudo ni reglas de llamada inmediata por objetivo aislado.
-- La heuristica de madurez debe permitir criterio contextual, no una maquina de contar mensajes.
-
-## Datos, API, autenticacion y autorizacion
-
-No hay cambios de base de datos, API, autenticacion, autorizacion ni RLS. Los chats siguen tratandose como informacion privada y no se incorpora la transcripcion cruda del audio al runtime.
-
-## Compatibilidad y migracion
-
-- Se actualizan `SKILL.md`, `operativa-dm.md` y `contexto-maestro.md` como una sola unidad.
-- Los filtros antiguos siguen siendo contexto opcional y nunca una secuencia obligatoria.
-- La regla intermedia de dos puertas suficientes queda reemplazada por el criterio de cuatro condiciones.
-- Precio, agenda, objeciones, limites clinicos y formato de salida se conservan.
-- Se guardan backups fechados antes de reemplazar cada archivo critico.
+- Lineas cortas, voseo rioplatense y tono humano.
+- Sin signos de apertura de pregunta o exclamacion.
+- Sin dos puntos.
+- Sin analisis, etiquetas, alternativas ni placeholders.
+- Sin datos inventados, diagnosticos, promesas o programacion personalizada.
 
 ## Criterios de aceptacion
 
-- Un primer mensaje breve sobre muscle-up recibe una pregunta contextual y no una llamada.
-- Un primer mensaje breve sobre las primeras cinco dominadas recibe una pregunta contextual y no una llamada.
-- Una consulta tecnica aislada recibe una correccion puntual y no una llamada automatica.
-- Una conversacion con objetivo, traba o intento y al menos otro aporte sustantivo puede llevar a llamada sin filtros adicionales.
-- Un unico mensaje detallado que pide ayuda o pregunta como trabaja Tato puede llevar a llamada con encaje claro.
-- El runtime no exige tiempo, intentos, prioridad, pago ni online antes de invitar.
-- Preguntar por precio con objetivo y encaje ya conocidos cuenta como interes explicito y puede llevar a llamada.
-- La aceptacion de llamada lleva directamente a agenda.
-- Una preferencia presencial usa primero el historial completo y un menor confirmado no se agenda.
-- Permanecen los limites de salud, no promesa, no precio inventado y una sola pregunta.
+- Una respuesta breve con objetivo claro no dispara llamada automatica.
+- Un mensaje detallado de alta intencion puede invitar sin filtros extra.
+- Una consulta tecnica recibe una sola prioridad y no una clase.
+- Una causa no observada aparece como hipotesis prudente.
+- Una barra baja se reconoce como limitacion del entorno sin diagnosticar escapulas.
+- Una pausa entre retraccion y tiron recibe un cue de continuidad.
+- Una tercera dominada deformada se interpreta como calidad que no resiste la fatiga, sin regalar programacion.
+- Una llamada aceptada pasa directamente a agenda.
+- Precio, modalidad, minoridad, salud y rechazos usan su rama especifica.
+- El DM final conserva una pregunta maxima, ningun signo de apertura y ningun dos puntos.
 
-## Estrategia de prueba
+## Validacion
 
-- Validacion estructural de UTF-8, tamaño, ausencia de bytes nulos y marcadores obligatorios.
-- Busqueda de contradicciones tanto del embudo antiguo como de la llamada inmediata por objetivo aislado.
-- Revision automatica de los DMs de calibracion para ausencia de dos puntos y maximo una pregunta.
-- Casos forward independientes para inicio, desarrollo maduro, alta intencion, duda tecnica, presencial y minoridad.
-- Revision del diff completo contra los backups y reemplazo atomico de los cuatro archivos.
+La validacion tiene tres capas:
 
-## Evidencia de validacion
+1. `scripts/validate_runtime.py` comprueba estructura, UTF-8, frontmatter, rutas y marcadores obligatorios.
+2. Busquedas de privacidad comprueban que la biblioteca no contenga timestamps ni transcripciones crudas.
+3. Casos forward independientes ejercitan inicio, desarrollo, tecnica, madurez, objeciones y agenda sin compartir la respuesta esperada.
 
-- `quick_validate.py` del skill-creator sobre el candidato: `Skill is valid!`.
-- Validador estatico: cuatro archivos en UTF-8 estricto, sin bytes nulos, marcadores obligatorios presentes y frases de llamada inmediata ausentes.
-- Calibracion: 13 ejemplos y 45 bloques de DM revisados, sin dos puntos y con como maximo una pregunta por bloque.
-- Diez casos forward independientes: tres inicios sin llamada, conversacion madura, alta intencion, historial presencial, objetivo vago, precio, minoridad y aceptacion de llamada.
-- La revision adversarial detecto una contradiccion entre precio y agenda; se corrigio para que precio habilite invitacion, pero las opciones de agenda aparezcan solo despues de aceptar. La revalidacion dio `GO`.
-- Los backups coincidieron byte a byte con los archivos activos previos y se reviso el diff completo de los cuatro candidatos.
-- Esta evidencia prueba coherencia del runtime local; no prueba una mejora de conversion ni agendas reales.
+La validacion local demuestra coherencia, no conversion. La efectividad comercial debe observarse con chats reales: invitaciones menos prematuras, respuestas mas especificas y llamadas que nazcan de interes real.
 
-## Rollout y rollback
+## Compatibilidad y limites
 
-- Rollout: activar el criterio de madurez conversacional en toda respuesta nueva del workspace.
-- Señales a observar: invitaciones menos prematuras, conversaciones que no vuelvan al interrogatorio y agendas que surjan despues de interes real.
-- La mejora en agendamiento solo puede probarse con conversaciones reales; la validacion local demuestra coherencia del runtime, no conversion.
-- Rollback: restaurar los backups `*.20260805-181629847.before-readiness.bak` si la validacion falla o Maxi revierte el criterio.
-
-## Riesgos
-
-- Un umbral demasiado alto puede reintroducir filtros y enfriar leads. Se mitiga con la via rapida para mensajes detallados o interes explicito.
-- Un umbral demasiado bajo puede volver a la llamada automatica. Se mitiga exigiendo una conducta observable, no solo un objetivo.
-- La madurez tiene un componente contextual. Se mitiga con señales positivas, contraejemplos y casos de calibracion, sin convertirlos en cuotas.
-- El contexto presencial puede quedar desactualizado. Se usa solo lo confirmado en el historial y no se promete disponibilidad.
-- La edad no siempre esta disponible. Se pregunta solo ante una señal concreta y nunca se infiere por apariencia.
+- No cambian oferta, precio, duracion, agenda ni formato de salida.
+- No se versionan backups ni datos privados.
+- No se introduce base de datos, API, autenticacion ni automatizacion de envios.
+- Si Maxi pide enviar por Instagram, se mantiene el envio linea por linea con verificacion entre lineas.
 
 ## Registro de decisiones
 
-- 2026-08-05: el embudo obligatorio de filtros se reemplazo inicialmente por una regla call-first de dos puertas.
-- 2026-08-05: la prueba de Maxi mostro que dos puertas disparaban llamadas prematuras; esa regla queda reemplazada por cuatro condiciones: objetivo, encaje, interes y madurez.
-- 2026-08-05: dos aportes sustantivos se usan como referencia para chats nuevos, no como requisito mecanico; la alta intencion puede acelerar.
-- 2026-08-05: voluntad de pago y formato online siguen sin ser requisitos previos fijos.
-- 2026-08-05: lectura de historial completo, minoridad, salud, privacidad y limites comerciales se conservan.
+- 2026-08-05: se reemplazo el embudo largo por criterio de madurez y cuatro condiciones de llamada.
+- 2026-08-14: se incorporo la biblioteca tecnica curada desde devoluciones y clases de Tato.
+- 2026-08-14: se separaron hechos, hipotesis y personalizacion.
+- 2026-08-14: se incorporo el mapa de las primeras cinco dominadas sin trasladar rutinas o dosis al DM.
+- 2026-08-14: se agrego un motor agentico obligatorio y carga progresiva de referencias.
