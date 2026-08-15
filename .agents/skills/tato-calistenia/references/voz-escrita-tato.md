@@ -84,7 +84,6 @@ Ritmos validos:
 
 `si queres hacemos una llamada y veo bien tu caso`
 `que te parece?`
-`te va?`
 
 No usar por defecto:
 

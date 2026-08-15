@@ -27,8 +27,8 @@ El agente no expone ese razonamiento. La salida operativa contiene unicamente el
 
 ## Validacion local
 
-```bash
-python3 .agents/skills/tato-calistenia/scripts/validate_runtime.py
+```powershell
+python .agents/skills/tato-calistenia/scripts/validate_runtime.py
 ```
 
 El validador usa solo la biblioteca estandar de Python. Comprueba UTF-8, frontmatter, referencias, archivos requeridos, marcadores del flujo y ausencia de timestamps de transcripciones en la biblioteca tecnica.
