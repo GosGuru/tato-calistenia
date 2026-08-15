@@ -490,9 +490,11 @@ Base de ritmo, no plantilla:
 `veo bien tu caso y te digo como ordenaria [X] con vos`
 `como lo ves?`
 
+El cierre de la invitacion varia con naturalidad entre `como lo ves?`, `te parece?`, `lo ves bien?` y `que te parece?`. Ninguno es obligatorio ni se repite mecanicamente en todas las conversaciones.
+
 Alternativa cuando todavia hace falta validar el alcance en la propia llamada:
 `si queres hacemos una llamada, veo bien tu caso y te digo si te puedo ayudar con [X]`
-`te sirve?`
+`que te parece?`
 
 Claves:
 - adaptas `[X]` a las palabras reales del lead

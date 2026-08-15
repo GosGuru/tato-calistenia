@@ -75,7 +75,9 @@ def read_utf8(path: Path, errors: list[str]) -> str:
         raw = path.read_bytes()
         if b"\x00" in raw:
             fail(errors, f"byte nulo en {path.relative_to(REPO_ROOT)}")
-        return raw.decode("utf-8")
+        # Git may check Markdown out with CRLF on Windows. Normalize newlines so
+        # structural checks behave the same on every supported platform.
+        return raw.decode("utf-8").replace("\r\n", "\n").replace("\r", "\n")
     except UnicodeDecodeError:
         fail(errors, f"UTF-8 invalido en {path.relative_to(REPO_ROOT)}")
         return ""
