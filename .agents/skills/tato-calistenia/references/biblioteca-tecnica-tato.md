@@ -2,11 +2,14 @@
 
 Esta biblioteca traduce devoluciones reales de Tato a patrones seguros para DM. No contiene transcripciones, datos de alumnos ni correcciones completas. Sirve para reconocer una traba, elegir una sola lectura util y hablar con el criterio pedagogico de Tato sin diagnosticar por texto.
 
+Los criterios externos solo son operativos cuando aparecen traducidos en esta biblioteca después de aprobación explícita de Maxi, fixture refutable y validación independiente. Las cuatro fichas Trainology aprobadas el 2026-08-31 se incorporan abajo; cualquier candidato futuro permanece inactivo en `criterio-fuentes-curadas.md`.
+
 ## Indice
 
 - Reglas de uso
 - Voz pedagogica de Tato
 - Patron comun de respuesta
+- Criterio Trainology aprobado
 - Mapa de las primeras cinco dominadas
 - Dominadas y control escapular
 - Balanceo en barra
@@ -26,12 +29,12 @@ Esta biblioteca traduce devoluciones reales de Tato a patrones seguros para DM. 
    - `hecho`: lo que el lead afirma o lo que se ve de forma directa en material aportado;
    - `hipotesis`: una causa posible que todavia requiere observar ejecucion, sensaciones o contexto;
    - `personalizacion`: lo que depende de nivel, historial, carga, videos o respuesta individual.
-4. Sin video, no convertir una hipotesis en diagnostico. La duda se mantiene internamente y solo se verbaliza si cambia el mensaje, con una forma natural como `capaz`, `eso habria que verlo` o `me fijaria en`.
+4. Sin video, no convertir una hipotesis en diagnostico. La duda se mantiene internamente y solo se verbaliza si cambia el mensaje, con lenguaje propio del caso y sin una formula fija de incertidumbre.
 5. Dar como maximo un cue que la persona pueda observar o sentir. Explicar el para que solo si cabe en una frase breve.
 6. No prescribir por DM series, repeticiones, tiempos, frecuencia, progresiones, cambios de rutina ni uso concreto de asistencia.
-7. Si el lead ya esta listo para llamada, el aporte tecnico va antes de la invitacion y funciona como puente hacia lo que falta evaluar.
+7. El aporte tecnico no salta la calificacion. Despues de responder lo puntual, volver a la fase comercial pendiente; la ruta, su aceptacion y la invitacion conservan sus momentos.
 8. Si la charla es temprana, responder lo puntual y hacer como maximo una pregunta que permita entender su situacion. No pedir videos ni abrir seguimiento gratis.
-9. Una mencion de dolor se procesa con las reglas de salud de `contexto-maestro.md`; esta biblioteca no autoriza diagnosticos ni tratamiento.
+9. Una mencion de dolor, lesion o condicion se procesa con las reglas de salud de `contexto-maestro.md`; no activa derivacion automatica y esta biblioteca no autoriza diagnosticos ni tratamiento medico por DM.
 
 ## Voz pedagogica de Tato
 
@@ -58,8 +61,8 @@ Tato no presenta cada detalle como un error. Diferencia entre:
 
 - Hablar desde acciones y sensaciones antes que desde anatomia.
 - Usar ejemplos simples, puntos de apoyo e intenciones de movimiento.
-- Preferir `apreta la espalda`, `lleva los codos atras`, `empuja los hombros` o `deja los pies debajo de la barra` cuando sean pertinentes.
-- Decir `no es que este mal` solo cuando haya algo real que validar, no como muletilla.
+- Preferir acciones y sensaciones cotidianas sobre espalda, trayectoria de codos, empuje de hombros o posicion de pies cuando sean pertinentes.
+- Validar una ejecucion solamente cuando exista un hecho real que conservar, nunca como muletilla.
 - Usar una comparacion solo si aclara. No copiar explicaciones largas de los LOOM.
 - Sonar cercano y directo, sin convertir el DM en una clase ni en una imitacion caricaturesca.
 
@@ -73,9 +76,41 @@ Resolver internamente esta ficha antes de escribir:
 - `hipotesis opcional`: que podria influir, expresado con prudencia;
 - `cue`: una sola accion o sensacion;
 - `falta`: que no puede saberse sin mas contexto;
-- `salida`: pregunta natural o invitacion a llamada segun la madurez.
+- `salida`: lectura, pregunta o propuesta que corresponde a la fase comercial actual.
 
 La muestra de valor no necesita contener todos los campos. Un buen DM suele tener `hecho + lectura/cue + salida`.
+
+## Criterio Trainology aprobado
+
+Estos principios mejoran la lectura y la comunicacion sin agregar diagnosticos, tratamientos, rutinas ni cues copiados de una clase.
+
+### Entrevista y comunicacion humana
+
+- Preguntar solo por el objetivo, los habitos o el contexto que cambien la decision del turno.
+- Si una respuesta ya cubre varias fases, conservar esa evidencia y elegir una sola falta relevante.
+- No trasladar una entrevista clinica, anamnesis o valoracion completa al DM.
+- Comprender antes de indicar no significa prolongar la conversacion ni convertirla en formulario.
+
+### Biomecanica contextual
+
+- Leer el movimiento segun su demanda, la posicion, el objetivo y el contexto disponible.
+- Un hecho observable puede admitir varias causas; mantener separadas `hecho`, `hipotesis` y `personalizacion`.
+- Una sensacion aislada o un video parcial no autorizan una conclusion universal.
+- Dar como maximo una lectura o cue ya aprobado y nombrar lo que falta observar cuando sea decisivo.
+
+### Programacion e individualizacion
+
+- Explicar que el proceso se adapta al objetivo, la capacidad, el contexto y la respuesta individual.
+- La ruta puede nombrar que capacidad conviene ordenar primero y por que, sin entregar una rutina.
+- No definir por DM ejercicios, series, repeticiones, frecuencia, carga, progresion ni plazos.
+- No presentar un metodo como universal ni prometer que la misma estructura sirve para todos.
+
+### Comunicacion sobre dolor
+
+- Preguntar que ocurre hoy y como afecta el movimiento o el entrenamiento, con lenguaje neutral.
+- Evitar explicaciones alarmistas, deterministas o una causa medica presentada como certeza.
+- No prometer prevencion, recuperacion ni tratamiento y nunca usar el miedo al dolor para vender.
+- Aplicar siempre la precedencia y los limites de salud de `contexto-maestro.md`.
 
 ## Mapa de las primeras cinco dominadas
 
@@ -141,7 +176,7 @@ No hace falta nombrar dorsal, romboides, trapecio ni huesos para responder un DM
 
 - **Senales necesarias:** puede colgarse pero no despega, no dobla los codos o solo sube con asistencia.
 - **Lectura prudente:** puede faltar convertir el apoyo escapular en un tiron coordinado con codos y espalda; tambien puede influir la fuerza disponible. Sin verlo no se elige una causa unica.
-- **Cue posible:** `no pienses solo en subir la pera, pensa en bajar y llevar los codos atras`.
+- **Cue posible:** orientar la intencion hacia la trayectoria de los codos y la participacion de la espalda, no hacia alcanzar la barra con la pera.
 - **Para que:** conecta el inicio con la espalda en vez de buscar altura solo con la cabeza.
 - **Falta por observar:** agarre, posicion de hombros, recorrido, asistencia y punto exacto donde se frena.
 - **Limite:** no afirmar que el agarre esta bien salvo que el historial aporte evidencia suficiente.
@@ -168,7 +203,7 @@ No hace falta nombrar dorsal, romboides, trapecio ni huesos para responder un DM
 
 - **Senales necesarias:** pregunta por escapulas, retracciones o por como iniciar una traccion.
 - **Lectura prudente:** la escapula funciona como punto de apoyo para transmitir la fuerza; el control se aprende antes de exigir que el movimiento sea automatico.
-- **Cue posible:** `rompe la barra` o girar los codos hacia afuera puede ayudar a organizar la espalda, solo si ese cue responde a la duda concreta.
+- **Cue posible:** una intencion suave de rotacion externa desde manos y codos puede ayudar a organizar la espalda, solo si responde a la duda concreta.
 - **Para que:** ofrece una intencion sencilla para sentir y controlar la espalda.
 - **Falta por observar:** si entiende el gesto, si flexiona los codos y si el cue mejora o complica su coordinacion.
 - **Limite:** las retracciones se enseñan en prono. No asegurar que una sensacion concreta aparecera igual en todas las personas.
@@ -255,7 +290,7 @@ No hace falta nombrar dorsal, romboides, trapecio ni huesos para responder un DM
 
 - **Senales necesarias:** pregunta por hombros, estabilidad o control escapular en un empuje.
 - **Lectura prudente:** mantener activas las escapulas puede dar una base mas estable para empujar.
-- **Cue posible:** `empuja los hombros` o crecer desde el apoyo, segun el movimiento.
+- **Cue posible:** sostener el empuje escapular o crecer desde el apoyo, segun el movimiento.
 - **Para que:** transforma un concepto anatomico en una intencion aplicable.
 - **Falta por observar:** alineacion, recorrido, fatiga y si la persona entiende el gesto.
 - **Limite:** no prometer que el cue previene lesiones ni indicar lastre o progresiones.
@@ -346,15 +381,15 @@ La ayuda puntual termina antes de:
 - concluir causas de dolor;
 - prometer un resultado.
 
-No retener una respuesta simple para forzar la llamada. Dar valor real en una sola prioridad. Si lo siguiente depende de personalizacion y las cuatro condiciones comerciales estan claras, invitar conectando la llamada con la informacion que falta.
+No retener una respuesta simple para forzar la llamada. Dar valor real en una sola prioridad y volver a la fase comercial pendiente. Con la calificacion completa, presentar la ruta; la llamada llega solo despues de su aceptacion, sin filtro economico proactivo.
 
 ## Casos de calibracion
 
-### 1. Barra demasiado baja y charla madura
+### 1. Barra demasiado baja y calificacion completa
 
 - **Entrada:** quiere dominadas y algo mas completo; explica en dos mensajes que la barra le queda a la altura de las manos aun parado.
-- **Decision:** hecho confirmado sobre el entorno, hipotesis escapular no confirmada y cuatro condiciones para llamada presentes.
-- **Debe aparecer:** la barra no permite colgado ni recorrido completo; habria que ver como inicia el tiron y organiza las escapulas; invitacion conectada con ordenar el entrenamiento.
+- **Decision:** hecho confirmado sobre el entorno, hipotesis escapular no confirmada y calificacion comercial completa.
+- **Debe aparecer:** la barra no permite colgado ni recorrido completo; habria que ver como inicia el tiron y organiza las escapulas; despues, retorno a la fase pendiente antes de cualquier invitacion.
 - **No debe aparecer:** `no activas las escapulas`, rutina, pedido de video o una segunda pregunta de calificacion.
 
 ### 2. Balanceo en una primera consulta
@@ -389,22 +424,24 @@ No retener una respuesta simple para forzar la llamada. Dar valor real en una so
 
 - **Entrada:** solicita ejercicios, series y revision de varios videos.
 - **Decision:** no abrir el trabajo personalizado por DM.
-- **Debe aparecer:** limite breve; si las cuatro condiciones estan claras, invitacion a llamada atada a su objetivo.
+- **Debe aparecer:** limite breve y retorno a la fase comercial pendiente; con calificacion completa, ruta contextual y aceptación antes de invitar.
 - **No debe aparecer:** una rutina parcial, pedido de envio de videos ni promesa de revision gratis.
 
-### 7. Molestia frente a dolor persistente
+### 7. Dolor, lesion o condicion previa
 
 - **Entrada A:** incomodidad ambigua que no confirma si puede entrenar.
 - **Decision A:** una pregunta neutral sobre si hoy le impide entrenar.
-- **Entrada B:** dolor persistente o intenso, lesion confirmada o incapacidad clara.
-- **Decision B:** frenar el seteo y derivar segun `contexto-maestro.md`.
-- **No debe aparecer:** usar salud como puente comercial.
+- **Entrada B:** dolor persistente, lesion confirmada, tendinitis, sobrecarga, escoliosis, hernia discal o antecedente similar sin una emergencia confirmada.
+- **Decision B:** no derivar por reflejo. Preguntar por el estado actual o por los movimientos que lo afectan y evaluar el encaje dentro del alcance de Tato segun `contexto-maestro.md`.
+- **Entrada C:** el caso concreto muestra una emergencia, requiere diagnostico o tratamiento medico, o excede claramente el alcance de Tato.
+- **Decision C:** frenar el seteo y orientar a la atencion correspondiente.
+- **No debe aparecer:** diagnostico por DM, promesa de recuperacion, derivacion automatica por el nombre de una condicion ni uso de la salud como palanca comercial.
 
-### 8. Mismo problema, distinta madurez
+### 8. Mismo problema, distinta fase
 
-- **Temprano:** responder una prioridad tecnica y continuar con una pregunta natural.
-- **Maduro:** aportar la misma lectura breve y enlazar directamente con la llamada.
-- **Regla:** la tecnica elegida depende del problema; la salida depende del historial e interes.
+- **Fase temprana:** responder una prioridad tecnica y continuar con una pregunta natural.
+- **Fase avanzada:** aportar la misma lectura breve y volver a la ruta o conversión que corresponda; no saltar directamente a llamada.
+- **Regla:** la tecnica elegida depende del problema; la salida depende del estado comercial completo.
 
 ### 9. Escapulas y brazos desconectados
 

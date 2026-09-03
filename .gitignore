@@ -2,3 +2,9 @@
 *.bak
 __pycache__/
 *.pyc
+
+# Transcripciones crudas de chats (no se versionan por privacidad)
+chats/
+
+# Local Gentle AI registry/cache
+.atl/

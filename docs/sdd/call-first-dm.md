@@ -1,178 +1,297 @@
-# Arquitectura agentica para DMs de Tato Calistenia
+# Arquitectura del setter Tato Calistenia
 
-Fecha: 2026-08-14
-Estado: implementado localmente
+Fecha: 2026-09-02
+Estado: implementación local v3
 
 ## Objetivo
 
-Producir el mejor siguiente DM posible para cada conversacion sin depender de un embudo fijo. El agente debe leer historial, objetivo, interes, madurez, tecnica y excepciones como un solo sistema; aportar valor con la voz de Tato y llevar a llamada solamente cuando sea consecuencia natural del intercambio.
+Producir el próximo movimiento natural de cada conversación y entregar a Tato leads mejor preparados. La calistenia se presenta como vehículo hacia una capacidad vital elegida por el lead; la llamada llega después de una aceptación positiva de la ruta, sin filtro económico proactivo.
 
-## Problemas resueltos
+## Principios
 
-- La primera version preguntaba demasiados filtros antes de invitar.
-- La version call-first corrigio ese exceso, pero podia invitar apenas aparecia un objetivo.
-- La operativa crecio hasta mezclar orquestacion, conocimiento, excepciones y ejemplos en un unico archivo largo.
-- El conocimiento tecnico inicial era demasiado chico para reflejar una traba concreta antes de la llamada.
-- Las transcripciones nuevas podian tentar a copiar rutinas o explicaciones individuales sin distinguir certeza ni alcance.
+- El historial completo manda sobre el último mensaje.
+- La calificación es adaptativa y nunca un formulario.
+- Una respuesta equivale a un movimiento y una pregunta máxima.
+- La decisión interna se completa antes de redactar; la redacción se construye de cero y no se recupera desde ejemplos.
+- La brevedad es el valor por defecto, pero la extensión aumenta cuando la apertura del lead necesita reconocimiento proporcional.
+- Toda conversación activa termina con una pregunta de dirección; los cierres excepcionales quedan sin pregunta.
+- La habilidad técnica puede ser un hito, no el destino universal.
+- La autoridad de Tato nace del criterio, no de presión o estatus.
+- El DM diagnostica comercialmente lo mínimo; la llamada profundiza y cierra.
+- Los LOOM aportan pedagogía curada, no voz literal ni datos privados.
+- El corpus escrito propio gobierna la forma; los audios salientes de Tato aportan criterio y vocabulario después de una curación privada, nunca recuperación literal.
+- Las fuentes externas solo aportan criterios aprobados; su matriz de mantenimiento no gobierna respuestas.
+- El maseteo organiza leads conocidos y nunca automatiza envíos.
+- Cada chat nuevo del workspace reconstruye la v3 desde el skill y sus referencias, sin depender de conversaciones anteriores.
 
-La arquitectura actual separa motor, voz escrita, reglas comerciales, contexto maestro y conocimiento tecnico.
-
-## Componentes del runtime
+## Componentes
 
 ### `SKILL.md`
 
-Punto de entrada. Mantiene el contrato, las invariantes y las reglas de carga progresiva. No contiene el detalle de todas las ramas.
+Contrato LLM-first, modos de salida y carga progresiva. Usa frontmatter compatible con `skill-creator`.
 
 ### `motor-agentico.md`
 
-Se carga para todo chat. Define:
-
-- orden de autoridad;
-- estado interno;
-- puertas prioritarias;
-- ciclo de decision;
-- condiciones de llamada;
-- seleccion de un solo gol del turno;
-- composicion y revision silenciosa.
-
-### `voz-escrita-tato.md`
-
-Referencia obligatoria para todo DM. Convierte el criterio interno en una respuesta breve, directa y humana. Separa la voz escrita de Instagram de la cadencia oral de los LOOM y evita formulas de agente como `por lo que contas`, `hay algo concreto para trabajar` o `te propongo una llamada corta`.
+Único dueño de estado, puertas prioritarias, fases, composición y revisión silenciosa.
 
 ### `operativa-dm.md`
 
-Referencia detallada para objeciones, precio, agenda, seguimiento, modalidad, minoridad, salud, ejemplos y dudas comerciales.
+Fuente normativa de posicionamiento, evidencia comercial, ruta personalizada y criterio de llamada.
+
+### `operativa-maseteo.md`
+
+Define elegibilidad, prioridad, aislamiento de estado y salida interna de `outbound_batch`.
+
+### `voz-escrita-tato.md`
+
+Define ritmo, escucha visible, autoridad, preguntas, ruta e invitación sin duplicar decisiones comerciales.
+
+### `objeciones-agenda.md`
+
+Resuelve precio o dinero cuando el lead los trae, modalidad, objeciones, follow-ups y agenda oficial.
+
+### `handoff-llamada.md`
+
+Define un brief factual con ángulo recomendado cuando Maxi lo pide. No produce guiones.
 
 ### `contexto-maestro.md`
 
-Fuente de identidad, oferta, metodo, seguridad, privacidad y limites comerciales. Los datos internos no quedan autorizados para el DM por el solo hecho de existir en este archivo.
+Fuente estable de identidad, avatar, oferta, precio interno, método, privacidad y seguridad.
 
 ### `biblioteca-tecnica-tato.md`
 
-Patrones curados desde LOOM reales. Separa hecho, hipotesis y personalizacion; contiene señales de uso, cue, para que, informacion faltante, limite y casos de calibracion.
+Patrones técnicos curados con separación entre hecho, hipótesis y personalización. Incluye los cuatro criterios Trainology aprobados sobre entrevista, biomecánica, individualización y comunicación sobre dolor.
 
-Los LOOM calibran la mirada tecnica y pedagogica. No se usan para imitar literalmente la forma hablada de Tato en un chat.
+### `casos-calibracion.md` y `assets/forward-cases.json`
+
+Decisiones esperadas, hard fails, escenarios y expectativas para verificación independiente. No contienen una respuesta prospect-facing para copiar.
+
+### `criterio-fuentes-curadas.md`
+
+Matriz de mantenimiento para Julio Rondinelli, Psychoselling, De 0 a 10 y Trainology. Registra `Rescatar`, `Rechazar`, traducción Tato, riesgo y aprobación sin incorporar transcripciones.
+
+## Interfaces
+
+### `prospect_dm`
+
+Salida por defecto:
+
+- solo el próximo DM;
+- una idea por línea;
+- un movimiento;
+- longitud proporcional al aporte del lead, sin una cuota rígida de líneas;
+- exactamente una pregunta de dirección al final si la conversación sigue activa;
+- ninguna pregunta si corresponde un cierre excepcional;
+- sin análisis, etiquetas ni alternativas;
+- sin signos de apertura;
+- sin dos puntos en prosa;
+- URL oficial permitida como única excepción.
+
+### `outbound_batch`
+
+Solo para seguidores, comentarios, recursos, conversaciones y reactivaciones verificables:
+
+- clasifica `eligible`, `needs_context` o `skip`;
+- prioriza bloqueo operativo, inbound, fase pendiente, primer follow-up, apertura y segundo follow-up;
+- mantiene un estado independiente por lead;
+- devuelve razón, prioridad, fase, siguiente acción y un único DM solo para elegibles;
+- nunca envía ni afirma envío.
+
+### `call_brief`
+
+Solo por pedido explícito. Devuelve destino, situación, brecha, sentido, disposición, ruta aceptada, salud, objeciones, pendientes, lenguaje útil, ángulo y datos que no deben repetirse.
+
+### `maintenance`
+
+Respuesta técnica normal. Un cambio de comportamiento obliga a sincronizar runtime, documentación, fixtures y validador.
 
 ## Estado interno
 
-Antes de redactar, el agente resuelve sin mostrar:
+El motor resuelve sin mostrar:
 
-- instruccion actual de Maxi;
-- hechos confirmados y datos no confirmados;
-- X del lead;
-- encaje real;
-- etapa conversacional;
-- evidencia de interes;
-- rama tecnica y certeza;
-- excepciones activas;
-- gol del turno;
-- siguiente movimiento.
+- `modo`;
+- `instruccion_maxi`;
+- `hechos_confirmados` y `datos_no_confirmados`;
+- `situacion_actual`;
+- `destino_funcional` y `destino_vital`;
+- `brecha_e_intentos`;
+- `sentido_personal`;
+- `disposicion_practica`;
+- `ruta_tato` y `aceptacion_ruta`;
+- `senal_economica`, únicamente cuando el lead trae dinero o precio;
+- `fase` y `subestado_conversion`;
+- `rama_tecnica`;
+- `excepciones`;
+- `followups_realizados`;
+- `gol_del_turno` y `siguiente_movimiento`.
 
-El historial completo tiene memoria dentro de la conversacion: un dato confirmado no se repregunta ni se contradice.
+En lote agrega `lead_ref`, fuente, elegibilidad, motivo, prioridad, bloqueo operativo y contacto duplicado, reconstruidos por separado para cada lead.
 
-## Precedencia de ramas
+## Precedencia
 
-1. Riesgo clinico que exige derivacion.
-2. Minoridad confirmada.
-3. Llamada ya aceptada.
-4. Objecion activa.
-5. Segundo rechazo o incompatibilidad confirmada.
-6. Pregunta operativa.
-7. Rama tecnica, comercial o conversacional normal.
+1. Emergencia o necesidad fuera de alcance.
+2. Menor confirmado.
+3. Bloqueo operativo verificable.
+4. Reserva confirmada.
+5. Llamada aceptada o agenda enviada.
+6. Objeción activa.
+7. Segundo rechazo o incompatibilidad confirmada.
+8. Pregunta operativa.
+9. Rama técnica, comercial o conversacional normal.
 
-Esta precedencia evita seguir calificando despues de una aceptacion, vender durante una derivacion o ignorar una objecion para abrir otra pregunta.
+Esta precedencia impide vender durante una emergencia, seguir calificando después de una aceptación o ignorar un freno activo.
 
-## Madurez e invitacion
+## Calificación
 
-La llamada requiere cuatro condiciones:
+Las siete fases son:
 
-1. objetivo concreto;
-2. aporte honesto de Tato;
-3. interes demostrado;
-4. madurez conversacional.
+`contexto -> destino -> brecha -> sentido -> disposición -> ruta -> conversión`
 
-Aceptar la guia, nombrar un objetivo, agradecer o hacer una consulta tecnica aislada no alcanzan por si solos. Una respuesta detallada, una traba sostenida, un pedido de ayuda o una pregunta comercial pueden acelerar la madurez sin cumplir una cantidad fija de mensajes.
+El historial puede completar varias. El agente salta las fases resueltas, pregunta por la primera evidencia relevante que falte y nunca pregunta para llenar una casilla.
 
-La ruta normal es:
+### Contexto
 
-`objetivo -> conversacion util -> interes demostrado -> invitacion -> agenda`
+Punto de partida y restricciones reales.
 
-Tiempo, intentos, urgencia, prioridad, pago y online son datos opcionales, nunca un formulario obligatorio.
+### Destino
 
-## Integracion tecnica y comercial
+Capacidad o hito y, si existe, lo que permitiría vivir, sentir o compartir.
 
-Ante una mencion tecnica, el agente:
+### Brecha
 
-1. identifica movimiento y hecho observable;
-2. elige un solo patron respaldado;
-3. distingue causa posible de hecho confirmado;
-4. aporta una lectura o cue breve;
-5. decide la salida por madurez, no por el mero hecho de hablar de tecnica.
+Traba, intentos y experiencia que no quiere repetir.
 
-Una charla temprana recibe ayuda puntual y, si hace falta, una pregunta natural. Una charla madura recibe esa misma muestra de valor y una invitacion conectada con lo que falta personalizar.
+### Sentido
 
-La ayuda gratuita termina antes de analizar videos, prescribir ejercicios, asistencia, series, repeticiones, frecuencia, progresiones o cambios de rutina.
+Importancia personal sin exigir dolor ni confesión emocional.
 
-## Primeras cinco dominadas
+### Disposición
 
-El agente distingue entre:
+Evidencia práctica de que puede sostener un proceso, sin interrogatorio de tiempo o dinero.
 
-- entorno o seteo;
-- control escapular;
-- fuerza de traccion;
-- coordinacion;
-- practica especifica;
-- fatiga.
+### Ruta
 
-Entiende la secuencia general de sentir, construir fuerza, integrar la primera dominada y consolidar repeticiones limpias. La goma puede servir para practicar tecnica aun despues de la primera repeticion libre. Estos principios orientan la lectura; no autorizan a entregar la rutina general del LOOM por DM.
+Movimiento A→B que combina prioridad, capacidad, observación, adaptación y autonomía. Plan, video y ajustes son mecanismos disponibles, no un folleto obligatorio.
 
-## Contrato de salida
+### Conversión
 
-- Solo el DM listo para enviar.
-- Un movimiento y como maximo una pregunta.
-- Lineas cortas, voseo rioplatense y tono humano.
-- Sin signos de apertura de pregunta o exclamacion.
-- Sin dos puntos.
-- Sin analisis, etiquetas, alternativas ni placeholders.
-- Sin datos inventados, diagnosticos, promesas o programacion personalizada.
+Aceptación de ruta, invitación a llamada, agenda y confirmación. Precio o dinero se atienden solamente si el lead los trae.
 
-## Criterios de aceptacion
+## Posicionamiento y oferta
 
-- Una respuesta breve con objetivo claro no dispara llamada automatica.
-- Un mensaje detallado de alta intencion puede invitar sin filtros extra.
-- Una consulta tecnica recibe una sola prioridad y no una clase.
-- Una causa no observada aparece como hipotesis prudente.
-- La prudencia tecnica no convierte el DM en un informe lleno de salvedades.
-- La respuesta prioriza la lectura concreta y usa vocabulario natural de Tato escrito.
-- Una barra baja se reconoce como limitacion del entorno sin diagnosticar escapulas.
-- Una pausa entre retraccion y tiron recibe un cue de continuidad.
-- Una tercera dominada deformada se interpreta como calidad que no resiste la fatiga, sin regalar programacion.
-- Una llamada aceptada pasa directamente a agenda.
-- Precio, modalidad, minoridad, salud y rechazos usan su rama especifica.
-- El DM final conserva una pregunta maxima, ningun signo de apertura y ningun dos puntos.
+- Público prioritario 40+; avatar ideal 45+.
+- Adultos menores avanzan si existe encaje.
+- No se pregunta edad por rutina ni se infiere capacidad económica.
+- Coaching 1 a 1 online de 90 días.
+- USD 300 como precio interno, comunicado solamente en llamada.
+- Sin cuotas, reserva, descuentos, resultados ni duración de llamada inventados.
+- Cal.com oficial después de aceptar la llamada.
 
-## Validacion
+## Integración técnica
 
-La validacion tiene tres capas:
+Ante técnica:
 
-1. `scripts/validate_runtime.py` comprueba estructura, UTF-8, frontmatter, rutas y marcadores obligatorios.
-2. Busquedas de privacidad comprueban que la biblioteca no contenga timestamps ni transcripciones crudas.
-3. Casos forward independientes ejercitan inicio, desarrollo, tecnica, madurez, objeciones y agenda sin compartir la respuesta esperada.
+1. identificar un hecho;
+2. elegir un patrón respaldado;
+3. marcar una prioridad;
+4. dar una lectura o cue;
+5. volver a la fase comercial pendiente.
 
-La validacion local demuestra coherencia, no conversion. La efectividad comercial debe observarse con chats reales: invitaciones menos prematuras, respuestas mas especificas y llamadas que nazcan de interes real.
+El DM no analiza videos, prescribe dosis, modifica rutinas ni abre seguimiento personalizado gratis.
 
-## Compatibilidad y limites
+## Precio y objeciones
 
-- No cambian oferta, precio, duracion, agenda ni formato de salida.
-- No se versionan backups ni datos privados.
-- No se introduce base de datos, API, autenticacion ni automatizacion de envios.
-- Si Maxi pide enviar por Instagram, se mantiene el envio linea por linea con verificacion entre lineas.
+- La disposición económica no se pregunta por iniciativa del agente.
+- Si el lead pregunta precio, se aclara que es un acompañamiento pago de 90 días y se propone conversar valor y propuesta con Tato en llamada, sin revelar USD 300. Esta es la única excepción a la aceptación previa de ruta; Cal.com todavía requiere que acepte la llamada.
+- No se piden ingresos, patrimonio ni presupuesto mínimo.
+- Un no económico claro recibe cierre cálido, no debate.
+- Miedo, dinero y logística se distinguen internamente.
+- No se usan vergüenza, ego, familia, salud, falsas urgencias ni cierres binarios.
+- Se permiten dos follow-ups como máximo y ninguno tras rechazo claro.
+
+## Agenda
+
+Después de aceptar:
+
+1. pedir que elija día y hora;
+2. enviar `https://cal.com/tato-ramon/reunion-auditoria` en una línea propia;
+3. pedir confirmación;
+4. no afirmar reserva hasta verla confirmada;
+5. no volver a calificar.
+
+El protocolo del URL es la única excepción al veto de dos puntos.
+
+## Seguridad
+
+- Tato puede evaluar molestias musculoesqueléticas como fisioterapeuta; el agente solo pregunta por el estado actual.
+- No diagnostica, prescribe ni promete tratamiento, prevención o recuperación.
+- Emergencias, problemas endocrinos, trastornos alimentarios, atención de salud mental y pedidos médicos fuera de alcance frenan la venta.
+- Salud, edad y familia nunca son palancas comerciales.
+
+## Criterios de aceptación
+
+- Un objetivo técnico aislado no dispara llamada.
+- Un audio largo no sustituye evidencia ausente.
+- El destino vital se descubre y no se impone.
+- La ruta no recita prestaciones.
+- Ruta, aceptación e invitación ocurren en momentos diferenciados; no se intercala un filtro económico proactivo.
+- Una pregunta directa por precio puede proponer llamada antes de ruta aceptada, pero nunca enviar agenda antes de que la llamada sea aceptada.
+- El precio interno no aparece en un DM.
+- Un adulto menor de 40 no se descarta por edad.
+- Una condición musculoesquelética recibe una pregunta neutral.
+- Un caso fuera de alcance frena la calificación.
+- Una llamada aceptada pasa al Cal.com exacto.
+- Una reserva solo se confirma con evidencia.
+- Un brief nunca se mezcla con el próximo DM.
+- Cada salida respeta voz, privacidad y formato.
+- Cada salida nace del caso, ignora metadatos de interfaz y evita repetir la huella sintáctica reciente.
+- Una apertura extensa o sensible recibe reconocimiento proporcional antes de la dirección; una respuesta breve puede recibir una pregunta directa sin prefacio.
+- Cada conversación activa termina con una pregunta de dirección conectada con la primera evidencia pendiente; rechazo, seguridad, incompatibilidad, inversión imposible, reserva confirmada y límite de follow-ups conservan cierre sin pregunta.
+- Un bloqueo de recurso se resuelve antes de retomar calificación.
+- `outbound_batch` no incorpora leads fríos, no prepara DMs para `skip` o `needs_context` y no mezcla estados.
+- Una ficha externa `candidate` no cambia el runtime técnico; las cuatro fichas Trainology aprobadas sí operan mediante la biblioteca, sin habilitar diagnóstico ni prescripción.
+
+## Validación
+
+`scripts/validate_runtime.py` comprueba:
+
+- frontmatter y metadatos;
+- rutas y módulos;
+- marcadores normativos;
+- ausencia de reglas desplazadas;
+- decisiones de calibración sin plantillas literales y URL permitida;
+- precio no expuesto;
+- fixtures e IDs únicos;
+- rúbrica y casos `outbound_batch`;
+- estructura y estados de la matriz curada;
+- privacidad básica;
+- sincronización documental.
+
+Los casos individuales se puntúan sobre fidelidad, fase, naturalidad, posicionamiento y seguridad. Los casos de lote usan elegibilidad, prioridad, continuidad, mensaje y seguridad. Ambos exigen 8/10 y sus dimensiones críticas completas.
+
+## Compatibilidad y límites
+
+- No se agregan dependencias, APIs, base de datos ni automatización de envíos.
+- No se agrega RAG ni se versiona el corpus de cursos.
+- No se versionan transcripciones, backups o PII.
+- Envíos reales se hacen línea por línea con verificación.
+- La validación local demuestra coherencia, no conversión.
+- No se afirma publicación o GitHub sin evidencia remota.
 
 ## Registro de decisiones
 
-- 2026-08-05: se reemplazo el embudo largo por criterio de madurez y cuatro condiciones de llamada.
-- 2026-08-14: se incorporo la biblioteca tecnica curada desde devoluciones y clases de Tato.
-- 2026-08-14: se separaron hechos, hipotesis y personalizacion.
-- 2026-08-14: se incorporo el mapa de las primeras cinco dominadas sin trasladar rutinas o dosis al DM.
-- 2026-08-14: se agrego un motor agentico obligatorio y carga progresiva de referencias.
-- 2026-08-14: se separo la voz escrita de Tato de la cadencia oral de los LOOM y se priorizo autoridad concisa en DM.
+- 2026-08-14: se separaron motor, voz, contexto y biblioteca técnica.
+- 2026-08-26: se corrigió la derivación automática de casos musculoesqueléticos.
+- 2026-08-30: se fijó el avatar prioritario 40+, ideal 45+, sin exclusión automática de adultos menores.
+- 2026-08-30: se reposicionó la calistenia como vehículo de capacidad, control y autonomía.
+- 2026-08-30: se reemplazó el pitch de prestaciones por una ruta personalizada.
+- 2026-08-31: se eliminaron respuestas modelo del runtime, se separó decisión de redacción y se añadió longitud proporcional, control de huella e ignorado de avisos de interfaz.
+- 2026-08-30: se incorporó validación económica suave antes de llamada.
+- 2026-08-30: se fijó USD 300 por 90 días como dato interno y Cal.com como agenda oficial.
+- 2026-08-30: se modularizaron objeciones, agenda, handoff y calibración.
+- 2026-08-31: se incorporó `outbound_batch` para leads conocidos, sin autosend.
+- 2026-08-31: se separó la matriz de fuentes curadas del runtime normativo.
+- 2026-08-31: Trainology quedó inicialmente como candidato técnico sujeto a aprobación de Maxi.
+- 2026-09-02: Maxi retiró la validación económica proactiva; la ruta aceptada habilita la invitación y el dinero se responde solo si el lead lo trae.
+- 2026-09-02: se curaron seis meses de mensajes escritos y 429 audios salientes únicos; la forma escrita manda y el audio aporta criterio sin entrar al runtime crudo.
+- 2026-08-31: Maxi aprobó las cuatro fichas Trainology y se activaron mediante reglas prudentes y fixtures, sin copiar transcripciones ni habilitar prescripción.
