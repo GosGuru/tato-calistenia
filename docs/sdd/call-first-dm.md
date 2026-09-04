@@ -22,6 +22,7 @@ Producir el próximo movimiento natural de cada conversación y entregar a Tato 
 - El corpus escrito propio gobierna la forma; los audios salientes de Tato aportan criterio y vocabulario después de una curación privada, nunca recuperación literal.
 - Las fuentes externas solo aportan criterios aprobados; su matriz de mantenimiento no gobierna respuestas.
 - El maseteo organiza leads conocidos y nunca automatiza envíos.
+- El CRM persiste eventos comerciales idempotentes, no transcripciones; el EOD es una salida revisable.
 - Cada chat nuevo del workspace reconstruye la v3 desde el skill y sus referencias, sin depender de conversaciones anteriores.
 
 ## Componentes
@@ -70,6 +71,10 @@ Decisiones esperadas, hard fails, escenarios y expectativas para verificación i
 
 Matriz de mantenimiento para Julio Rondinelli, Psychoselling, De 0 a 10 y Trainology. Registra `Rescatar`, `Rechazar`, traducción Tato, riesgo y aprobación sin incorporar transcripciones.
 
+### `tracking-eod.md`, `crm-event.schema.json` y `crm_tracker.py`
+
+Definen el ledger SQLite privado, el contrato de eventos y la agregación del formulario. Los textos se convierten en huellas antes de persistirse; un borrador nunca cuenta como envío.
+
 ## Interfaces
 
 ### `prospect_dm`
@@ -101,6 +106,10 @@ Solo para seguidores, comentarios, recursos, conversaciones y reactivaciones ver
 
 Solo por pedido explícito. Devuelve destino, situación, brecha, sentido, disposición, ruta aceptada, salud, objeciones, pendientes, lenguaje útil, ángulo y datos que no deben repetirse.
 
+### `eod_review`
+
+Genera los nueve campos del cierre desde eventos verificables, mantiene contactos y burbujas separados, pide energía y sensación y espera aprobación. No envía el formulario.
+
 ### `maintenance`
 
 Respuesta técnica normal. Un cambio de comportamiento obliga a sincronizar runtime, documentación, fixtures y validador.
@@ -110,6 +119,7 @@ Respuesta técnica normal. Un cambio de comportamiento obliga a sincronizar runt
 El motor resuelve sin mostrar:
 
 - `modo`;
+- `lead_key`, fuente y contenido de origen;
 - `instruccion_maxi`;
 - `hechos_confirmados` y `datos_no_confirmados`;
 - `situacion_actual`;
@@ -199,6 +209,15 @@ Ante técnica:
 
 El DM no analiza videos, prescribe dosis, modifica rutinas ni abre seguimiento personalizado gratis.
 
+## Persistencia CRM y EOD
+
+- Identificar por handle de Instagram o ID estable de ManyChat.
+- Reprocesar el historial completo de forma segura: la huella idempotente descarta eventos repetidos.
+- Persistir `dm_drafted` al preparar y `outbound_sent` o `followup_sent` solo al observar o verificar el envío.
+- Derivar contactos, respuestas, seguimientos, calidad, objeciones y comentarios desde el ledger.
+- Conservar energía y sensación como campos personales pendientes.
+- Mantener la base fuera de Git y no guardar el texto crudo.
+
 ## Precio y objeciones
 
 - La disposición económica no se pregunta por iniciativa del agente.
@@ -249,6 +268,9 @@ El protocolo del URL es la única excepción al veto de dos puntos.
 - Cada conversación activa termina con una pregunta de dirección conectada con la primera evidencia pendiente; rechazo, seguridad, incompatibilidad, inversión imposible, reserva confirmada y límite de follow-ups conservan cierre sin pregunta.
 - Un bloqueo de recurso se resuelve antes de retomar calificación.
 - `outbound_batch` no incorpora leads fríos, no prepara DMs para `skip` o `needs_context` y no mezcla estados.
+- Un historial pegado varias veces produce los mismos IDs y no infla el EOD.
+- Una respuesta redactada pero no enviada permanece fuera de las métricas de envío.
+- La automatización EOD avisa y espera aprobación; nunca presenta un envío como realizado.
 - Una ficha externa `candidate` no cambia el runtime técnico; las cuatro fichas Trainology aprobadas sí operan mediante la biblioteca, sin habilitar diagnóstico ni prescripción.
 
 ## Validación
@@ -271,7 +293,7 @@ Los casos individuales se puntúan sobre fidelidad, fase, naturalidad, posiciona
 
 ## Compatibilidad y límites
 
-- No se agregan dependencias, APIs, base de datos ni automatización de envíos.
+- Se admite SQLite local mediante biblioteca estándar; no se agregan APIs, RAG ni automatización de envíos.
 - No se agrega RAG ni se versiona el corpus de cursos.
 - No se versionan transcripciones, backups o PII.
 - Envíos reales se hacen línea por línea con verificación.
@@ -295,3 +317,12 @@ Los casos individuales se puntúan sobre fidelidad, fase, naturalidad, posiciona
 - 2026-09-02: Maxi retiró la validación económica proactiva; la ruta aceptada habilita la invitación y el dinero se responde solo si el lead lo trae.
 - 2026-09-02: se curaron seis meses de mensajes escritos y 429 audios salientes únicos; la forma escrita manda y el audio aporta criterio sin entrar al runtime crudo.
 - 2026-08-31: Maxi aprobó las cuatro fichas Trainology y se activaron mediante reglas prudentes y fixtures, sin copiar transcripciones ni habilitar prescripción.
+- 2026-09-03: Maxi aprobó el ledger CRM idempotente y un EOD programable que prepara, avisa y espera autorización antes de enviar.
+
+## Garantías del registro EOD
+
+El agente registra los hechos observados y el borrador internamente por lote; Maxi no lleva cuentas manuales. Identidad estable, evidencia monotónica y orden cronológico evitan duplicaciones y retrocesos. Los cierres usan America/Montevideo, calidad histórica y contactos reales separados de burbujas; los borradores nunca cuentan como envíos.
+
+El reporte conserva los nueve campos y declara cobertura parcial de evidencia registrada, no sincronización con Instagram. Fechas desconocidas quedan pendientes, nunca se inventan. Las consultas son solo lectura; las bases heredadas admiten nuevos eventos sin migrar ni reescribir los históricos. Las lecturas consolidan identidades exactas y mantienen visible la conciliación pendiente. No se cambia la programación ni la aprobación del formulario. Detalles operativos en `.agents/skills/tato-calistenia/references/tracking-eod.md`.
+
+Prueba de regresión sintética: `python -B .agents/skills/tato-calistenia/scripts/test_crm_tracker.py`. Requiere disponibilidad de la zona IANA America/Montevideo en Python; si falta, el tracker informa el error sin asumir otra zona.

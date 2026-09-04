@@ -14,6 +14,7 @@ SKILL_ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = SKILL_ROOT.parents[2]
 REFERENCES = SKILL_ROOT / "references"
 ASSETS = SKILL_ROOT / "assets"
+CRM_TRACKER = SKILL_ROOT / "scripts" / "crm_tracker.py"
 OFFICIAL_CAL_URL = "https://cal.com/tato-ramon/reunion-auditoria"
 
 RUNTIME_FILES = [
@@ -28,7 +29,10 @@ RUNTIME_FILES = [
     REFERENCES / "contexto-maestro.md",
     REFERENCES / "biblioteca-tecnica-tato.md",
     REFERENCES / "casos-calibracion.md",
+    REFERENCES / "tracking-eod.md",
     ASSETS / "forward-cases.json",
+    ASSETS / "crm-event.schema.json",
+    CRM_TRACKER,
     REPO_ROOT / "AGENTS.md",
     REPO_ROOT / "README.md",
     REPO_ROOT / "docs" / "sdd" / "call-first-dm.md",
@@ -54,7 +58,9 @@ REQUIRED_MARKERS = {
         "references/casos-calibracion.md",
         "references/operativa-maseteo.md",
         "references/criterio-fuentes-curadas.md",
+        "references/tracking-eod.md",
         "assets/forward-cases.json",
+        "assets/crm-event.schema.json",
         "pregunta de dirección",
     ],
     "openai.yaml": [
@@ -76,6 +82,30 @@ REQUIRED_MARKERS = {
         "profundidad_del_aporte",
         "huella_reciente",
         "No pensar mediante una respuesta modelo",
+        "### 1.1 Persistir evidencia sin duplicar",
+        "dm_drafted",
+        "verified",
+    ],
+    "tracking-eod.md": [
+        "## Privacidad y almacenamiento",
+        "## Eventos",
+        "## Definiciones EOD",
+        "## Cierre programado",
+        "respuestas_tardias",
+        "pendientes de Maxi",
+    ],
+    "crm_tracker.py": [
+        "CREATE TABLE IF NOT EXISTS leads",
+        "CREATE TABLE IF NOT EXISTS events",
+        "def record_events",
+        "def eod_report",
+        "def self_test",
+    ],
+    "crm-event.schema.json": [
+        "Tato CRM event",
+        "dm_drafted",
+        "followup_sent",
+        "evidence_state",
     ],
     "operativa-dm.md": [
         "## Siete fases adaptativas",
@@ -355,7 +385,7 @@ def validate_frontmatter(text: str, errors: list[str]) -> None:
         (r"(?m)^name:\s*tato-calistenia\s*$", "nombre del skill inválido"),
         (r"(?m)^license:\s*Apache-2\.0\s*$", "licencia del skill inválida"),
         (r"(?m)^\s{2}author:\s*valka\s*$", "metadata.author inválido"),
-        (r'(?m)^\s{2}version:\s*"3\.0"\s*$', "metadata.version inválido"),
+        (r'(?m)^\s{2}version:\s*"3\.1"\s*$', "metadata.version inválido"),
     ]
     for pattern, message in checks:
         if not re.search(pattern, frontmatter):
@@ -590,6 +620,42 @@ def validate_no_loaded_output_templates(contents: dict[str, str], errors: list[s
                 fail(errors, f"{filename} contiene una plantilla de salida cargada: {marker}")
 
 
+def validate_crm_assets(errors: list[str]) -> None:
+    schema_path = ASSETS / "crm-event.schema.json"
+    try:
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        fail(errors, f"crm-event.schema.json inválido: {exc}")
+        return
+    required = set(schema.get("required", []))
+    expected = {"lead_key", "event_type", "occurred_at", "actor", "evidence_state"}
+    if required != expected:
+        fail(errors, "crm-event.schema.json no conserva los campos obligatorios")
+    try:
+        result = subprocess.run(
+            [sys.executable, str(CRM_TRACKER), "self-test"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=20,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        fail(errors, f"no se pudo ejecutar el self-test CRM: {exc}")
+        return
+    if result.returncode != 0 or "crm tracker self-test: ok" not in result.stdout:
+        detail = (result.stderr or result.stdout).strip()[:500]
+        fail(errors, f"self-test CRM falló: {detail}")
+
+
+    regression = subprocess.run(
+        [sys.executable, "-B", str(SKILL_ROOT / "scripts" / "test_crm_tracker.py")],
+        cwd=REPO_ROOT, capture_output=True, text=True, check=False, timeout=30,
+    )
+    if regression.returncode != 0:
+        fail(errors, "CRM regression tests failed: " + (regression.stderr or regression.stdout)[-500:])
+
+
 def validate_runtime() -> list[str]:
     errors: list[str] = []
     contents = {path.name: read_utf8(path, errors) for path in VALIDATED_FILES}
@@ -607,6 +673,7 @@ def validate_runtime() -> list[str]:
     validate_privacy(contents, errors)
     validate_tracked_backups(errors)
     validate_no_loaded_output_templates(contents, errors)
+    validate_crm_assets(errors)
 
     for filename, markers in REQUIRED_MARKERS.items():
         text = contents.get(filename, "")

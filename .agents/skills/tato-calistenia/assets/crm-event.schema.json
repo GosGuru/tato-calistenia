@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.tato-calistenia/crm-event.schema.json",
+  "title": "Tato CRM event",
+  "type": "object",
+  "required": [
+    "lead_key",
+    "event_type",
+    "occurred_at",
+    "actor",
+    "evidence_state"
+  ],
+  "properties": {
+    "lead_key": {
+      "type": "string",
+      "minLength": 1
+    },
+    "display_name": {
+      "type": "string"
+    },
+    "event_type": {
+      "enum": [
+        "contact_started",
+        "dm_drafted",
+        "outbound_sent",
+        "inbound_received",
+        "followup_sent",
+        "route_presented",
+        "route_accepted",
+        "call_invited",
+        "calendar_sent",
+        "booking_confirmed",
+        "objection_observed",
+        "disqualified",
+        "operational_block"
+      ]
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T.*(?:Z|[+-]\\d{2}:\\d{2})$"
+    },
+    "actor": {
+      "enum": [
+        "maximo",
+        "agent",
+        "automation",
+        "lead",
+        "tato",
+        "unknown"
+      ]
+    },
+    "evidence_state": {
+      "enum": [
+        "draft",
+        "observed",
+        "verified"
+      ]
+    },
+    "message_text": {
+      "type": "string",
+      "description": "Accepted only for hashing and never persisted.",
+      "minLength": 1
+    },
+    "message_fingerprint": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_kind": {
+      "type": "string"
+    },
+    "source_ref": {
+      "type": "string"
+    },
+    "phase": {
+      "enum": [
+        "contexto",
+        "destino",
+        "brecha",
+        "sentido",
+        "disposicion",
+        "ruta",
+        "conversion"
+      ]
+    },
+    "conversion_substate": {
+      "enum": [
+        "pendiente_aceptacion_ruta",
+        "lista_para_llamada",
+        "llamada_aceptada",
+        "agenda_enviada",
+        "reserva_confirmada"
+      ]
+    },
+    "quality": {
+      "enum": [
+        "alta",
+        "media",
+        "baja",
+        "sin_clasificar"
+      ]
+    },
+    "objection": {
+      "type": "string"
+    },
+    "next_action": {
+      "type": "string"
+    },
+    "next_action_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T.*(?:Z|[+-]\\d{2}:\\d{2})$"
+    },
+    "reason_code": {
+      "type": "string"
+    },
+    "event_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable platform message/event ID, scoped by lead and direction. Never use a generated timestamp or draft ID for a sent message."
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "dm_drafted"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "evidence_state": {
+            "const": "draft"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "enum": [
+              "outbound_sent",
+              "followup_sent"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "evidence_state": {
+            "enum": [
+              "observed",
+              "verified"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "enum": [
+              "outbound_sent",
+              "followup_sent",
+              "inbound_received",
+              "dm_drafted"
+            ]
+          }
+        }
+      },
+      "then": {
+        "anyOf": [
+          {
+            "required": [
+              "event_id"
+            ]
+          },
+          {
+            "required": [
+              "message_text"
+            ]
+          },
+          {
+            "required": [
+              "message_fingerprint"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

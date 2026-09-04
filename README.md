@@ -1,6 +1,6 @@
 # Tato Calistenia
 
-Runtime local del setter de Instagram de Tato Calistenia y VALKA. Lee el historial completo, devuelve el próximo DM, prepara una cola interna de leads conocidos o, solo bajo pedido explícito, genera un brief para la llamada.
+Runtime local del setter de Instagram de Tato Calistenia y VALKA. Lee el historial completo, devuelve el próximo DM, registra eventos comerciales idempotentes, prepara una cola interna de leads conocidos y genera cierres EOD revisables.
 
 En cada chat nuevo abierto dentro de este proyecto, `AGENTS.md` dirige al skill v3 y el caso se reconstruye desde el runtime local y la entrada actual. No depende del historial de otro chat.
 
@@ -17,6 +17,8 @@ En cada chat nuevo abierto dentro de este proyecto, `AGENTS.md` dirige al skill 
 - [Biblioteca técnica](.agents/skills/tato-calistenia/references/biblioteca-tecnica-tato.md) — patrones técnicos curados.
 - [Casos de calibración](.agents/skills/tato-calistenia/references/casos-calibracion.md) — decisiones esperadas sin respuestas literales y rúbrica.
 - [Criterio de fuentes curadas](.agents/skills/tato-calistenia/references/criterio-fuentes-curadas.md) — matriz de mantenimiento `Rescatar`/`Rechazar`; no es runtime prospect-facing.
+- [Tracking CRM y EOD](.agents/skills/tato-calistenia/references/tracking-eod.md) — eventos, privacidad, métricas y cierre revisable.
+- [Tracker local](.agents/skills/tato-calistenia/scripts/crm_tracker.py) — SQLite privado, deduplicación y agregación EOD sin dependencias.
 - [Fixtures forward](.agents/skills/tato-calistenia/assets/forward-cases.json) — escenarios y expectativas estructuradas.
 - [Diseño](docs/sdd/call-first-dm.md) — especificación y criterios de aceptación.
 
@@ -30,12 +32,13 @@ En cada chat nuevo abierto dentro de este proyecto, `AGENTS.md` dirige al skill 
 
 ## Flujo
 
-1. Interpretar modo e historial completo.
-2. Construir el estado interno y resolver seguridad o bloqueos operativos prioritarios.
-3. Recorrer contexto, destino, brecha, sentido y disposición sin formulario.
-4. Presentar una ruta A→B contextualizada y esperar aceptación.
-5. Invitar a llamada desde el destino real sin filtro económico proactivo.
-6. Tras la aceptación, enviar el Cal.com oficial y verificar la reserva.
+1. Interpretar modo e historial completo e identificar al lead por handle o ID estable.
+2. Consultar su estado y registrar únicamente eventos nuevos; el texto del chat no se persiste.
+3. Construir el estado interno y resolver seguridad o bloqueos operativos prioritarios.
+4. Recorrer contexto, destino, brecha, sentido y disposición sin formulario.
+5. Presentar una ruta A→B contextualizada y esperar aceptación.
+6. Invitar a llamada desde el destino real sin filtro económico proactivo.
+7. Tras la aceptación, enviar el Cal.com oficial y verificar la reserva.
 
 Si el lead pregunta precio, se aclara que es un acompañamiento pago de 90 días y que el detalle se conversa con Tato en la llamada; USD 300 sigue siendo información interna.
 
@@ -48,16 +51,18 @@ Una respuesta puede completar varias fases. El agente salta lo ya resuelto y eli
 - `prospect_dm`: únicamente el siguiente mensaje listo para copiar, línea por línea, un movimiento y una pregunta de dirección obligatoria al final de toda conversación activa; breve por defecto y proporcional cuando el lead se abre; los cierres excepcionales quedan sin pregunta.
 - `outbound_batch`: cola interna de leads conocidos con elegibilidad, prioridad, fase, siguiente acción y un DM máximo por elegible; nunca envía.
 - `call_brief`: hechos, pendientes y ángulo para Tato, únicamente cuando Maxi lo solicita.
+- `eod_review`: agrega métricas, presenta los nueve campos y espera energía, sensación y aprobación; nunca envía.
 - `maintenance`: respuesta técnica para revisar, probar o modificar el runtime.
 
 ## Validación local
 
 ```powershell
 python .agents/skills/tato-calistenia/scripts/validate_runtime.py
+python .agents/skills/tato-calistenia/scripts/crm_tracker.py self-test
 git diff --check
 ```
 
-El validador usa solo la biblioteca estándar de Python. Comprueba frontmatter, referencias, módulos, 50 fixtures v3, decisiones de calibración sin plantillas literales, rúbricas individuales y de lote, matriz curada, privacidad, URL autorizada, ausencia del filtro económico proactivo, precio no expuesto y ausencia de reglas anteriores.
+El validador usa solo la biblioteca estándar de Python. Comprueba frontmatter, referencias, módulos, esquema CRM, tracker, 50 fixtures v3, matriz curada, privacidad y reglas comerciales; también ejecuta el self-test idempotente del tracker.
 
 Las pruebas individuales se evalúan sobre fidelidad, fase, naturalidad, posicionamiento y seguridad. Los lotes se evalúan sobre elegibilidad, prioridad, continuidad, mensaje y seguridad. La validación local demuestra coherencia; la conversión se confirma con conversaciones reales.
 
@@ -72,7 +77,7 @@ Las pruebas individuales se evalúan sobre fidelidad, fase, naturalidad, posicio
 - Sincronizar runtime, documentación, fixtures y validador en cada cambio conductual.
 - Mantener backups, chats, cachés y temporales fuera de Git.
 - No afirmar publicación o despliegue sin evidencia remota.
-- No agregar RAG, base de datos ni automatización de envíos a esta versión.
+- La única base admitida es el ledger SQLite privado del CRM; no agregar RAG, persistir chats crudos ni automatizar envíos de DMs o formularios.
 
 ## Instalación
 
@@ -82,3 +87,11 @@ cd tato-calistenia
 ```
 
 La carpeta `.agents` es oculta. En Finder se muestra con `Command + Shift + .`.
+
+## Garantías del registro EOD
+
+El agente registra los hechos observados y el borrador internamente por lote; Maxi no lleva cuentas manuales. Identidad estable, evidencia monotónica y orden cronológico evitan duplicaciones y retrocesos. Los cierres usan America/Montevideo, calidad histórica y contactos reales separados de burbujas; los borradores nunca cuentan como envíos.
+
+El reporte conserva los nueve campos y declara cobertura parcial de evidencia registrada, no sincronización con Instagram. Fechas desconocidas quedan pendientes, nunca se inventan. Las consultas son solo lectura; las bases heredadas admiten nuevos eventos sin migrar ni reescribir los históricos. Las lecturas consolidan identidades exactas y mantienen visible la conciliación pendiente. No se cambia la programación ni la aprobación del formulario. Detalles operativos en `.agents/skills/tato-calistenia/references/tracking-eod.md`.
+
+Prueba de regresión sintética: `python -B .agents/skills/tato-calistenia/scripts/test_crm_tracker.py`. Requiere disponibilidad de la zona IANA America/Montevideo en Python; si falta, el tracker informa el error sin asumir otra zona.

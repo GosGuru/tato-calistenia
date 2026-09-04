@@ -31,6 +31,8 @@ Cuando Maxi pega una conversación, transcribe una captura o pide el próximo me
 - ignorar avisos de interfaz, pausas de automatización y metadatos de plataforma;
 - razonar etapa, evidencia y dirección antes de redactar; no buscar ejemplos para copiar, adaptar una frase modelo ni repetir el mismo esqueleto entre leads;
 - no inventar precio visible, agenda, resultados, técnica ni datos del lead.
+- consultar y actualizar el registro privado según `references/tracking-eod.md`, sin mostrarlo ni contaminar la salida;
+- registrar el DM como borrador y convertirlo en envío solo ante evidencia observada o verificación de interfaz.
 
 La calificación usa siete fases adaptativas: contexto, destino, brecha, sentido, disposición, ruta y conversión. El historial puede completar varias; nunca se convierten en formulario.
 
@@ -62,6 +64,17 @@ Cuando Maxi pide revisar, priorizar o trabajar un lote de leads conocidos:
 - resolver recursos o enlaces prometidos antes de continuar el seteo.
 
 Si después Maxi autoriza envíos reales, operar un lead y una línea por vez, verificando cada burbuja antes de seguir.
+
+### Cierre EOD
+
+Cuando Maxi pida el cierre o lo active la programación:
+
+- usar `eod_review` y `references/tracking-eod.md`;
+- generar los nueve campos desde eventos idempotentes;
+- conservar contactos únicos y burbujas como métricas separadas;
+- pedir energía y sensación porque son datos personales;
+- presentar el borrador y esperar aprobación;
+- no abrir, completar ni enviar el Google Form sin autorización explícita para ese cierre.
 
 ### Brief de llamada
 
@@ -96,5 +109,14 @@ Cuando Maxi pide revisar, adaptar, probar o documentar:
 - No copiar transcripciones crudas, nombres de alumnos ni datos privados al runtime, fixtures o documentación.
 - Curar LOOM, cursos y fuentes externas en patrones generalizables y prudentes con `Rescatar`, `Rechazar` y traducción Tato.
 - No versionar backups `*.bak`, cachés ni archivos temporales.
+- No versionar bases CRM, exportaciones EOD ni chats crudos; la base predeterminada vive fuera del repositorio.
 - Preservar cambios no relacionados.
 - No afirmar que un cambio está en GitHub si solo existe localmente.
+
+## Garantías del registro EOD
+
+El agente registra los hechos observados y el borrador internamente por lote; Maxi no lleva cuentas manuales. Identidad estable, evidencia monotónica y orden cronológico evitan duplicaciones y retrocesos. Los cierres usan America/Montevideo, calidad histórica y contactos reales separados de burbujas; los borradores nunca cuentan como envíos.
+
+El reporte conserva los nueve campos y declara cobertura parcial de evidencia registrada, no sincronización con Instagram. Fechas desconocidas quedan pendientes, nunca se inventan. Las consultas son solo lectura; las bases heredadas admiten nuevos eventos sin migrar ni reescribir los históricos. Las lecturas consolidan identidades exactas y mantienen visible la conciliación pendiente. No se cambia la programación ni la aprobación del formulario. Detalles operativos en `.agents/skills/tato-calistenia/references/tracking-eod.md`.
+
+Prueba de regresión sintética: `python -B .agents/skills/tato-calistenia/scripts/test_crm_tracker.py`. Requiere disponibilidad de la zona IANA America/Montevideo en Python; si falta, el tracker informa el error sin asumir otra zona.
