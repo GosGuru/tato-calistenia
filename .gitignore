@@ -16,3 +16,9 @@ eod-exports/
 
 # Local Gentle AI registry/cache
 .atl/
+
+# Node dependencies and build artifacts
+node_modules/
+**/node_modules/
+dist/
+**/dist/

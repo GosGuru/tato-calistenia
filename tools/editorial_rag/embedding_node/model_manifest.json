@@ -1,0 +1,26 @@
+{
+  "spec_version": "multilingual-e5-small-q8-mean-l2-v1",
+  "preprocessing_version": "e5-prefix-lossless-codepoint-split-v1",
+  "model": "Xenova/multilingual-e5-small",
+  "revision": "3acb1fa45c83e69002b1641b37f3cccc132cdd63",
+  "runtime": "@huggingface/transformers",
+  "runtime_version": "3.8.1",
+  "dimensions": 384,
+  "max_tokens": 512,
+  "max_query_chars": 24000,
+  "max_chunks": 64,
+  "max_passages": 8,
+  "query_prefix": "query: ",
+  "passage_prefix": "passage: ",
+  "pooling": "mean",
+  "normalize": true,
+  "device": "cpu",
+  "dtype": "q8",
+  "files": [
+    {"path":"config.json","size":658,"hash_kind":"git_blob_sha1","hash":"4104f38273cc595fd9500fd243124e9f6cf383dc"},
+    {"path":"tokenizer_config.json","size":443,"hash_kind":"git_blob_sha1","hash":"059214673d9d6d2ee319411e2ffec8c024b816d5"},
+    {"path":"special_tokens_map.json","size":167,"hash_kind":"git_blob_sha1","hash":"e0b1d18ecd0ae4ff1d47bd297d910c0cf83e504b"},
+    {"path":"tokenizer.json","size":17082730,"hash_kind":"sha256","hash":"0b44a9d7b51c3c62626640cda0e2c2f70fdacdc25bbbd68038369d14ebdf4c39"},
+    {"path":"onnx/model_quantized.onnx","size":118308185,"hash_kind":"sha256","hash":"f80102d3f2a1229f387d3c81909990d8945513e347b0eab049f7de3c6f98c193"}
+  ]
+}

@@ -22,7 +22,7 @@ Quedan fuera:
 
 ## Contrato del lote
 
-Cada lead se resuelve como un caso independiente. El lote no crea un historial común ni permite copiar hechos, nombres, objetivos, fase o mensaje entre personas.
+Cada lead se resuelve como un caso independiente, sin consultar ni escribir bases, crear leads ni persistir eventos o borradores. El lote no crea un historial común ni permite copiar hechos, nombres, objetivos, fase o mensaje entre personas.
 
 Para cada entrada reconstruir, cuando conste:
 
@@ -137,7 +137,7 @@ Reglas:
 2. enviar una línea por vez;
 3. verificar visualmente cada burbuja y el compositor vacío;
 4. detenerse ante interrupción, captura dudosa o cambio de conversación;
-5. actualizar el estado solo con evidencia visible.
+5. actualizar únicamente el estado efímero del caso con evidencia visible, sin registrar en bases.
 
 ## Métricas prudentes
 

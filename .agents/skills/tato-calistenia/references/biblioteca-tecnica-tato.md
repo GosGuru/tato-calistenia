@@ -30,13 +30,17 @@ Los criterios externos solo son operativos cuando aparecen traducidos en esta bi
    - `hipotesis`: una causa posible que todavia requiere observar ejecucion, sensaciones o contexto;
    - `personalizacion`: lo que depende de nivel, historial, carga, videos o respuesta individual.
 4. Sin video, no convertir una hipotesis en diagnostico. La duda se mantiene internamente y solo se verbaliza si cambia el mensaje, con lenguaje propio del caso y sin una formula fija de incertidumbre.
-5. Dar como maximo un cue que la persona pueda observar o sentir. Explicar el para que solo si cabe en una frase breve.
+5. Orientar sobre qué requiere evaluación, sin prescribir cómo ejecutar ni improvisar correcciones por texto. Una traba relatada no equivale a pedir feedback técnico. Responder preguntas concretas con información general respaldada; la evaluación individual corresponde a Tato.
 6. No prescribir por DM series, repeticiones, tiempos, frecuencia, progresiones, cambios de rutina ni uso concreto de asistencia.
 7. El aporte tecnico no salta la calificacion. Despues de responder lo puntual, volver a la fase comercial pendiente; la ruta, su aceptacion y la invitacion conservan sus momentos.
 8. Si la charla es temprana, responder lo puntual y hacer como maximo una pregunta que permita entender su situacion. No pedir videos ni abrir seguimiento gratis.
 9. Una mencion de dolor, lesion o condicion se procesa con las reglas de salud de `contexto-maestro.md`; no activa derivacion automatica y esta biblioteca no autoriza diagnosticos ni tratamiento medico por DM.
 
 ## Voz pedagogica de Tato
+
+### Criterio profesional, no secuencia de DM
+
+El orden siguiente describe cómo Tato evalúa una corrección profesional; no autoriza al setter a reproducirla por texto. Los cues de los patrones inferiores son conocimiento de referencia, no instrucciones para insertar en un DM. Usar ese criterio para identificar qué falta evaluar y responder dudas generales sin prescribir ejecución individual.
 
 ### Orden de una correccion
 
@@ -74,11 +78,11 @@ Resolver internamente esta ficha antes de escribir:
 - `hecho observable`: que ocurre o que condicion externa existe;
 - `lectura`: que significa ese hecho para el movimiento;
 - `hipotesis opcional`: que podria influir, expresado con prudencia;
-- `cue`: una sola accion o sensacion;
+- `limite`: qué corrección individual no puede indicarse por texto;
 - `falta`: que no puede saberse sin mas contexto;
 - `salida`: lectura, pregunta o propuesta que corresponde a la fase comercial actual.
 
-La muestra de valor no necesita contener todos los campos. Un buen DM suele tener `hecho + lectura/cue + salida`.
+Esta ficha es interna, no una plantilla de respuesta. El valor está en comprender y orientar: una lectura breve de lo que requiere evaluación puede conectar con la evidencia pendiente, sin cue seguido de pregunta genérica. No convertir la incertidumbre en una frase fija.
 
 ## Criterio Trainology aprobado
 
@@ -96,7 +100,7 @@ Estos principios mejoran la lectura y la comunicacion sin agregar diagnosticos, 
 - Leer el movimiento segun su demanda, la posicion, el objetivo y el contexto disponible.
 - Un hecho observable puede admitir varias causas; mantener separadas `hecho`, `hipotesis` y `personalizacion`.
 - Una sensacion aislada o un video parcial no autorizan una conclusion universal.
-- Dar como maximo una lectura o cue ya aprobado y nombrar lo que falta observar cuando sea decisivo.
+- Usar una lectura prudente para nombrar lo que falta observar cuando sea decisivo, sin convertir un patrón aprobado en corrección individual por texto.
 
 ### Programacion e individualizacion
 
@@ -368,7 +372,7 @@ La ayuda puntual puede incluir:
 
 - una lectura del hecho relatado;
 - una hipotesis prudente;
-- un cue aplicable;
+- una respuesta general respaldada a una pregunta concreta;
 - una frase sobre por que importa.
 
 La ayuda puntual termina antes de:
@@ -396,21 +400,21 @@ No retener una respuesta simple para forzar la llamada. Dar valor real en una so
 
 - **Entrada:** `cuando hago dominadas me hamaco`.
 - **Decision:** consulta tecnica aislada y charla temprana.
-- **Debe aparecer:** un solo cue sobre pies y cadera debajo de la barra, seguido de una pregunta natural solo si hace avanzar el objetivo.
+- **Debe aparecer:** una lectura prudente del balanceo y una pregunta conectada con la evidencia pendiente, sin indicar colocación de pies o cadera.
 - **No debe aparecer:** llamada automatica, clase sobre fuerzas o varias correcciones.
 
 ### 3. No logra iniciar la dominada
 
 - **Entrada:** puede colgarse, pero no consigue doblar los codos sin goma.
 - **Decision:** reflejar el dato y plantear prudentemente la conexion entre apoyo escapular, codos y espalda.
-- **Debe aparecer:** incertidumbre natural, sin lenguaje de informe, y un cue de tiron.
+- **Debe aparecer:** incertidumbre natural sobre qué limita el inicio, sin lenguaje de informe ni cue de tirón.
 - **No debe aparecer:** afirmar una unica causa o asegurar que el agarre esta bien sin evidencia adicional.
 
 ### 4. Dificultad para cerrar arriba
 
 - **Entrada:** llega cerca de la barra pero los hombros se van hacia adelante al final.
 - **Decision:** una lectura sobre perdida de apoyo arriba; preguntar por fatiga solo si la charla no esta madura.
-- **Debe aparecer:** un cue sobre pecho o codos atras.
+- **Debe aparecer:** una distinción prudente sobre la dificultad al final del recorrido, sin prescribir posición de pecho o codos.
 - **No debe aparecer:** correccion de agarre, balanceo y volumen en el mismo DM.
 
 ### 5. Consulta sin video y causa incierta
@@ -439,7 +443,7 @@ No retener una respuesta simple para forzar la llamada. Dar valor real en una so
 
 ### 8. Mismo problema, distinta fase
 
-- **Fase temprana:** responder una prioridad tecnica y continuar con una pregunta natural.
+- **Fase temprana:** orientar sobre una prioridad de evaluación y continuar con una pregunta conectada si hace falta.
 - **Fase avanzada:** aportar la misma lectura breve y volver a la ruta o conversión que corresponda; no saltar directamente a llamada.
 - **Regla:** la tecnica elegida depende del problema; la salida depende del estado comercial completo.
 
@@ -447,30 +451,30 @@ No retener una respuesta simple para forzar la llamada. Dar valor real en una so
 
 - **Entrada:** `bajo los hombros, aguanto y despues intento tirar, pero me quedo sin fuerza`.
 - **Decision:** puede conocer las partes y faltar continuidad; no asumir que la pausa es la unica causa.
-- **Debe aparecer:** un cue para activar y enlazar enseguida el tiron con codos abajo y atras.
+- **Debe aparecer:** la necesidad de evaluar la continuidad del movimiento, sin ordenar una secuencia de activación o tirón.
 - **No debe aparecer:** una explicacion anatomica larga, rutina o diagnostico de falta de fuerza.
 
 ### 10. Ya tiene dos dominadas y la tercera se deforma
 
 - **Entrada:** cuenta que las primeras salen limpias y luego sube un hombro o pierde el recorrido.
 - **Decision:** distinguir capacidad inicial de calidad bajo fatiga.
-- **Debe aparecer:** priorizar el corte cuando pierde la posicion o nombrar que la tecnica aun no resiste la serie, segun la etapa comercial.
+- **Debe aparecer:** distinguir el rendimiento inicial del cambio al acumular repeticiones, sin prescribir cuándo cortar la serie.
 - **No debe aparecer:** celebrar solo el numero, ordenar abandonar la goma o indicar series y repeticiones.
 
 ### 11. Pregunta que musculos trabajan
 
 - **Entrada:** pregunta que pasa en el cuerpo durante una dominada.
 - **Decision:** responder desde la coordinacion antes que desde una lista anatomica.
-- **Debe aparecer:** escapulas como punto de apoyo y codos abajo/atras como intencion del tiron.
+- **Debe aparecer:** una explicación general respaldada del trabajo coordinado de espalda y brazos, sin convertirla en una orden de ejecución.
 - **No debe aparecer:** clase sobre inserciones, ligamentos o una causa tecnica no relacionada con la pregunta.
 
 ## Lista final de control
 
 Antes de entregar el DM, verificar:
 
-- una sola correccion o hipotesis;
+- una sola lectura orientadora, sin corrección individual por texto;
 - causa no confirmada expresada con prudencia;
-- una accion o sensacion concreta;
+- orientación conectada con la evidencia pendiente, sin cue obligatorio;
 - ningun dato privado ni afirmacion tomada literalmente de un alumno;
 - ninguna prescripcion personalizada;
 - llamada conectada con la traba real, solo si corresponde;

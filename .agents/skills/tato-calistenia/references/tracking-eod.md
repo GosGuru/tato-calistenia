@@ -1,70 +1,52 @@
-# Registro CRM y cierre EOD
+# Cierre EOD y registro manual
 
-Esta referencia define persistencia operativa. El formulario EOD es una salida agregada; nunca es la fuente de verdad.
+Cargar solo para `eod_review` o mantenimiento explícito del registro. El registro automático del agente está eliminado. El CRM web es manual y no está conectado al agente, Instagram ni ManyChat.
 
 ## Privacidad y almacenamiento
 
-- Guardar solo estado comercial y huellas de mensajes; nunca persistir chats crudos.
-- Usar por defecto la base local privada indicada por `crm_tracker.py` fuera del repositorio.
-- No versionar bases, exportaciones, nombres completos innecesarios ni identificadores privados.
+- No consultar ni escribir bases locales o remotas, crear leads, reconstruir eventos persistentes ni guardar borradores durante conversaciones, lotes, briefs o cierres EOD.
+- Usar solo evidencia aportada para ese cierre. No recuperar automáticamente chats, exportaciones ni el ledger histórico.
+- No persistir chats crudos ni versionar bases, exportaciones o identificadores privados.
+- Conservar intactos bases históricas, exportaciones, `../scripts/crm_tracker.py` y `../assets/crm-event.schema.json`. Son utilidades históricas/manuales, no requisitos del agente. Solo un pedido explícito de mantenimiento con alcance definido autoriza su uso; no migrar ni borrar datos sin autorización.
 
-## Eventos
+## Evidencia y cobertura
 
-El esquema canónico vive en `../assets/crm-event.schema.json`. Antes de responder un chat, consultar el lead. Después de decidir, registrar `dm_drafted` sin contarlo como envío. Registrar `outbound_sent` o `followup_sent` únicamente cuando el historial lo muestre (`observed`) o la interfaz confirme el envío (`verified`). Un borrador, una intención o una salida del agente nunca cuentan como enviados.
-
-Al recibir un historial completo, reconstruir todos los eventos verificables y reenviarlos al tracker: la huella idempotente descarta duplicados. Usar el handle de Instagram o el ID estable de ManyChat como `lead_key`; el nombre visible no es una identidad estable.
-
-Registrar también cambios comerciales comprobables: `route_presented`, `route_accepted`, `call_invited`, `calendar_sent`, `booking_confirmed`, `objection_observed`, `disqualified` y `operational_block`.
-
-## Comandos
-
-Leer el estado antes de decidir:
-
-```powershell
-python .agents/skills/tato-calistenia/scripts/crm_tracker.py lead --lead-key <id>
-```
-
-Registrar uno o varios eventos mediante JSON por stdin:
-
-```powershell
-$json | python .agents/skills/tato-calistenia/scripts/crm_tracker.py record --input -
-```
-
-Generar el cierre revisable:
-
-```powershell
-python .agents/skills/tato-calistenia/scripts/crm_tracker.py eod --date YYYY-MM-DD --format form
-```
+- Distinguir borrador, intención y envío observado o verificado. Solo los últimos aportan métricas de contacto.
+- Identificar personas por handle de Instagram o ID estable de ManyChat aportado; un nombre visible solo no permite deduplicar identidades con certeza.
+- Contar una persona una sola vez aunque haya varias burbujas o se repita una captura. No asumir que dos identidades de plataformas distintas son la misma persona.
+- Usar fechas verificables en `America/Montevideo`; no inventar fecha, hora ni zona. Sin evidencia fechada, marcar pendiente y excluir del recuento fechado.
+- Declarar siempre cobertura parcial de la evidencia aportada, no sincronización ni totalidad de la actividad real. Falta de evidencia no significa cero.
+- Separar el mínimo comprobable de lo pendiente. No ejecutar el agregador ni leer la base como alternativa automática.
 
 ## Definiciones EOD
 
-- `mensajes_enviados`: contactos únicos con al menos un outbound `observed` o `verified` ese día.
-- `burbujas_enviadas`: cantidad de eventos outbound verificables; se conserva como métrica interna.
-- `respondieron`: contactos con inbound verificable posterior a un outbound del mismo día, según el orden temporal registrado. No implica atribución causal confirmada.
-- `respuestas_tardias`: contactos cuyo inbound del día sigue a un outbound de un día anterior; si también respondieron después de otro outbound de hoy, se cuentan solo en `respondieron`.
-- `seguimientos`: contactos únicos con `followup_sent` verificable.
-- `calidad`: distribución `alta`, `media`, `baja` y `sin_clasificar` vigente al cierre entre contactos con inbound u outbound observado o verificado del día; excluye borradores y cambios posteriores.
-- `objeciones`: frecuencia de `objection_observed` por categoría.
-- `energia` y `como_te_sentiste`: siempre quedan pendientes de Maxi.
+- `Personas distintas contactadas hoy`: identidades únicas con al menos un envío observado o verificado ese día; varias burbujas cuentan una persona.
+- `mensajes_enviados`: clave heredada del formulario; conserva la métrica de personas distintas, no cantidad de burbujas.
+- `respondieron`: personas con respuesta verificable posterior a un outbound del mismo día. No implica causalidad comercial.
+- `respuestas_tardias`: personas que respondieron hoy a un outbound anterior; no duplicar si también respondieron después de otro outbound de hoy.
+- `seguimientos`: personas con seguimiento enviado verificable, nunca un seguimiento solamente redactado.
+- `calidad`: alta, media, baja o sin clasificar, únicamente cuando la evidencia permite esa clasificación, sin inferir dinero por perfil.
+- `objeciones`: objeciones observadas por categoría, sin atribuir motivos inventados.
+- `energia` y `como_te_sentiste`: pendientes de Maxi.
+
+## Nueve campos del cierre
+
+Abrir el borrador con `Personas distintas contactadas hoy` y mantener los nueve campos del formulario, sin añadir burbujas como métrica cotidiana:
+
+1. FECHA DE HOY
+2. ¿Cuántos mensajes enviaste?
+3. ¿Cuántos respondieron?
+4. ¿Cuántos seguimientos realizaste?
+5. CALIDAD de los LEADS de hoy
+6. Objeciones comunes por las cuales no agendas llamada
+7. ¿Cómo estás de energía hoy?
+8. Comentarios extras - referidos al setteo
+9. extra… (cómo te sentiste hoy?)
+
+Anotar cobertura parcial, respuestas tardías y datos pendientes en comentarios. Un dato no comprobado queda pendiente, no se convierte en cero. Pedir energía y sensación a Maxi, presentar el borrador y esperar aprobación.
 
 ## Cierre programado
 
-La automatización genera y presenta el EOD, pide energía y sensación y espera aprobación. No abre, completa ni envía Google Forms sin autorización explícita en ese cierre.
+Preparar el EOD solo por pedido explícito o cuando lo active una programación ya autorizada. Si falta evidencia aportada para ese cierre, solicitarla sin consultar bases automáticamente ni inventar cifras. No modificar la programación existente.
 
-## Registro automático interno y cobertura
-
-- El agente registra internamente, sin pedir a Maxi que prepare JSON ni lleve cuentas. Consultar el lead y enviar en un solo lote los hechos nuevos verificables y el borrador del turno. Reprocesar historial disponible es seguro; no abrir otro chat ni emitir explicaciones en la salida de prospecto.
-- Usar exactamente la misma identidad estable del lead en todas las conversaciones. No crear un segundo lead por cambiar nombre visible o formato del handle. Si no hay identidad fiable, no inventarla: mantener el registro pendiente y explicitar cobertura parcial al cierre.
-- Para mensajes, preferir `event_id` de plataforma. Sin ID, la huella usa lead, dirección, instante exacto y texto normalizado. Conservar el mismo método entre importaciones. Si dos burbujas tienen idéntico texto e instante, usar sus IDs distintos; no fabricar segundos para separarlas.
-- La identidad no incluye actor, fase ni nivel de evidencia. Reobservar un envío como `verified` no crea otra burbuja; `followup_sent` y `outbound_sent` del mismo mensaje se consolidan como seguimiento. Un `dm_drafted` sigue siendo un evento distinto y nunca se promueve por intención.
-- `occurred_at` requiere fecha, hora y zona verificables. Guardar el instante real, no la hora de lectura del historial. No inventar medianoche, año ni fecha para capturas incompletas. Esos eventos quedan pendientes fuera de métricas fechadas.
-- El día comercial usa `America/Montevideo`; offsets equivalentes identifican el mismo instante. Se requiere una base IANA disponible para Python (`tzdata` en Windows cuando el sistema no la provea); si falta, el comando falla explícitamente, nunca cambia de zona silenciosamente.
-- El lote se valida completo antes de escribir y se confirma en una transacción. Un error no deja media carga. Una repetición antigua no retrocede fase ni calidad; las anotaciones corregidas requieren un nuevo evento factual, no editar una burbuja ya importada.
-- El EOD siempre indica cobertura parcial: solamente incluye evidencia registrada. Cero no significa que no hubo actividad fuera de los chats observados. El registro automático interno no es una integración ni sincronización con Instagram o ManyChat.
-- Si falla el registro, no afirmar que se guardó ni reenviar un DM para repararlo. Mantener el pendiente, revisar el error y comunicar la cobertura incompleta en mantenimiento o cierre.
-
-## Compatibilidad y reconciliación
-
-`lead` y `eod` abren SQLite en modo solo lectura y no crean una base vacía. Una base ausente es un registro no disponible, no un día con cero actividad.
-
-Las bases anteriores al formato 2 admiten registros nuevos sin migración ni modificación de eventos históricos. La primera reobservación puede añadir una copia canónica: las lecturas consolidan solo identidades exactas con mismo lead, dirección, instante y huella, conservando la evidencia más fuerte. No se mezclan IDs de plataforma distintos; cambiar entre ID de plataforma y huella puede requerir conciliación. Mensajes heredados sin huella ni ID estable no se fusionan por suposición. El EOD conserva el aviso de conciliación pendiente, excluye fechas históricas sin zona e informa su cantidad. No migrar, borrar, reemplazar ni reiniciar la base sin aprobación explícita de Maxi; no usar cifras heredadas como cierre definitivo hasta conciliar.
+No abrir, completar ni enviar Google Forms sin autorización explícita para ese cierre. La autorización para preparar no autoriza a enviar ni a leer o escribir el CRM histórico.

@@ -15,9 +15,11 @@ Cada ficha declara:
 - `Traducción Tato`;
 - `Riesgo y límites`.
 
-Solo un criterio `approved` puede convertirse en regla activa. La transcripción original, ejemplos identificables, cifras de otros negocios, testimonios y lenguaje literal quedan fuera del repositorio.
+Solo un criterio `approved` puede convertirse en regla activa mediante edición explícita del dueño, nunca por cambiar una etiqueta. Para correcciones nuevas seguir `feedback-controlado.md`; el ledger empieza vacío y no reconstruye aprobaciones de estas fichas. El mapa `assets/source-governance.json` distingue traducciones vigentes de originales históricos o pendientes. La cobertura real reportada se resume en `docs/source-audit-status.md` desde la raíz del repositorio; cursos inventariados no equivalen a cursos leídos. La transcripción original, ejemplos identificables, cifras de otros negocios, testimonios y lenguaje literal quedan fuera del repositorio.
 
 ## Julio Rondinelli
+
+Maxi confirmó que Juli refiere a Julio Rondinelli y al documento histórico `Estructura de SETTER de 6 cifras - fuente original.md`. Se corroboró la fuente en solo lectura; permanece no operativa y no reemplaza esta traducción aprobada. No se importan frases, métricas, presión ni instrucciones económicas de otro nicho.
 
 ### Dirección y calificación adaptativa
 
@@ -29,7 +31,7 @@ Solo un criterio `approved` puede convertirse en regla activa. La transcripción
 - `reviewed_on`: 2026-08-31
 - **Rescatar:** apertura directa, segmentación temprana por situación, objetivo frente a punto actual, escucha antes de ofrecer, ruta contextual, CTA claro y seguimiento desde el punto pendiente.
 - **Rechazar:** agravar dolor, ultimátum de compromiso, promesas económicas, resultados no demostrados, escasez falsa, dos horarios inventados y presión mediante dinero, tiempo, salud o familia.
-- **Traducción Tato:** contexto, destino, brecha, disposición, ruta y conversión siguen siendo fases adaptativas. Dirección significa elegir el próximo movimiento, no controlar al lead.
+- **Traducción Tato:** contexto, destino, brecha, disposición, ruta y conversión siguen siendo fases adaptativas. Entender la mejora detrás de una cifra solo si es ambigua; sentido funcional basta. Distinguir constancia de voluntad de proceso guiado. Dirección significa elegir el próximo movimiento, no controlar al lead. Ante objeciones, responder el freno real, aclarar una sola cosa si falta y conservar el estado ganado; tras resolverlo retomar el paso pendiente si corresponde. Un no claro cierra, aunque hubiera agenda previa.
 - **Riesgo y límites:** no trasladar preguntas de ingresos, cifras de facturación, casos de éxito ni cierres binarios al nicho de Tato.
 
 ### Vehículo y CTA
@@ -182,7 +184,7 @@ Maxi aprobó las cuatro fichas de esta sección el 2026-08-31. Sus criterios son
 - `reviewed_on`: 2026-09-02
 - **Rescatar:** centro de gravedad breve, una o dos burbujas en intercambios simples, reconocimiento corto, vocabulario cotidiano, pregunta concreta desde el presente y longitud proporcional cuando la persona se abre.
 - **Rechazar:** avisos de plataforma, automatizaciones, campañas repetidas, aperturas masivas, enlaces antiguos, emojis y secuencias comerciales históricas.
-- **Traducción Tato:** los mensajes escritos gobiernan la forma final. El agente entra por el hecho actual, usa voseo rioplatense, evita recapitular y mantiene un solo movimiento con una pregunta máxima.
+- **Traducción Tato:** la traducción aprobada de los mensajes escritos orienta la forma final; frecuencias contaminadas por automatización no prueban voz limpia ni escucha bilateral. El agente entra por el hecho actual, usa voseo rioplatense, evita recapitular y mantiene un solo movimiento con una pregunta máxima.
 - **Riesgo y límites:** las proporciones son tendencias y no cuotas; ninguna frase, nombre, handle, conversación ni dato privado pasa al runtime.
 
 ### Criterio y vocabulario hablado

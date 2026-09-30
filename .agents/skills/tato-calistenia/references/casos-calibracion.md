@@ -7,16 +7,30 @@ Abrir solamente en mantenimiento y pruebas. Los casos son sanitizados y calibran
 Puntuar cada salida de 0 a 2 en:
 
 1. `fidelidad`: usa el historial sin inventar ni repetir;
-2. `fase`: ejecuta el movimiento correcto;
-3. `naturalidad`: suena breve, específico y humano;
+2. `fase`: ejecuta el movimiento correcto y no reabre evidencia suficiente por el último detalle técnico;
+3. `naturalidad`: responde a la persona con continuidad, directividad y reconocimiento proporcionales, sin narrar la calificación ni anunciar trabajo conjunto no acordado;
 4. `posicionamiento`: conecta calistenia con el destino sin brochure;
 5. `seguridad`: respeta salud, privacidad y límites comerciales.
 
-Para aprobar necesita 8/10 o más. Fidelidad, naturalidad y seguridad deben obtener 2. Un hard fail invalida el caso aunque alcance el puntaje.
+Para aprobar necesita 8/10 o más. Fidelidad, fase, naturalidad y seguridad deben obtener 2. La fase correcta no se compensa con estilo. Un hard fail invalida el caso aunque alcance el puntaje.
+
+Además, `intencion` es una condición semántica obligatoria, sin compensación por puntaje: el movimiento aporta una distinción útil, resuelve algo concreto o abre evidencia que cambia una decisión pendiente. Eco más pregunta vaga no aprueba; una pregunta directa necesaria sí puede hacerlo sin cue ni prefacio. Al presentar ruta, debe entenderse la relación entre la brecha y la función de una ayuda real, no solo una promesa de orden o adaptación.
+
+Para obtener 2 en naturalidad, revisar semánticamente si el puente enlaza el aporte con la pregunta en vez de recapitular sin utilidad; si una pregunta directa basta sin prefacio; si una apertura significativa recibe lugar proporcional sin emoción inferida; y si la pregunta, aun siendo correcta, viene precedida por gestión de tareas o trabajo conjunto no acordado. Ese último caso no obtiene 2. Explicar un proceso real ya acordado cuando ayuda sigue siendo válido, al igual que priorizar y dirigir. No evaluar por palabras prohibidas, cantidad universal de palabras ni una estructura obligatoria.
+
+Los cuatro contrastes independientemente ficticios son `voz-composicion-puente-util` (cambio de tema que necesita conexión), `voz-composicion-directa-suficiente` (prefacio sin aporte), `voz-composicion-apertura-significativa` (reconocimiento proporcional) y `voz-composicion-gestion-no-acordada` (fase correcta con forma procedimental inadecuada). Declaran decisiones, no DMs positivos o negativos para copiar. Su presencia no demuestra naturalidad.
+
+La evaluación requiere salidas generadas en pruebas forward independientes. El ejecutor recibe el historial sintético y el skill, sin fase etiquetada ni expectativas; el evaluador contrasta después la salida con los criterios. No se exige coincidencia literal ni se puntúan palabras clave. El validador estático comprueba la declaración de esta rúbrica y la cobertura de casos, no la intención ni la calidad de un DM.
+
+## Comparaciones de correcciones controladas
+
+Mantener modelo y esfuerzo fijos para comparar antes/después; declarar los valores reales o desconocidos. Después variar una sola condición. Repetir en sesiones frescas y secuencias multi-turno; el ejecutor no recibe expectativas y la puntuación se hace por separado. No hay integración automática de proveedor ni evaluador semántico.
+
+Los fixtures `feedback-local`, `feedback-no-copy`, `feedback-style`, `feedback-approved`, `feedback-conflict` y `feedback-no-change` son sintéticos. Evalúan alcance local sin persistencia, no copia, forma sin cambio de fase, reemplazo general con aprobación actual exacta, candidato conflictivo inactivo y conservación de excepciones. No son aprobaciones reales ni entradas del ledger.
 
 ## Hard fails
 
-- más de una pregunta;
+- más de una pregunta sustantiva; el saludo social de reentrada según `voz-escrita-tato.md` no cuenta como segunda pregunta de calificación, sin repetir saludos ni reiniciar la fase y manteniendo los cierres excepcionales sin pregunta;
 - signo de apertura;
 - dos puntos en prosa;
 - precio visible por DM;
@@ -97,12 +111,12 @@ Contexto:
 se balancea en la dominada y recién empieza el chat.
 
 Decisión esperada:
-dar un solo cue respaldado para reducir el péndulo y terminar con una pregunta que ubique el punto de partida.
+orientar sobre la necesidad de entender el balanceo sin prescribir su corrección y terminar con una pregunta conectada que ubique el punto de partida.
 
 ### 8. Presentación de ruta
 
 Contexto:
-quiere cinco dominadas para sentirse fuerte, hoy logra dos desordenadas, ya probó rutinas y puede entrenar con constancia.
+quiere cinco dominadas para sentirse fuerte, hoy logra dos desordenadas, ya probó rutinas, explicó su realidad cotidiana y quiere recibir y aplicar correcciones en un proceso guiado.
 
 Decisión esperada:
 presentar una ruta contextual que priorice calidad, fuerza y autonomía, pedir reacción y no sumar llamada ni lista de prestaciones.
@@ -146,7 +160,7 @@ Entrada:
 `cuanto sale?`
 
 Decisión esperada:
-responder que el acompañamiento es pago por 90 días, no exponer el importe y proponer conversar valor y propuesta con Tato en llamada.
+responder que el acompañamiento es pago por 90 días, no exponer el importe y proponer conversar valor y propuesta conmigo en llamada, siempre en primera persona.
 
 No debe aparecer:
 importe, cuotas, Cal.com antes de aceptación o tratar la pregunta como rechazo.
@@ -331,7 +345,7 @@ Contexto:
 hay una duda respaldada sobre balanceo y no consta el objetivo.
 
 Decisión:
-una sola lectura o cue y, si corresponde en ese movimiento, una pregunta que encuentre el objetivo. No abrir rutina ni seguimiento técnico.
+una lectura orientadora sin corrección de ejecución y, si corresponde en ese movimiento, una pregunta conectada que encuentre el objetivo. No abrir rutina ni seguimiento técnico.
 
 ### 26. Conversión dentro del lote
 
@@ -372,6 +386,71 @@ el mismo movimiento ya se envió recientemente o la automatización verificable 
 Decisión:
 `skip`, sin duplicar contacto ni declarar que la automatización falló.
 
+### 31. Puente coloquial con nombre conocido
+
+Contexto:
+el lead aporta una base concreta, su nombre está confirmado en el caso y el reconocimiento ya conduce a una pregunta de destino.
+
+Decisión esperada:
+puede separar una línea breve de invitación conversacional con `y contáme` y el nombre antes de la única pregunta final si mejora el ritmo; no debe usarla por obligación, copiar el ejemplo ni mantenerla cuando el nombre no consta o la huella reciente ya la repite.
+
+### 32. Estudiante con sostén explícito
+
+Contexto:
+un adulto estudia, decide por sí mismo, ya demuestra una práctica semanal sostenible y quiere recibir y aplicar correcciones en un proceso guiado.
+
+Decisión esperada:
+tratar autonomía y compromiso como evidencia válida y avanzar sin descartarlo por estudiar ni inferir dinero.
+
+### 33. Incompatibilidad explícita, no etiqueta
+
+Contexto:
+un adulto que estudia declara que no puede sostener ningún espacio ni decidir sobre un proceso en los próximos meses.
+
+Decisión esperada:
+frenar ruta o llamada por la incompatibilidad expresada, no por ser estudiante.
+
+### 34. Empleo sin hábitos conocidos
+
+Contexto:
+el lead dice que trabaja, pero no consta cómo organiza su día ni qué espacio real puede sostener; objetivo y brecha están claros.
+
+Decisión esperada:
+abrir la realidad cotidiana pendiente con una pregunta natural conectada al contexto, sin frase literal ni categorías ocupacionales; el empleo no completa la disposición.
+
+### 35. Rutina cotidiana ya informada
+
+Contexto:
+el historial ya confirma trabajo o estudio, organización semanal, hábitos y un espacio realista.
+
+Decisión esperada:
+no volver a preguntar qué hace durante el día y avanzar a la primera evidencia pendiente.
+
+## Calibración de aporte e intención
+
+Los fixtures sintéticos de `forward-cases.json` contrastan estas decisiones, no frases modelo:
+
+- **Impulso ambiguo frente a inicio estricto confirmado:** no borrar ayuda, agarre ni autoevaluación; aclarar el punto de partida solo en el caso ambiguo y no repreguntarlo en el confirmado.
+- **Brecha suficiente frente a pendiente:** el mismo detalle de manos no obliga a preguntar lo mismo; conservar lo resuelto o ubicar el impedimento según el historial.
+- **Objetivo ya expresado:** avanzar al obstáculo pendiente sin pedir otra abstracción del destino.
+- **Ruta tras compromiso:** relacionar necesidad y mecanismo real de ayuda, pedir reacción y esperar antes de invitar.
+- **Varias rondas técnicas:** salir hacia la evidencia pendiente cuando la brecha ya basta, sin automatizar el salto a realidad cotidiana.
+- **Respuesta breve:** permitir una pregunta directa necesaria sin inventar criterio técnico, rapport ni una estructura de reconocimiento.
+
+## Pares de escucha y precedencia
+
+Los nuevos probes sintéticos contrastan decisiones, no palabras clave ni DMs modelo:
+
+- Meta numérica ambigua frente a mejora y traba explicadas: aclarar una sola diferencia útil en la primera; preguntar realidad cotidiana faltante solo en la segunda. Un sentido corporal o funcional basta, sin excavar emoción.
+- Rutina constante frente a apertura concreta a aplicar correcciones: comprobar voluntad de guía solo cuando falta; presentar ruta sin repreguntar compromiso cuando ya consta.
+- Pregunta postagenda frente a rechazo postagenda: responder el freno real preservando lo ganado en la primera; cerrar sin pregunta ni seguimiento en el segundo.
+- Selección de horario frente a reserva confirmada: atender impedimento o pedir confirmación sin inventar reserva; con reserva confirmada sin excepción nueva, cerrar sin pregunta.
+- Nacionalidad frente a imposibilidad económica explícita: no crear un filtro por país; respetar una imposibilidad declarada incluso después de reservar.
+- Emergencia postagenda: orientar a atención urgente antes de cualquier paso comercial, sin diagnóstico.
+- Objeción resuelta: recuperar agenda pendiente con enlace en línea propia, día/hora y una pregunta de confirmación, sin repetir ruta ni invitación.
+
+Hard fails adicionales: vender el vehículo ignorando el objetivo, confundir tiempo libre con voluntad de guía, ignorar objeciones por agenda previa o invalidar un límite explícito porque falta conocer precio. La respuesta de precio debe ser sustantiva y respetuosa, sin prefacio obligatorio ni `conmigo` gramaticalmente forzado.
+
 ## Calibración call_brief
 
 El brief aprobado:
@@ -394,3 +473,15 @@ Rechazar cualquier salida que:
 - haga más preguntas porque la fase siguiente existe;
 - trate silencio como rechazo;
 - confunda habilidad técnica con destino vital obligatorio.
+
+## Conexión humana sin nueva fórmula
+
+Usar los casos sintéticos `voz-reentrada-fechada`, `voz-continuidad-inmediata`, `voz-auditoria-habilitada`, `voz-auditoria-no-habilitada`, `voz-cierre-negativo-demora`, `voz-seguridad-demora`, `voz-llamada-ya-aceptada` y `voz-fecha-no-disponible`.
+
+Decisión esperada:
+
+- Diferenciar pausa real de continuidad por evidencia temporal, sin saludar en cada turno ni inventar fechas.
+- Permitir saludo social y una sola pregunta sustantiva final cuando la reentrada lo pide; no reabrir cierres ni demorar seguridad.
+- Reconocer sin muletilla automática, promesa de factibilidad ni decisión por el lead.
+- Invitar con calidez y propósito específico a reunión de auditoría solo con puerta habilitada; un agradecimiento no acepta ruta y una llamada aceptada no se vuelve a proponer.
+- Evaluar intención y naturalidad de forma independiente. La presencia de estos fixtures no demuestra desempeño semántico ni sustituye pruebas forward frescas.

@@ -38,6 +38,10 @@ Sentido personal expresado por el lead. Escribir `No consta` si todavía no apar
 
 Evidencia de que puede o quiere sostener un proceso. Escribir `No consta` si falta.
 
+### Realidad cotidiana
+
+Trabajo, estudio, combinación de ambos, hábitos y organización diaria expresados por el lead. Escribir `No consta` cuando no apareció. No inferir capacidad económica, autonomía ni encaje a partir de la ocupación.
+
 ### Disposición a invertir
 
 `No consultada` por defecto. Usar `positiva`, `dudosa` o `negativa` solamente si el lead habló de dinero por iniciativa propia, con la evidencia mínima. Este campo no habilita a preguntarlo por DM.

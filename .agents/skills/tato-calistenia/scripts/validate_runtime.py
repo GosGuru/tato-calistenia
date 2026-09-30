@@ -3,12 +3,14 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import subprocess
 import sys
 from pathlib import Path
 
+from runtime_governance import validate_repository
 
 SKILL_ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = SKILL_ROOT.parents[2]
@@ -31,8 +33,6 @@ RUNTIME_FILES = [
     REFERENCES / "casos-calibracion.md",
     REFERENCES / "tracking-eod.md",
     ASSETS / "forward-cases.json",
-    ASSETS / "crm-event.schema.json",
-    CRM_TRACKER,
     REPO_ROOT / "AGENTS.md",
     REPO_ROOT / "README.md",
     REPO_ROOT / "docs" / "sdd" / "call-first-dm.md",
@@ -41,8 +41,10 @@ RUNTIME_FILES = [
 
 MAINTENANCE_FILES = [
     REFERENCES / "criterio-fuentes-curadas.md",
+    REFERENCES / "feedback-controlado.md",
 ]
 
+LEGACY_FILES = [ASSETS / "crm-event.schema.json", CRM_TRACKER]
 VALIDATED_FILES = RUNTIME_FILES + MAINTENANCE_FILES
 
 REQUIRED_MARKERS = {
@@ -60,8 +62,9 @@ REQUIRED_MARKERS = {
         "references/criterio-fuentes-curadas.md",
         "references/tracking-eod.md",
         "assets/forward-cases.json",
-        "assets/crm-event.schema.json",
         "pregunta de dirección",
+        "Personas distintas contactadas hoy",
+        "realidad cotidiana",
     ],
     "openai.yaml": [
         "Setter de Instagram y briefs de llamada",
@@ -78,34 +81,48 @@ REQUIRED_MARKERS = {
         "outbound_batch",
         "bloqueo_operativo",
         "## Revisión silenciosa",
+        "### Prueba de intención",
+        "El valor del seteo está en comprender y orientar",
         "Toda conversación activa termina con una pregunta de dirección",
         "profundidad_del_aporte",
         "huella_reciente",
         "No pensar mediante una respuesta modelo",
-        "### 1.1 Persistir evidencia sin duplicar",
-        "dm_drafted",
-        "verified",
+        "### 1.1 Trabajar sin registro automático",
+        "sin consultar ni escribir bases",
+        "realidad cotidiana",
+        "intención conectiva",
+        "comprometerse con un proceso",
     ],
     "tracking-eod.md": [
         "## Privacidad y almacenamiento",
-        "## Eventos",
+        "## Evidencia y cobertura",
+        "## Nueve campos del cierre",
         "## Definiciones EOD",
         "## Cierre programado",
         "respuestas_tardias",
         "pendientes de Maxi",
+        "Personas distintas contactadas hoy",
+        "sin consultar bases automáticamente",
+        "pendiente, no se convierte en cero",
     ],
     "crm_tracker.py": [
         "CREATE TABLE IF NOT EXISTS leads",
         "CREATE TABLE IF NOT EXISTS events",
         "def record_events",
+        "def ensure_lead",
         "def eod_report",
         "def self_test",
+        "contacted_today_unique_leads",
+        "MANYCHAT_PREFIX",
     ],
     "crm-event.schema.json": [
         "Tato CRM event",
         "dm_drafted",
         "followup_sent",
         "evidence_state",
+        "identity_kind",
+        "crm_registered",
+        "manychat:b64:",
     ],
     "operativa-dm.md": [
         "## Siete fases adaptativas",
@@ -120,10 +137,16 @@ REQUIRED_MARKERS = {
         "## Dirección eficiente",
         "pregunta final de dirección",
         "pregunta directa sin prefacio",
+        "y contáme",
         "frase final no se recupera ni se copia",
+        "Ser estudiante no descarta",
+        "ejemplos aprobados",
+        "comprobación directa",
     ],
     "voz-escrita-tato.md": [
         "## Huella comprobada de Tato",
+        "No cerrar esas líneas con coma",
+        "comas internas y vocativas",
         "## Escucha visible",
         "## Destino antes que skill",
         "## Ruta sin voz de vendedor",
@@ -133,6 +156,7 @@ REQUIRED_MARKERS = {
         "## Redacción desde criterio",
         "## Longitud proporcional",
         "No buscar ejemplos similares",
+        "transición en varias líneas",
     ],
     "operativa-maseteo.md": [
         "## Alcance",
@@ -157,6 +181,7 @@ REQUIRED_MARKERS = {
     "handoff-llamada.md": [
         "## Formato de salida",
         "### Destino en sus palabras",
+        "### Realidad cotidiana",
         "### Disposición a invertir",
         "### Ángulo recomendado",
         "### No repetir ni asumir",
@@ -193,6 +218,9 @@ REQUIRED_MARKERS = {
         OFFICIAL_CAL_URL,
         "## Calibración outbound_batch",
         "Hard fails del lote",
+        "Puente coloquial con nombre conocido",
+        "Estudiante con sostén explícito",
+        "## Calibración de aporte e intención",
     ],
     "criterio-fuentes-curadas.md": [
         "## Contrato de curación",
@@ -215,14 +243,24 @@ REQUIRED_MARKERS = {
         "acompañamiento pago de 90 días",
         OFFICIAL_CAL_URL,
         "Brief de llamada",
+        "Personas distintas contactadas hoy",
+        "transiciones suaves",
+        "realidad cotidiana",
+        "ejemplos de Maxi calibran la intención",
+        "comprometerse con un proceso",
     ],
     "README.md": [
-        "50 fixtures v3",
+        "fixtures v3",
         "Público prioritario 40+",
         "USD 300",
         "call_brief",
         "outbound_batch",
         "forward-cases.json",
+        "Personas distintas contactadas hoy",
+        "puente coloquial",
+        "realidad cotidiana",
+        "ejemplos aprobados calibran intención y flujo",
+        "comprometerse con un proceso",
     ],
     "call-first-dm.md": [
         "Cada chat nuevo del workspace reconstruye la v3",
@@ -232,6 +270,12 @@ REQUIRED_MARKERS = {
         OFFICIAL_CAL_URL,
         "## Criterios de aceptación",
         "redacción se construye de cero",
+        "Personas distintas contactadas hoy",
+        "El registro automático del agente está eliminado",
+        "y contáme",
+        "realidad cotidiana",
+        "ejemplos aprobados calibran intención y flujo",
+        "comprometerse con un proceso",
     ],
     ".gitignore": ["*.bak", "chats/"],
 }
@@ -291,6 +335,19 @@ VALID_PHASES = {
 }
 
 REQUIRED_FORWARD_IDS = {
+    "voz-composicion-puente-util",
+    "voz-composicion-directa-suficiente",
+    "voz-composicion-apertura-significativa",
+    "voz-composicion-gestion-no-acordada",
+    'voz-reentrada-fechada',
+    'voz-continuidad-inmediata',
+    'voz-auditoria-habilitada',
+    'voz-auditoria-no-habilitada',
+    'voz-cierre-negativo-demora',
+    'voz-seguridad-demora',
+    'voz-llamada-ya-aceptada',
+    'voz-fecha-no-disponible',
+
     "avatar-padre-45",
     "capacidad-cotidiana-52",
     "muscle-up-43",
@@ -341,6 +398,35 @@ REQUIRED_FORWARD_IDS = {
     "prospect-aviso-interfaz",
     "prospect-lesion-alcance-tato",
     "prospect-huella-repetida",
+    "prospect-puente-nombre",
+    "prospect-estudiante-autonomo",
+    "prospect-estudiante-incompatibilidad",
+    "prospect-empleado-sin-habitos",
+    "prospect-rutina-ya-conocida",
+    "prospect-transicion-cotidiana-conectada",
+    "prospect-disposicion-compromiso-contextual",
+    "prospect-sin-registro-automatico",
+    "batch-sin-registro-automatico",
+    "eod-sin-evidencia",
+    "prospect-impulso-no-estricto",
+    "prospect-inicio-estricto-confirmado",
+    "prospect-brecha-tecnica-suficiente",
+    "prospect-brecha-tecnica-pendiente",
+    "prospect-objetivo-ya-expresado",
+    "prospect-ruta-tras-compromiso",
+    "prospect-continuidad-sin-bucle-tecnico",
+    "prospect-respuesta-breve-intencion",
+    "prospect-meta-numerica-ambigua",
+    "prospect-meta-numerica-explicada",
+    "prospect-rutina-sin-voluntad",
+    "prospect-voluntad-proceso-confirmada",
+    "prospect-objecion-postagenda",
+    "prospect-rechazo-postagenda",
+    "prospect-seleccion-no-reserva",
+    "prospect-nacionalidad-no-proxy",
+    "prospect-imposibilidad-postreserva",
+    "prospect-emergencia-postagenda",
+    "prospect-objecion-resuelta-retoma",
 }
 
 
@@ -379,7 +465,10 @@ def validate_frontmatter(text: str, errors: list[str]) -> None:
         if ":" in line and not line.startswith((" ", "\t"))
     ]
     if top_level != ["name", "description", "license", "metadata"]:
-        fail(errors, "SKILL.md debe declarar name, description, license y metadata en ese orden")
+        fail(
+            errors,
+            "SKILL.md debe declarar name, description, license y metadata en ese orden",
+        )
 
     checks = [
         (r"(?m)^name:\s*tato-calistenia\s*$", "nombre del skill inválido"),
@@ -391,7 +480,9 @@ def validate_frontmatter(text: str, errors: list[str]) -> None:
         if not re.search(pattern, frontmatter):
             fail(errors, message)
 
-    description_lines = [line for line in frontmatter.splitlines() if line.startswith("description:")]
+    description_lines = [
+        line for line in frontmatter.splitlines() if line.startswith("description:")
+    ]
     if len(description_lines) != 1:
         fail(errors, "description debe ocupar una sola línea física")
     else:
@@ -419,7 +510,10 @@ def validate_references(skill_text: str, errors: list[str]) -> None:
 def validate_calibration_contract(text: str, errors: list[str]) -> None:
     decisions = re.findall(r"(?m)^Decisión esperada:\s*$", text)
     if len(decisions) < 23:
-        fail(errors, f"casos-calibracion.md tiene pocas decisiones comprobables ({len(decisions)})")
+        fail(
+            errors,
+            f"casos-calibracion.md tiene pocas decisiones comprobables ({len(decisions)})",
+        )
 
     forbidden_template_headers = [
         "Salida valida:",
@@ -433,7 +527,10 @@ def validate_calibration_contract(text: str, errors: list[str]) -> None:
             fail(errors, f"casos-calibracion.md conserva plantilla literal: {marker}")
 
     if OFFICIAL_CAL_URL not in text:
-        fail(errors, "casos-calibracion.md no conserva la URL oficial en la decisión de agenda")
+        fail(
+            errors,
+            "casos-calibracion.md no conserva la URL oficial en la decisión de agenda",
+        )
 
 
 def validate_fixtures(path: Path, errors: list[str]) -> None:
@@ -458,8 +555,35 @@ def validate_fixtures(path: Path, errors: list[str]) -> None:
         fail(errors, "rúbrica forward incompleta o desordenada")
     if rubric.get("minimum_total") != 8:
         fail(errors, "rúbrica forward debe exigir 8/10")
-    if rubric.get("required_full_scores") != ["fidelidad", "naturalidad", "seguridad"]:
-        fail(errors, "rúbrica forward no exige fidelidad, naturalidad y seguridad completas")
+    if rubric.get("required_full_scores") != [
+        "fidelidad",
+        "fase",
+        "naturalidad",
+        "seguridad",
+    ]:
+        fail(
+            errors,
+            "rúbrica forward no exige fidelidad, fase, naturalidad y seguridad completas",
+        )
+
+    # Validate the review contract declaration, never the semantics of a DM.
+    if rubric.get("required_gates") != ["intencion"]:
+        fail(errors, "rúbrica forward no declara intención como condición obligatoria")
+    gate_criteria = rubric.get("gate_criteria")
+    intention = (
+        gate_criteria.get("intencion") if isinstance(gate_criteria, dict) else None
+    )
+    if not isinstance(intention, str) or not intention.strip():
+        fail(
+            errors,
+            "rúbrica forward carece de un criterio de intención para revisión independiente",
+        )
+
+    naturalness = rubric.get("naturalness_criteria")
+    for key in ("continuidad", "directividad", "proporcionalidad", "sin_gestion_ficticia"):
+        criterion = naturalness.get(key) if isinstance(naturalness, dict) else None
+        if not isinstance(criterion, str) or not criterion.strip():
+            fail(errors, f"rúbrica de naturalidad carece de criterio válido: {key}")
 
     batch_rubric = data.get("batch_rubric", {})
     expected_batch_dimensions = [
@@ -475,8 +599,15 @@ def validate_fixtures(path: Path, errors: list[str]) -> None:
         fail(errors, "rúbrica outbound_batch debe puntuar 0 a 2")
     if batch_rubric.get("minimum_total") != 8:
         fail(errors, "rúbrica outbound_batch debe exigir 8/10")
-    if batch_rubric.get("required_full_scores") != ["continuidad", "mensaje", "seguridad"]:
-        fail(errors, "rúbrica outbound_batch no exige continuidad, mensaje y seguridad completas")
+    if batch_rubric.get("required_full_scores") != [
+        "continuidad",
+        "mensaje",
+        "seguridad",
+    ]:
+        fail(
+            errors,
+            "rúbrica outbound_batch no exige continuidad, mensaje y seguridad completas",
+        )
 
     cases = data.get("cases")
     if not isinstance(cases, list) or len(cases) < 50:
@@ -500,7 +631,13 @@ def validate_fixtures(path: Path, errors: list[str]) -> None:
         else:
             seen.add(case_id)
         mode = case.get("mode")
-        if mode not in {"prospect_dm", "outbound_batch", "call_brief"}:
+        if mode not in {
+            "prospect_dm",
+            "outbound_batch",
+            "call_brief",
+            "eod_review",
+            "maintenance",
+        }:
             fail(errors, f"fixture {case_id} tiene modo inválido")
         if mode == "outbound_batch":
             batch_count += 1
@@ -510,16 +647,37 @@ def validate_fixtures(path: Path, errors: list[str]) -> None:
             fail(errors, f"fixture {case_id} tiene fase inválida")
         for key in ("required", "forbidden"):
             value = case.get(key)
-            if not isinstance(value, list) or not value or not all(isinstance(item, str) for item in value):
+            if (
+                not isinstance(value, list)
+                or not value
+                or not all(isinstance(item, str) for item in value)
+            ):
                 fail(errors, f"fixture {case_id} tiene {key} inválido")
 
         serialized = json.dumps(case, ensure_ascii=False)
-        if re.search(r"(?i)Analisis_de_llamada|loom_transcripciones\.txt|Objeciones_Lead", serialized):
+        allowed_output = json.dumps(
+            {
+                "expected_move": case.get("expected_move", ""),
+                "required": case.get("required", []),
+            },
+            ensure_ascii=False,
+        ).lower()
+        if "trabajás, estudiás o ambas" in allowed_output:
+            fail(
+                errors, f"fixture {case_id} permite una pregunta ocupacional categórica"
+            )
+        if re.search(
+            r"(?i)Analisis_de_llamada|loom_transcripciones\.txt|Objeciones_Lead",
+            serialized,
+        ):
             fail(errors, f"fixture {case_id} referencia material crudo")
         if re.search(r"(?i)[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}", serialized):
             fail(errors, f"fixture {case_id} parece contener un email privado")
         if re.search(r"(?<!\w)(?:\+?\d[\s().-]?){8,}(?!\w)", serialized):
-            fail(errors, f"fixture {case_id} parece contener un teléfono o identificador numérico")
+            fail(
+                errors,
+                f"fixture {case_id} parece contener un teléfono o identificador numérico",
+            )
 
     missing_ids = REQUIRED_FORWARD_IDS - seen
     if missing_ids:
@@ -561,13 +719,23 @@ def validate_curation(path: Path, text: str, errors: list[str]) -> None:
         statuses = re.findall(r"(?m)^- `status`: `([^`]+)`", trainology.group(1))
         reviewed_on = re.findall(r"(?m)^- `reviewed_on`: (.+)$", trainology.group(1))
         if len(statuses) != 4 or any(status != "approved" for status in statuses):
-            fail(errors, "las cuatro fichas Trainology deben estar approved tras la autorización de Maxi")
-        if len(reviewed_on) != 4 or any(value.strip() != "2026-08-31" for value in reviewed_on):
-            fail(errors, "las cuatro fichas Trainology deben registrar reviewed_on 2026-08-31")
+            fail(
+                errors,
+                "las cuatro fichas Trainology deben estar approved tras la autorización de Maxi",
+            )
+        if len(reviewed_on) != 4 or any(
+            value.strip() != "2026-08-31" for value in reviewed_on
+        ):
+            fail(
+                errors,
+                "las cuatro fichas Trainology deben registrar reviewed_on 2026-08-31",
+            )
 
 
 def validate_privacy(contents: dict[str, str], errors: list[str]) -> None:
-    reference_names = [path.name for path in VALIDATED_FILES if path.parent == REFERENCES]
+    reference_names = [
+        path.name for path in VALIDATED_FILES if path.parent == REFERENCES
+    ]
     for filename in reference_names:
         text = contents.get(filename, "")
         if re.search(r"(?m)^\s*\[?\d{1,2}:\d{2}(?::\d{2})?\]?\s", text):
@@ -578,7 +746,10 @@ def validate_privacy(contents: dict[str, str], errors: list[str]) -> None:
             fail(errors, f"{filename} parece contener un email privado")
         phone_text = re.sub(r"\b\d{4}-\d{2}-\d{2}\b", "", text)
         if re.search(r"(?<!\w)(?:\+?\d[\s().-]?){8,}(?!\w)", phone_text):
-            fail(errors, f"{filename} parece contener un teléfono o identificador numérico")
+            fail(
+                errors,
+                f"{filename} parece contener un teléfono o identificador numérico",
+            )
         if re.search(r"(?i)C:[\\/]+Users[\\/]+[^\\/]+", text):
             fail(errors, f"{filename} parece contener una ruta personal")
         if re.search(r"(?im)^\s*(?:speaker|hablante)\s*\d*\s*:", text):
@@ -603,7 +774,9 @@ def validate_tracked_backups(errors: list[str]) -> None:
         fail(errors, "hay backups *.bak todavía versionados")
 
 
-def validate_no_loaded_output_templates(contents: dict[str, str], errors: list[str]) -> None:
+def validate_no_loaded_output_templates(
+    contents: dict[str, str], errors: list[str]
+) -> None:
     prospect_files = ["motor-agentico.md", "voz-escrita-tato.md", "operativa-dm.md"]
     forbidden_headers = [
         "Salida valida:",
@@ -617,7 +790,10 @@ def validate_no_loaded_output_templates(contents: dict[str, str], errors: list[s
         text = contents.get(filename, "")
         for marker in forbidden_headers:
             if marker in text:
-                fail(errors, f"{filename} contiene una plantilla de salida cargada: {marker}")
+                fail(
+                    errors,
+                    f"{filename} contiene una plantilla de salida cargada: {marker}",
+                )
 
 
 def validate_crm_assets(errors: list[str]) -> None:
@@ -647,23 +823,99 @@ def validate_crm_assets(errors: list[str]) -> None:
         detail = (result.stderr or result.stdout).strip()[:500]
         fail(errors, f"self-test CRM falló: {detail}")
 
-
     regression = subprocess.run(
         [sys.executable, "-B", str(SKILL_ROOT / "scripts" / "test_crm_tracker.py")],
-        cwd=REPO_ROOT, capture_output=True, text=True, check=False, timeout=30,
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=30,
     )
     if regression.returncode != 0:
-        fail(errors, "CRM regression tests failed: " + (regression.stderr or regression.stdout)[-500:])
+        fail(
+            errors,
+            "CRM regression tests failed: "
+            + (regression.stderr or regression.stdout)[-500:],
+        )
 
 
-def validate_runtime() -> list[str]:
-    errors: list[str] = []
-    contents = {path.name: read_utf8(path, errors) for path in VALIDATED_FILES}
+def validate_no_automatic_tracking(contents: dict[str, str], errors: list[str]) -> None:
+    """Reject reintroduction of automatic bookkeeping in active instructions."""
+    for filename in (
+        "SKILL.md",
+        "motor-agentico.md",
+        "operativa-dm.md",
+        "operativa-maseteo.md",
+        "tracking-eod.md",
+        "AGENTS.md",
+        "README.md",
+    ):
+        text = contents.get(filename, "")
+        if re.search(r"crm_tracker\.py\s+(?:lead|ensure|record|eod)\b", text):
+            fail(errors, f"automatic tracker command in {filename}")
+        for marker in (
+            "Registrar `dm_drafted`",
+            "ejecutar `ensure` sin",
+            "El agente registra internamente",
+            "El agente registra los hechos",
+            "reconstruir todos los eventos verificables",
+        ):
+            if marker.casefold() in text.casefold():
+                fail(errors, f"automatic bookkeeping mandate in {filename}: {marker}")
+    skill = contents.get("SKILL.md", "")
+    always_loaded = re.search(r"(?m)^1\. Leer completos (.+)$", skill)
+    if always_loaded and "tracking-eod.md" in always_loaded.group(1):
+        fail(errors, "tracking-eod.md must remain conditional")
+    motor = contents.get("motor-agentico.md", "")
+    always_motor = motor.split("Siempre cargar:", 1)[-1].split(
+        "Cargar cuando corresponda:", 1
+    )[0]
+    if "tracking-eod.md" in always_motor:
+        fail(errors, "motor must not always load tracking-eod.md")
+
+
+def validate_decision_contract(text: str, errors: list[str]) -> None:
+    """Check the declared order and mode enum, not conversational semantics."""
+    mode_line = re.search(r"(?m)^- `modo`: (.+)$", text)
+    modes = set(re.findall(r"`([^`]+)`", mode_line.group(1))) if mode_line else set()
+    if modes != {
+        "prospect_dm",
+        "outbound_batch",
+        "call_brief",
+        "eod_review",
+        "maintenance",
+    }:
+        fail(errors, "enum de modo incompleto en motor-agentico.md")
+    section = text.split("## Precedencia", 1)[-1].split("## Ciclo de decisión", 1)[0]
+    expected = [
+        "1. Emergencia",
+        "2. Menor confirmado, rechazo claro, inversión explícitamente imposible",
+        "3. Bloqueo operativo",
+        "4. Objeción activa o pregunta concreta",
+        "5. Reserva confirmada sin excepción activa",
+        "6. Llamada aceptada o agenda enviada sin freno activo",
+        "7. Rama técnica",
+    ]
+    lines = re.findall(r"(?m)^\d+\. .+$", section)
+    if len(lines) != len(expected) or any(
+        not lines[index].startswith(prefix) for index, prefix in enumerate(expected)
+    ):
+        fail(
+            errors,
+            "precedencia declarada debe priorizar seguridad, cierres y frenos antes de agenda",
+        )
+
+
+def validate_runtime(include_legacy_crm: bool = False) -> list[str]:
+    errors: list[str] = validate_repository()
+    files = VALIDATED_FILES + (LEGACY_FILES if include_legacy_crm else [])
+    contents = {path.name: read_utf8(path, errors) for path in files}
 
     skill_text = contents.get("SKILL.md", "")
     validate_frontmatter(skill_text, errors)
     validate_references(skill_text, errors)
     validate_calibration_contract(contents.get("casos-calibracion.md", ""), errors)
+    validate_decision_contract(contents.get("motor-agentico.md", ""), errors)
     validate_fixtures(ASSETS / "forward-cases.json", errors)
     validate_curation(
         REFERENCES / "criterio-fuentes-curadas.md",
@@ -673,9 +925,13 @@ def validate_runtime() -> list[str]:
     validate_privacy(contents, errors)
     validate_tracked_backups(errors)
     validate_no_loaded_output_templates(contents, errors)
-    validate_crm_assets(errors)
+    validate_no_automatic_tracking(contents, errors)
+    if include_legacy_crm:
+        validate_crm_assets(errors)
 
     for filename, markers in REQUIRED_MARKERS.items():
+        if not include_legacy_crm and filename in {path.name for path in LEGACY_FILES}:
+            continue
         text = contents.get(filename, "")
         for marker in markers:
             if marker not in text:
@@ -696,12 +952,20 @@ def validate_runtime() -> list[str]:
 
 
 def main() -> int:
-    errors = validate_runtime()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--legacy-crm", action="store_true", help="Run isolated legacy tracker checks"
+    )
+    args = parser.parse_args()
+    errors = validate_runtime(include_legacy_crm=args.legacy_crm)
     if errors:
         for error in errors:
             print(f"ERROR: {error}")
         return 1
     print("runtime valido")
+    print(
+        "Validación estática: estructura, contratos y cobertura; no evalúa calidad semántica de DMs."
+    )
     return 0
 
 

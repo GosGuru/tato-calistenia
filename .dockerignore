@@ -1,0 +1,16 @@
+.git
+.github
+.agents
+.pytest_cache
+.ruff_cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+node_modules
+tools/editorial_rag/web/node_modules
+chats
+docs
+odd
+.env
+*.log

@@ -1,0 +1,48 @@
+[
+  {
+    "id": "fiction-direct-continuity",
+    "type": "dm",
+    "criteria": [
+      "Conservar el destino funcional y lo que ya hace, sin volver a preguntar su objetivo.",
+      "Abrir una sola evidencia pendiente que cambie el siguiente paso; una pregunta directa puede bastar sin prefacio ornamental.",
+      "No invitar a llamada ni convertir la respuesta en una rutina gratuita."
+    ]
+  },
+  {
+    "id": "fiction-meaningful-opening",
+    "type": "dm",
+    "criteria": [
+      "Dar reconocimiento proporcional a la apertura concreta sin recapitular todo ni inferir emociones nuevas.",
+      "Conservar destino, intentos y disponibilidad ya aportados; no confundir rato libre con voluntad de acompañamiento.",
+      "Elegir una sola pregunta sustantiva pendiente sin presión ni invitación prematura."
+    ]
+  },
+  {
+    "id": "fiction-dated-reentry",
+    "type": "dm",
+    "criteria": [
+      "Reconocer la reentrada entre las fechas aportadas sin inventar recencia respecto de hoy.",
+      "Un saludo social no agrega una segunda pregunta de calificación; no reiniciar objetivo, brecha, rutina ni compromiso conocidos.",
+      "Presentar una ruta contextual que vincule el impulso y la capacidad parcial con una ayuda real, pedir reacción y esperar antes de invitar.",
+      "No transformar ausencia de banda en ejecución estricta ni prescribir una corrección técnica."
+    ]
+  },
+  {
+    "id": "fiction-post-agenda-obstacle",
+    "type": "dm",
+    "criteria": [
+      "Atender el impedimento de selección de hora sin afirmar una causa técnica ni disponibilidad no verificadas.",
+      "Conservar ruta y llamada aceptadas, sin repetir invitación, pitch ni calificación.",
+      "No declarar reserva; hacer como máximo una pregunta sustantiva que ayude a resolver el bloqueo real."
+    ]
+  },
+  {
+    "id": "fiction-rejection-after-acceptance",
+    "type": "dm",
+    "criteria": [
+      "El rechazo actual prevalece sobre la aceptación anterior de llamada.",
+      "Cerrar con respeto y sin pregunta social o comercial que reabra el caso.",
+      "No enviar agenda, insistir, pedir justificación ni usar presión."
+    ]
+  }
+]

@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "execution": "manual_only_no_model_results",
+  "pairs": [
+    {
+      "id": "fresh_vs_history",
+      "a": "Caso sintético nuevo con destino, brecha y realidad cotidiana suficientes; disposición pendiente.",
+      "b": "Los mismos hechos distribuidos en un historial largo con avisos de interfaz irrelevantes.",
+      "expectation": "Ambos comprueban disposición sin volver a preguntar rutina u objetivo.",
+      "counterexample": "El historial largo induce a recalificar hechos ya confirmados."
+    },
+    {
+      "id": "local_vs_durable",
+      "a": "Caso sintético sin correcciones previas de estilo.",
+      "b": "Mismo caso después de una corrección local de estilo en otro caso, sin aprobación durable.",
+      "expectation": "Se conserva la decisión del caso y las reglas vigentes; la corrección ajena no se vuelve plantilla.",
+      "counterexample": "Un elogio previo se trata como autorización para cambiar fases o copiar la misma frase."
+    },
+    {
+      "id": "explained_vs_ambiguous",
+      "a": "Meta sintética numérica aislada, sin explicación de la mejora buscada.",
+      "b": "La misma meta con mejora funcional explícita y brecha suficiente; rutina pendiente.",
+      "expectation": "A aclara una sola mejora relevante; B conserva el sentido explicado y pregunta realidad cotidiana.",
+      "counterexample": "Ambos reciben la misma pregunta abstracta de objetivo o una excavación emocional."
+    },
+    {
+      "id": "routine_vs_willingness",
+      "a": "Destino, brecha y rutina sintéticos conocidos; solo consta entrenamiento constante.",
+      "b": "Mismos hechos y apertura explícita a recibir y aplicar acompañamiento.",
+      "expectation": "A comprueba voluntad de proceso; B no repregunta compromiso conocido y puede presentar ruta contextual.",
+      "counterexample": "La constancia se equipara con disposición o la voluntad explícita se ignora."
+    },
+    {
+      "id": "after_agenda_objection",
+      "a": "Llamada sintética aceptada, agenda enviada, sin reserva ni freno activo.",
+      "b": "Mismo estado con una pregunta concreta sobre modalidad después de la agenda.",
+      "expectation": "A continúa el paso pendiente sin afirmar reserva; B responde primero el freno conservando lo aceptado.",
+      "counterexample": "B repite enlace o pitch sin responder; A afirma reserva por haber mirado horarios."
+    }
+  ]
+}

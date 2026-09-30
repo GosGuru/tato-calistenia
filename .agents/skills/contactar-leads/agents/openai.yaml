@@ -1,0 +1,4 @@
+interface:
+  display_name: "Contactar leads"
+  short_description: "Recorridos y seguimientos verificados en ManyChat"
+  default_prompt: "Usá $contactar-leads para completar el recorrido autorizado de ManyChat y registrar cada acción verificada."

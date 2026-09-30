@@ -1,0 +1,40 @@
+{
+  "mcpServers": {
+    "supabase-editorial": {
+      "url": "https://mcp.supabase.com/mcp?project_ref=cgoosfuwohjupcbwdaty&features=docs%2Caccount%2Cdatabase%2Cdebugging%2Cdevelopment%2Cfunctions%2Cbranching"
+    },
+    "supabase-editorial-readonly": {
+      "url": "https://mcp.supabase.com/mcp?project_ref=cgoosfuwohjupcbwdaty&read_only=true&features=docs%2Caccount%2Cdatabase%2Cdebugging%2Cdevelopment%2Cfunctions%2Cbranching"
+    },
+    "notebooklm-tato": {
+      "command": "C:/Users/Maxim/AppData/Local/TatoNotebookLM/venv/Scripts/notebooklm-mcp.exe",
+      "args": ["--transport", "stdio"],
+      "cwd": "C:/Users/Maxim/AppData/Local/TatoNotebookLM/work",
+      "env": {
+        "NOTEBOOKLM_MCP_CLI_PATH": "C:/Users/Maxim/AppData/Local/TatoNotebookLM/data",
+        "NLM_PROFILE": "tato-pro",
+        "NLM_BROWSER": "chrome",
+        "NLM_BROWSER_PATH": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+        "HOME": "C:/Users/Maxim/AppData/Local/TatoNotebookLM/home",
+        "USERPROFILE": "C:/Users/Maxim/AppData/Local/TatoNotebookLM/home",
+        "APPDATA": "C:/Users/Maxim/AppData/Local/TatoNotebookLM/appdata",
+        "LOCALAPPDATA": "C:/Users/Maxim/AppData/Local/TatoNotebookLM/local",
+        "TEMP": "C:/Users/Maxim/AppData/Local/TatoNotebookLM/tmp",
+        "TMP": "C:/Users/Maxim/AppData/Local/TatoNotebookLM/tmp",
+        "PYTHONUTF8": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "OTEL_SDK_DISABLED": "true",
+        "NOTEBOOKLM_MCP_DEBUG": "false",
+        "NOTEBOOKLM_RATE_LIMIT_MAX_RETRIES": "0"
+      },
+      "inheritEnv": false,
+      "lifecycle": "lazy",
+      "disabled": false,
+      "approveTools": true,
+      "includeTools": ["notebook_list", "notebook_get", "notebook_describe", "notebook_query", "source_get_content", "source_add", "note"],
+      "exposeResources": false,
+      "directTools": false,
+      "protocolVersion": "legacy"
+    }
+  }
+}
