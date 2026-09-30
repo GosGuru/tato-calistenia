@@ -42,7 +42,7 @@ PROVIDERS = {
         'name': 'DeepSeek',
         'type': 'api',
         'default_model': 'deepseek-chat',
-        'models': ['deepseek-chat', 'deepseek-reasoner'],
+        'models': ['deepseek-chat', 'deepseek-reasoner', 'deepseek-flash', 'deepseek-v4-pro'],
         'default_base_url': 'https://api.deepseek.com',
         'env_key': 'DEEPSEEK_API_KEY',
         'requires_key': True,
@@ -73,13 +73,13 @@ PROVIDERS = {
         'requires_key': True,
     },
     'opencode': {
-        'name': 'OpenCode / Local',
-        'type': 'local',
-        'default_model': 'llama3.3',
-        'models': ['llama3.3', 'qwen2.5', 'deepseek-r1'],
-        'default_base_url': 'http://localhost:11434/v1',
+        'name': 'OpenCode',
+        'type': 'api',
+        'default_model': 'gpt-6-luna',
+        'models': ['gpt-6-luna', 'kimi-k2.6', 'glm-5.1', 'minimax-m2.7', 'deepseek-r1', 'llama3.3'],
+        'default_base_url': 'https://opencode.ai/inference/openai/v1',
         'env_key': 'OPENCODE_API_KEY',
-        'requires_key': False,
+        'requires_key': True,
     },
     'openai': {
         'name': 'OpenAI Direct',
@@ -91,6 +91,15 @@ PROVIDERS = {
         'requires_key': True,
     },
 }
+
+
+def normalize_base_url(url: Optional[str]) -> str:
+    """Normalize base URL by stripping whitespace, trailing slashes, and redundant /chat/completions."""
+    if not url:
+        return ''
+    cleaned = url.strip()
+    cleaned = re.sub(r'/chat/completions/?$', '', cleaned, flags=re.IGNORECASE)
+    return cleaned.rstrip('/')
 
 
 def get_available_models_info() -> Dict[str, Any]:
@@ -163,12 +172,12 @@ def resolve_provider_settings(config: ProviderConfig) -> Dict[str, str]:
     info = PROVIDERS.get(provider)
     if not info:
         # Custom provider fallback
-        base_url = config.base_url or 'https://api.openai.com/v1'
+        base_url = normalize_base_url(config.base_url or 'https://api.openai.com/v1')
         model = config.model or 'default'
         api_key = config.api_key or ''
-        return {'provider': provider, 'base_url': base_url.rstrip('/'), 'model': model, 'api_key': api_key}
+        return {'provider': provider, 'base_url': base_url, 'model': model, 'api_key': api_key}
 
-    base_url = config.base_url or info['default_base_url'] or ''
+    base_url = normalize_base_url(config.base_url or info['default_base_url'] or '')
     model = config.model or info['default_model']
     api_key = config.api_key
 
@@ -183,7 +192,7 @@ def resolve_provider_settings(config: ProviderConfig) -> Dict[str, str]:
 
     return {
         'provider': provider,
-        'base_url': base_url.rstrip('/'),
+        'base_url': base_url,
         'model': model,
         'api_key': api_key or '',
     }

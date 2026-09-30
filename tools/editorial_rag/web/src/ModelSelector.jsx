@@ -17,9 +17,9 @@ export const DEFAULT_PROVIDERS = [
     id: 'deepseek',
     name: 'DeepSeek',
     badge: 'API oficial',
-    description: 'api.deepseek.com — Modelos DeepSeek-V3 y DeepSeek-R1 (razonamiento).',
+    description: 'api.deepseek.com — Modelos V3 (deepseek-chat), R1 (deepseek-reasoner), Flash y V4 Pro.',
     requiresKey: true,
-    models: ['deepseek-chat', 'deepseek-reasoner'],
+    models: ['deepseek-chat', 'deepseek-reasoner', 'deepseek-flash', 'deepseek-v4-pro'],
     defaultModel: 'deepseek-chat',
     defaultBaseUrl: 'https://api.deepseek.com',
   },
@@ -52,13 +52,13 @@ export const DEFAULT_PROVIDERS = [
   },
   {
     id: 'opencode',
-    name: 'OpenCode / Ollama',
-    badge: 'Local / Proxy',
-    description: 'Servidor local OpenAI-compatible (Ollama, vLLM, OpenCode) en tu máquina o red.',
-    requiresKey: false,
-    models: ['llama3.3', 'qwen2.5', 'deepseek-r1'],
-    defaultModel: 'llama3.3',
-    defaultBaseUrl: 'http://localhost:11434/v1',
+    name: 'OpenCode',
+    badge: 'opencode.ai',
+    description: 'opencode.ai — Inferencia para gpt-6-luna, kimi-k2.6, glm-5.1 o modelos locales.',
+    requiresKey: true,
+    models: ['gpt-6-luna', 'kimi-k2.6', 'glm-5.1', 'minimax-m2.7', 'deepseek-r1', 'llama3.3'],
+    defaultModel: 'gpt-6-luna',
+    defaultBaseUrl: 'https://opencode.ai/inference/openai/v1',
   },
   {
     id: 'openai',
@@ -71,6 +71,11 @@ export const DEFAULT_PROVIDERS = [
     defaultBaseUrl: 'https://api.openai.com/v1',
   },
 ];
+
+export function sanitizeBaseUrl(url) {
+  if (!url) return '';
+  return url.trim().replace(/\/chat\/completions\/?$/i, '').replace(/\/+$/, '');
+}
 
 export function getSavedModelConfig() {
   try {
@@ -119,14 +124,18 @@ export function getActiveProviderPayload(modelConfig) {
     provider: modelConfig.provider,
     model: modelConfig.model,
     api_key: apiKey || undefined,
-    base_url: modelConfig.baseUrl || undefined,
+    base_url: sanitizeBaseUrl(modelConfig.baseUrl) || undefined,
   };
 }
 
 export function modelDisplayLabel(modelConfig) {
   if (!modelConfig || modelConfig.provider === 'codex') return 'Codex';
   if (modelConfig.provider === 'deepseek') {
-    return `DeepSeek (${modelConfig.model === 'deepseek-reasoner' ? 'R1' : 'V3'})`;
+    if (modelConfig.model === 'deepseek-reasoner') return 'DeepSeek (R1)';
+    if (modelConfig.model === 'deepseek-flash') return 'DeepSeek (Flash)';
+    if (modelConfig.model === 'deepseek-v4-pro') return 'DeepSeek (V4 Pro)';
+    if (modelConfig.model === 'deepseek-chat') return 'DeepSeek (V3)';
+    return `DeepSeek (${modelConfig.model || 'V3'})`;
   }
   if (modelConfig.provider === 'openrouter') {
     const name = (modelConfig.model || '').split('/').pop() || 'V3';
@@ -136,7 +145,7 @@ export function modelDisplayLabel(modelConfig) {
     return `Gemini (${(modelConfig.model || '').replace('gemini-', '')})`;
   }
   if (modelConfig.provider === 'opencode') {
-    return `OpenCode (${modelConfig.model || 'Local'})`;
+    return `OpenCode (${modelConfig.model || 'gpt-6-luna'})`;
   }
   if (modelConfig.provider === 'openai') {
     return `OpenAI (${modelConfig.model || 'GPT-4o'})`;
@@ -201,6 +210,7 @@ export default function ModelSelector({ modelConfig, onModelChange, token, onDis
     setTestResult(null);
     try {
       const finalModel = customModel.trim() || selectedModel || currentProviderDef.defaultModel;
+      const cleanBaseUrl = sanitizeBaseUrl(baseUrl);
       const res = await localRequest('/api/models/test', {
         method: 'POST',
         cache: 'no-store',
@@ -211,7 +221,7 @@ export default function ModelSelector({ modelConfig, onModelChange, token, onDis
           provider: activeProvider,
           model: finalModel,
           api_key: apiKey.trim() || undefined,
-          base_url: baseUrl.trim() || undefined,
+          base_url: cleanBaseUrl || undefined,
         }),
       });
       setTestResult(res);
@@ -232,10 +242,11 @@ export default function ModelSelector({ modelConfig, onModelChange, token, onDis
       saveApiKey(activeProvider, apiKey.trim());
       setSavedKeysMap(getSavedApiKeys());
     }
+    const cleanBaseUrl = sanitizeBaseUrl(baseUrl);
     const newConfig = {
       provider: activeProvider,
       model: finalModel,
-      baseUrl: baseUrl.trim() || undefined,
+      baseUrl: cleanBaseUrl || undefined,
     };
     saveModelConfig(newConfig);
     onModelChange(newConfig);

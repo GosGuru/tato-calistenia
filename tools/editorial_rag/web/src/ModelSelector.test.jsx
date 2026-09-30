@@ -9,6 +9,7 @@ import ModelSelector, {
   providerDisplayName,
   saveApiKey,
   saveModelConfig,
+  sanitizeBaseUrl,
 } from './ModelSelector.jsx';
 
 describe('ModelSelector storage and label helpers', () => {
@@ -52,13 +53,25 @@ describe('ModelSelector storage and label helpers', () => {
     });
   });
 
+  it('sanitizes base URL by stripping /chat/completions and trailing slashes', () => {
+    expect(sanitizeBaseUrl('https://opencode.ai/inference/openai/v1/chat/completions')).toBe('https://opencode.ai/inference/openai/v1');
+    expect(sanitizeBaseUrl('https://opencode.ai/inference/openai/v1/chat/completions/')).toBe('https://opencode.ai/inference/openai/v1');
+    expect(sanitizeBaseUrl('https://opencode.ai/inference/openai/v1/')).toBe('https://opencode.ai/inference/openai/v1');
+    expect(sanitizeBaseUrl('https://opencode.ai/inference/openai/v1')).toBe('https://opencode.ai/inference/openai/v1');
+    expect(sanitizeBaseUrl('')).toBe('');
+    expect(sanitizeBaseUrl(null)).toBe('');
+  });
+
   it('formats display labels accurately for various providers', () => {
     expect(modelDisplayLabel({ provider: 'codex', model: 'chatgpt' })).toBe('Codex');
     expect(modelDisplayLabel({ provider: 'deepseek', model: 'deepseek-chat' })).toBe('DeepSeek (V3)');
     expect(modelDisplayLabel({ provider: 'deepseek', model: 'deepseek-reasoner' })).toBe('DeepSeek (R1)');
+    expect(modelDisplayLabel({ provider: 'deepseek', model: 'deepseek-flash' })).toBe('DeepSeek (Flash)');
+    expect(modelDisplayLabel({ provider: 'deepseek', model: 'deepseek-v4-pro' })).toBe('DeepSeek (V4 Pro)');
     expect(modelDisplayLabel({ provider: 'openrouter', model: 'anthropic/claude-3.5-sonnet' })).toBe('OpenRouter (claude-3.5-sonnet)');
     expect(modelDisplayLabel({ provider: 'gemini', model: 'gemini-2.5-flash' })).toBe('Gemini (2.5-flash)');
-    expect(modelDisplayLabel({ provider: 'opencode', model: 'llama3.3' })).toBe('OpenCode (llama3.3)');
+    expect(modelDisplayLabel({ provider: 'opencode', model: 'gpt-6-luna' })).toBe('OpenCode (gpt-6-luna)');
+    expect(modelDisplayLabel({ provider: 'opencode' })).toBe('OpenCode (gpt-6-luna)');
     expect(modelDisplayLabel({ provider: 'openai', model: 'gpt-4o' })).toBe('OpenAI (gpt-4o)');
   });
 
@@ -67,6 +80,7 @@ describe('ModelSelector storage and label helpers', () => {
     expect(providerDisplayName('deepseek')).toBe('DeepSeek');
     expect(providerDisplayName('openrouter')).toBe('OpenRouter');
     expect(providerDisplayName('gemini')).toBe('Google Gemini');
+    expect(providerDisplayName('opencode')).toBe('OpenCode');
   });
 });
 
@@ -140,5 +154,35 @@ describe('ModelSelector UI interaction', () => {
     );
 
     expect(await screen.findByText('Conectado exitosamente con DeepSeek.')).toBeVisible();
+  });
+
+  it('configures OpenCode with cloud defaults, API key, and sanitizes /chat/completions from baseUrl', async () => {
+    const onModelChange = vi.fn();
+    render(<ModelSelector modelConfig={{ provider: 'codex', model: 'chatgpt' }} onModelChange={onModelChange} token="tok" />);
+
+    const summary = screen.getByLabelText('Selector de modelos');
+    fireEvent.click(summary);
+
+    const opencodeBtn = screen.getByRole('button', { name: /OpenCode/i });
+    fireEvent.click(opencodeBtn);
+
+    expect(screen.getByLabelText(/Clave de API \(OpenCode\)/i)).toBeVisible();
+    const keyInput = screen.getByPlaceholderText('sk-...');
+    fireEvent.change(keyInput, { target: { value: 'sk-opencode-secret' } });
+
+    const baseUrlInput = screen.getByLabelText(/Base URL/i);
+    fireEvent.change(baseUrlInput, {
+      target: { value: 'https://opencode.ai/inference/openai/v1/chat/completions' },
+    });
+
+    const applyBtn = screen.getByRole('button', { name: 'Guardar y usar' });
+    await userEvent.click(applyBtn);
+
+    expect(onModelChange).toHaveBeenCalledWith({
+      provider: 'opencode',
+      model: 'gpt-6-luna',
+      baseUrl: 'https://opencode.ai/inference/openai/v1',
+    });
+    expect(getSavedApiKeys()['opencode']).toBe('sk-opencode-secret');
   });
 });

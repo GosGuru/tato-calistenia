@@ -11,6 +11,7 @@ from tools.editorial_rag.api_runner import (
     clean_model_output,
     create_runner,
     get_available_models_info,
+    normalize_base_url,
     resolve_provider_settings,
     test_provider_connection,
 )
@@ -81,15 +82,33 @@ class ProviderSettingsTests(unittest.TestCase):
         self.assertEqual(settings['base_url'], 'https://generativelanguage.googleapis.com/v1beta/openai')
         self.assertEqual(settings['model'], 'gemini-2.5-flash')
 
-    def test_opencode_local_requires_no_key(self):
+    def test_normalize_base_url(self):
+        self.assertEqual(normalize_base_url('https://opencode.ai/inference/openai/v1/chat/completions'), 'https://opencode.ai/inference/openai/v1')
+        self.assertEqual(normalize_base_url('https://opencode.ai/inference/openai/v1/chat/completions/'), 'https://opencode.ai/inference/openai/v1')
+        self.assertEqual(normalize_base_url('https://opencode.ai/inference/openai/v1/'), 'https://opencode.ai/inference/openai/v1')
+        self.assertEqual(normalize_base_url('https://opencode.ai/inference/openai/v1'), 'https://opencode.ai/inference/openai/v1')
+        self.assertEqual(normalize_base_url(''), '')
+        self.assertEqual(normalize_base_url(None), '')
+
+    def test_opencode_requires_key(self):
         cfg = ProviderConfig(provider='opencode')
+        with patch.dict(os.environ, {}, clear=True):
+            with self.assertRaises(ApiRunnerError):
+                resolve_provider_settings(cfg)
+
+    def test_opencode_cloud_defaults_and_normalization(self):
+        cfg = ProviderConfig(
+            provider='opencode',
+            api_key='sk-opencode-123',
+            base_url='https://opencode.ai/inference/openai/v1/chat/completions',
+        )
         settings = resolve_provider_settings(cfg)
-        self.assertEqual(settings['base_url'], 'http://localhost:11434/v1')
-        self.assertEqual(settings['model'], 'llama3.3')
-        self.assertEqual(settings['api_key'], '')
+        self.assertEqual(settings['base_url'], 'https://opencode.ai/inference/openai/v1')
+        self.assertEqual(settings['model'], 'gpt-6-luna')
+        self.assertEqual(settings['api_key'], 'sk-opencode-123')
 
     def test_custom_provider(self):
-        cfg = ProviderConfig(provider='custom_corp', base_url='http://internal.ai/v1', model='corp-llm', api_key='k')
+        cfg = ProviderConfig(provider='custom_corp', base_url='http://internal.ai/v1/chat/completions', model='corp-llm', api_key='k')
         settings = resolve_provider_settings(cfg)
         self.assertEqual(settings['base_url'], 'http://internal.ai/v1')
         self.assertEqual(settings['model'], 'corp-llm')
