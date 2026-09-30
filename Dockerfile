@@ -22,6 +22,7 @@ COPY tools/editorial_rag/requirements.txt ./tools/editorial_rag/requirements.txt
 RUN pip install --no-cache-dir -r ./tools/editorial_rag/requirements.txt
 
 COPY tools/ ./tools/
+COPY .agents/ ./.agents/
 COPY --from=frontend-builder /app/tools/editorial_rag/web/dist ./tools/editorial_rag/web/dist
 
 EXPOSE 8765
