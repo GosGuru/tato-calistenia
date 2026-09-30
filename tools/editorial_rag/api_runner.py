@@ -102,6 +102,24 @@ def normalize_base_url(url: Optional[str]) -> str:
     return cleaned.rstrip('/')
 
 
+def normalize_model_name(provider: str, model: Optional[str]) -> str:
+    """Normalize model identifier, mapping common marketing names or casing to exact API slugs."""
+    if not model:
+        return ''
+    m = model.strip()
+    if provider.lower() == 'deepseek':
+        m_clean = m.lower().replace(' ', '-')
+        if 'flash' in m_clean:
+            return 'deepseek-flash'
+        if 'pro' in m_clean or 'v4' in m_clean:
+            return 'deepseek-v4-pro'
+        if 'reason' in m_clean or 'r1' in m_clean:
+            return 'deepseek-reasoner'
+        if 'chat' in m_clean or 'v3' in m_clean:
+            return 'deepseek-chat'
+    return m
+
+
 def get_available_models_info() -> Dict[str, Any]:
     providers_info = []
     for pid, info in PROVIDERS.items():
@@ -173,12 +191,12 @@ def resolve_provider_settings(config: ProviderConfig) -> Dict[str, str]:
     if not info:
         # Custom provider fallback
         base_url = normalize_base_url(config.base_url or 'https://api.openai.com/v1')
-        model = config.model or 'default'
+        model = normalize_model_name(provider, config.model or 'default')
         api_key = config.api_key or ''
         return {'provider': provider, 'base_url': base_url, 'model': model, 'api_key': api_key}
 
     base_url = normalize_base_url(config.base_url or info['default_base_url'] or '')
-    model = config.model or info['default_model']
+    model = normalize_model_name(provider, config.model or info['default_model'])
     api_key = config.api_key
 
     if not api_key and info['env_key']:

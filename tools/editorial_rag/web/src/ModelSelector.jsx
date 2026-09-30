@@ -77,6 +77,19 @@ export function sanitizeBaseUrl(url) {
   return url.trim().replace(/\/chat\/completions\/?$/i, '').replace(/\/+$/, '');
 }
 
+export function normalizeModelName(provider, model) {
+  if (!model) return '';
+  const m = model.trim();
+  if (provider === 'deepseek') {
+    const clean = m.toLowerCase().replace(/\s+/g, '-');
+    if (clean.includes('flash')) return 'deepseek-flash';
+    if (clean.includes('pro') || clean.includes('v4')) return 'deepseek-v4-pro';
+    if (clean.includes('reason') || clean.includes('r1')) return 'deepseek-reasoner';
+    if (clean.includes('chat') || clean.includes('v3')) return 'deepseek-chat';
+  }
+  return m;
+}
+
 export function getSavedModelConfig() {
   try {
     const raw = localStorage.getItem('tato_editorial_selected_model');
@@ -209,7 +222,8 @@ export default function ModelSelector({ modelConfig, onModelChange, token, onDis
     setTesting(true);
     setTestResult(null);
     try {
-      const finalModel = customModel.trim() || selectedModel || currentProviderDef.defaultModel;
+      const candidateModel = customModel.trim() || selectedModel || currentProviderDef.defaultModel;
+      const finalModel = normalizeModelName(activeProvider, candidateModel);
       const cleanBaseUrl = sanitizeBaseUrl(baseUrl);
       const res = await localRequest('/api/models/test', {
         method: 'POST',
@@ -237,7 +251,8 @@ export default function ModelSelector({ modelConfig, onModelChange, token, onDis
   }
 
   function handleApply() {
-    const finalModel = customModel.trim() || selectedModel || currentProviderDef.defaultModel;
+    const candidateModel = customModel.trim() || selectedModel || currentProviderDef.defaultModel;
+    const finalModel = normalizeModelName(activeProvider, candidateModel);
     if (currentProviderDef.requiresKey) {
       saveApiKey(activeProvider, apiKey.trim());
       setSavedKeysMap(getSavedApiKeys());

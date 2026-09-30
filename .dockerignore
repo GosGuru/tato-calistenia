@@ -6,6 +6,8 @@ __pycache__
 *.pyc
 *.pyo
 *.pyd
+.venv
+**/.venv
 node_modules
 tools/editorial_rag/web/node_modules
 chats
