@@ -188,7 +188,6 @@ class ApiSessionRunnerMockTests(unittest.TestCase):
         _, kwargs = mock_post.call_args
         headers = kwargs.get('headers', {})
         self.assertIn('x-opencode-session', headers)
-        self.assertIn('X-OpenCode-Session', headers)
         self.assertEqual(headers.get('User-Agent'), 'tato-calistenia/1.0')
         # Ensure it parses as a valid UUID
         self.assertIsInstance(uuid.UUID(headers['x-opencode-session']), uuid.UUID)

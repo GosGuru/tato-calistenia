@@ -259,9 +259,7 @@ def test_provider_connection(config: ProviderConfig, timeout: float = 15.0) -> D
             headers['X-Title'] = 'Tato Calistenia'
 
         if settings['provider'] == 'opencode' or 'opencode.ai' in settings.get('base_url', ''):
-            session_id = str(uuid.uuid4())
-            headers['x-opencode-session'] = session_id
-            headers['X-OpenCode-Session'] = session_id
+            headers['x-opencode-session'] = str(uuid.uuid4()).lower()
 
         payload = {
             'model': settings['model'],
@@ -337,9 +335,7 @@ class ApiSessionRunner:
 
         if settings['provider'] == 'opencode' or 'opencode.ai' in settings.get('base_url', ''):
             session_hash = hashlib.sha256(prompt[:300].encode('utf-8')).hexdigest()[:16]
-            session_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"tato-{session_hash}"))
-            headers['x-opencode-session'] = session_id
-            headers['X-OpenCode-Session'] = session_id
+            headers['x-opencode-session'] = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"tato-{session_hash}")).lower()
 
         is_json_expected = type(packet) is RawHistoryPacket
         payload: Dict[str, Any] = {
