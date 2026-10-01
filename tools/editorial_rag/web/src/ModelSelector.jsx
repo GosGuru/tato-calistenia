@@ -56,7 +56,7 @@ export const DEFAULT_PROVIDERS = [
     badge: 'Go / Suscripción',
     description: 'opencode.ai — Inferencia Go (suscripción) para DeepSeek V4.1 Flash, Kimi K2.6, GLM-5.1 y GPT-6 Luna.',
     requiresKey: true,
-    models: ['deepseek-v4.1-flash', 'kimi-k2.6', 'glm-5.1', 'minimax-m2.7', 'gpt-6-luna', 'deepseek-r1'],
+    models: ['deepseek-v4.1-flash', 'deepseek-v4-flash', 'deepseek-v4-pro', 'kimi-k2.6', 'glm-5.1', 'minimax-m2.7'],
     defaultModel: 'deepseek-v4.1-flash',
     defaultBaseUrl: 'https://opencode.ai/zen/go/v1',
   },
@@ -80,6 +80,12 @@ export function sanitizeBaseUrl(url) {
 export function normalizeModelName(provider, model) {
   if (!model) return '';
   const m = model.trim();
+  if (provider === 'opencode') {
+    const clean = m.toLowerCase();
+    if (!clean || clean === 'gpt-6-luna' || clean === 'gpt-5.6-luna' || clean === 'default') {
+      return 'deepseek-v4.1-flash';
+    }
+  }
   if (provider === 'deepseek') {
     const clean = m.toLowerCase().replace(/\s+/g, '-');
     if (clean.includes('flash')) return 'deepseek-flash';

@@ -78,7 +78,7 @@ PROVIDERS = {
         'name': 'OpenCode',
         'type': 'api',
         'default_model': 'deepseek-v4.1-flash',
-        'models': ['deepseek-v4.1-flash', 'kimi-k2.6', 'glm-5.1', 'minimax-m2.7', 'gpt-6-luna', 'deepseek-r1'],
+        'models': ['deepseek-v4.1-flash', 'deepseek-v4-flash', 'deepseek-v4-pro', 'kimi-k2.6', 'glm-5.1', 'minimax-m2.7'],
         'default_base_url': 'https://opencode.ai/zen/go/v1',
         'env_key': 'OPENCODE_API_KEY',
         'requires_key': True,
@@ -109,6 +109,9 @@ def normalize_model_name(provider: str, model: Optional[str]) -> str:
     if not model:
         return ''
     m = model.strip()
+    if provider.lower() == 'opencode':
+        if not m or m.lower() in ('gpt-6-luna', 'gpt-5.6-luna', 'default'):
+            return 'deepseek-v4.1-flash'
     if provider.lower() == 'deepseek':
         m_clean = m.lower().replace(' ', '-')
         if 'flash' in m_clean:
@@ -281,7 +284,7 @@ def test_provider_connection(config: ProviderConfig, timeout: float = 15.0) -> D
                 detail = err_body.get('error', {}).get('message', response.text[:200])
             except Exception:
                 detail = response.text[:200]
-            return {'status': 'error', 'provider': settings['provider'], 'error': f"HTTP {response.status_code}: {detail}"}
+            return {'status': 'error', 'provider': settings['provider'], 'error': f"HTTP {response.status_code} ({settings['model']}): {detail}"}
 
         data = response.json()
         reply = data.get('choices', [{}])[0].get('message', {}).get('content', '').strip()
