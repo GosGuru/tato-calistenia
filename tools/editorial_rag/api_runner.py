@@ -3,6 +3,7 @@ import hashlib
 import json
 import os
 import re
+import uuid
 from contextlib import nullcontext
 from typing import Any, Dict, List, Optional
 
@@ -76,8 +77,8 @@ PROVIDERS = {
     'opencode': {
         'name': 'OpenCode',
         'type': 'api',
-        'default_model': 'gpt-6-luna',
-        'models': ['gpt-6-luna', 'kimi-k2.6', 'glm-5.1', 'minimax-m2.7', 'deepseek-v4.1-flash', 'deepseek-r1'],
+        'default_model': 'deepseek-v4.1-flash',
+        'models': ['deepseek-v4.1-flash', 'kimi-k2.6', 'glm-5.1', 'minimax-m2.7', 'gpt-6-luna', 'deepseek-r1'],
         'default_base_url': 'https://opencode.ai/zen/go/v1',
         'env_key': 'OPENCODE_API_KEY',
         'requires_key': True,
@@ -249,7 +250,7 @@ def test_provider_connection(config: ProviderConfig, timeout: float = 15.0) -> D
         settings = resolve_provider_settings(config)
         endpoint = f"{settings['base_url']}/chat/completions"
 
-        headers = {'Content-Type': 'application/json'}
+        headers = {'Content-Type': 'application/json', 'User-Agent': 'tato-calistenia/1.0'}
         if settings['api_key']:
             headers['Authorization'] = f"Bearer {settings['api_key']}"
 
@@ -258,7 +259,9 @@ def test_provider_connection(config: ProviderConfig, timeout: float = 15.0) -> D
             headers['X-Title'] = 'Tato Calistenia'
 
         if settings['provider'] == 'opencode' or 'opencode.ai' in settings.get('base_url', ''):
-            headers['x-opencode-session'] = 'tato-editorial-test'
+            session_id = str(uuid.uuid4())
+            headers['x-opencode-session'] = session_id
+            headers['X-OpenCode-Session'] = session_id
 
         payload = {
             'model': settings['model'],
@@ -324,7 +327,7 @@ class ApiSessionRunner:
         settings = resolve_provider_settings(self.config)
         endpoint = f"{settings['base_url']}/chat/completions"
 
-        headers = {'Content-Type': 'application/json'}
+        headers = {'Content-Type': 'application/json', 'User-Agent': 'tato-calistenia/1.0'}
         if settings['api_key']:
             headers['Authorization'] = f"Bearer {settings['api_key']}"
 
@@ -334,7 +337,9 @@ class ApiSessionRunner:
 
         if settings['provider'] == 'opencode' or 'opencode.ai' in settings.get('base_url', ''):
             session_hash = hashlib.sha256(prompt[:300].encode('utf-8')).hexdigest()[:16]
-            headers['x-opencode-session'] = f"tato-{session_hash}"
+            session_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"tato-{session_hash}"))
+            headers['x-opencode-session'] = session_id
+            headers['X-OpenCode-Session'] = session_id
 
         is_json_expected = type(packet) is RawHistoryPacket
         payload: Dict[str, Any] = {

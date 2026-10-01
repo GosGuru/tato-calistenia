@@ -116,7 +116,7 @@ class ProviderSettingsTests(unittest.TestCase):
         )
         settings = resolve_provider_settings(cfg)
         self.assertEqual(settings['base_url'], 'https://opencode.ai/inference/openai/v1')
-        self.assertEqual(settings['model'], 'gpt-6-luna')
+        self.assertEqual(settings['model'], 'deepseek-v4.1-flash')
         self.assertEqual(settings['api_key'], 'sk-opencode-123')
 
     def test_custom_provider(self):
@@ -183,18 +183,24 @@ class ApiSessionRunnerMockTests(unittest.TestCase):
         packet = RawHistoryPacket('Lead: hola\nTato: buenas', 'rules', True)
         runner(packet)
 
-        # Verify x-opencode-session header was passed
+        # Verify x-opencode-session header was passed as a valid UUID and User-Agent set
+        import uuid
         _, kwargs = mock_post.call_args
         headers = kwargs.get('headers', {})
         self.assertIn('x-opencode-session', headers)
-        self.assertTrue(headers['x-opencode-session'].startswith('tato-'))
+        self.assertIn('X-OpenCode-Session', headers)
+        self.assertEqual(headers.get('User-Agent'), 'tato-calistenia/1.0')
+        # Ensure it parses as a valid UUID
+        self.assertIsInstance(uuid.UUID(headers['x-opencode-session']), uuid.UUID)
 
         # Also verify in test_provider_connection
         from tools.editorial_rag.api_runner import test_provider_connection
         test_provider_connection(cfg)
         _, kwargs_test = mock_post.call_args
         headers_test = kwargs_test.get('headers', {})
-        self.assertEqual(headers_test.get('x-opencode-session'), 'tato-editorial-test')
+        self.assertIn('x-opencode-session', headers_test)
+        self.assertEqual(headers_test.get('User-Agent'), 'tato-calistenia/1.0')
+        self.assertIsInstance(uuid.UUID(headers_test['x-opencode-session']), uuid.UUID)
 
 
 class AvailableModelsInfoTests(unittest.TestCase):
