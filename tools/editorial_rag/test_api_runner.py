@@ -43,6 +43,18 @@ class CleanModelOutputTests(unittest.TestCase):
         output = "Aquí está tu respuesta:\n{\"type\":\"dm\",\"text\":\"salida\"}\nEspero te sirva."
         self.assertEqual(clean_model_output(output, is_json_expected=True), '{"type":"dm","text":"salida"}')
 
+    def test_plain_text_wrapped_when_json_expected(self):
+        output = "Hola, qué tal? Contame qué te está costando."
+        self.assertEqual(clean_model_output(output, is_json_expected=True), '{"type":"dm","text":"Hola, qué tal? Contame qué te está costando."}')
+
+    def test_json_with_extra_fields_cleaned(self):
+        output = '{"type":"dm","text":"salida","reasoning":"algo más"}'
+        self.assertEqual(clean_model_output(output, is_json_expected=True), '{"type":"dm","text":"salida"}')
+
+    def test_json_alternative_key_mapped(self):
+        output = '{"dm":"salida directa"}'
+        self.assertEqual(clean_model_output(output, is_json_expected=True), '{"type":"dm","text":"salida directa"}')
+
 
 class ProviderSettingsTests(unittest.TestCase):
     def test_codex_defaults(self):

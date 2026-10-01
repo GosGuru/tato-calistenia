@@ -171,16 +171,31 @@ def clean_model_output(content: str, is_json_expected: bool = False) -> str:
                 lines = lines[:-1]
             text = '\n'.join(lines).strip()
 
-        # If there's surrounding conversational text, extract the outermost JSON object
-        if not text.startswith('{') and '{' in text and '}' in text:
+        # If there's an embedded JSON object, extract it and sanitize to closed schema
+        if '{' in text and '}' in text:
             start = text.find('{')
             end = text.rfind('}') + 1
             candidate = text[start:end].strip()
             try:
-                json.loads(candidate)
-                text = candidate
+                parsed = json.loads(candidate)
+                if isinstance(parsed, dict):
+                    msg_type = parsed.get('type')
+                    if msg_type == 'needs_context' and 'question' in parsed:
+                        if set(parsed.keys()) == {'type', 'question'}:
+                            return candidate
+                        return json.dumps({'type': 'needs_context', 'question': str(parsed['question']).strip()}, ensure_ascii=False, separators=(',', ':'))
+                    dm_text = parsed.get('text') or parsed.get('dm') or parsed.get('message') or parsed.get('response')
+                    if dm_text:
+                        if set(parsed.keys()) == {'type', 'text'} and parsed.get('type') == 'dm':
+                            return candidate
+                        return json.dumps({'type': 'dm', 'text': str(dm_text).strip()}, ensure_ascii=False, separators=(',', ':'))
+                    return candidate
             except Exception:
                 pass
+
+        # If plain text was returned instead of JSON, wrap as a DM
+        if text.strip() and not text.startswith('{'):
+            return json.dumps({'type': 'dm', 'text': text.strip()}, ensure_ascii=False, separators=(',', ':'))
 
     return text.strip()
 
