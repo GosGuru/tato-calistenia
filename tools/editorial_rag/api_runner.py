@@ -257,7 +257,7 @@ def test_provider_connection(config: ProviderConfig, timeout: float = 15.0) -> D
             headers['HTTP-Referer'] = 'http://127.0.0.1:8765'
             headers['X-Title'] = 'Tato Calistenia'
 
-        if settings['provider'] == 'opencode':
+        if settings['provider'] == 'opencode' or 'opencode.ai' in settings.get('base_url', ''):
             headers['x-opencode-session'] = 'tato-editorial-test'
 
         payload = {
@@ -332,7 +332,7 @@ class ApiSessionRunner:
             headers['HTTP-Referer'] = 'http://127.0.0.1:8765'
             headers['X-Title'] = 'Tato Calistenia'
 
-        if settings['provider'] == 'opencode':
+        if settings['provider'] == 'opencode' or 'opencode.ai' in settings.get('base_url', ''):
             session_hash = hashlib.sha256(prompt[:300].encode('utf-8')).hexdigest()[:16]
             headers['x-opencode-session'] = f"tato-{session_hash}"
 
