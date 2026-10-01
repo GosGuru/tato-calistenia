@@ -53,12 +53,12 @@ export const DEFAULT_PROVIDERS = [
   {
     id: 'opencode',
     name: 'OpenCode',
-    badge: 'opencode.ai',
-    description: 'opencode.ai — Inferencia para gpt-6-luna, kimi-k2.6, glm-5.1 o modelos locales.',
+    badge: 'Go / Suscripción',
+    description: 'opencode.ai — Inferencia Go (suscripción) para gpt-6-luna, kimi-k2.6, glm-5.1, DeepSeek 4.1.',
     requiresKey: true,
-    models: ['gpt-6-luna', 'kimi-k2.6', 'glm-5.1', 'minimax-m2.7', 'deepseek-r1', 'llama3.3'],
+    models: ['gpt-6-luna', 'kimi-k2.6', 'glm-5.1', 'minimax-m2.7', 'deepseek-v4.1-flash', 'deepseek-r1'],
     defaultModel: 'gpt-6-luna',
-    defaultBaseUrl: 'https://opencode.ai/inference/openai/v1',
+    defaultBaseUrl: 'https://opencode.ai/zen/go/v1',
   },
   {
     id: 'openai',
