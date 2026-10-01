@@ -180,7 +180,7 @@ describe('ModelSelector UI interaction', () => {
 
     expect(onModelChange).toHaveBeenCalledWith({
       provider: 'opencode',
-      model: 'gpt-6-luna',
+      model: 'deepseek-v4.1-flash',
       baseUrl: 'https://opencode.ai/inference/openai/v1',
     });
     expect(getSavedApiKeys()['opencode']).toBe('sk-opencode-secret');
