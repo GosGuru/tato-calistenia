@@ -1,4 +1,5 @@
 """Multi-provider LLM adapter supporting OpenAI-compatible APIs (DeepSeek, OpenRouter, Gemini, OpenCode)."""
+import hashlib
 import json
 import os
 import re
@@ -256,6 +257,9 @@ def test_provider_connection(config: ProviderConfig, timeout: float = 15.0) -> D
             headers['HTTP-Referer'] = 'http://127.0.0.1:8765'
             headers['X-Title'] = 'Tato Calistenia'
 
+        if settings['provider'] == 'opencode':
+            headers['x-opencode-session'] = 'tato-editorial-test'
+
         payload = {
             'model': settings['model'],
             'messages': [{'role': 'user', 'content': 'Responde únicamente con la palabra OK.'}],
@@ -327,6 +331,10 @@ class ApiSessionRunner:
         if settings['provider'] == 'openrouter':
             headers['HTTP-Referer'] = 'http://127.0.0.1:8765'
             headers['X-Title'] = 'Tato Calistenia'
+
+        if settings['provider'] == 'opencode':
+            session_hash = hashlib.sha256(prompt[:300].encode('utf-8')).hexdigest()[:16]
+            headers['x-opencode-session'] = f"tato-{session_hash}"
 
         is_json_expected = type(packet) is RawHistoryPacket
         payload: Dict[str, Any] = {

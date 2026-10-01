@@ -169,6 +169,33 @@ class ApiSessionRunnerMockTests(unittest.TestCase):
             runner(packet)
         self.assertIn('API key inválida', str(ctx.exception))
 
+    @patch('httpx.Client.post')
+    def test_opencode_session_header_sent(self, mock_post):
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            'choices': [{'message': {'content': '{"type":"dm","text":"hola"}'}}]
+        }
+        mock_post.return_value = mock_response
+
+        cfg = ProviderConfig(provider='opencode', api_key='sk-opencode-test')
+        runner = ApiSessionRunner(cfg)
+        packet = RawHistoryPacket('Lead: hola\nTato: buenas', 'rules', True)
+        runner(packet)
+
+        # Verify x-opencode-session header was passed
+        _, kwargs = mock_post.call_args
+        headers = kwargs.get('headers', {})
+        self.assertIn('x-opencode-session', headers)
+        self.assertTrue(headers['x-opencode-session'].startswith('tato-'))
+
+        # Also verify in test_provider_connection
+        from tools.editorial_rag.api_runner import test_provider_connection
+        test_provider_connection(cfg)
+        _, kwargs_test = mock_post.call_args
+        headers_test = kwargs_test.get('headers', {})
+        self.assertEqual(headers_test.get('x-opencode-session'), 'tato-editorial-test')
+
 
 class AvailableModelsInfoTests(unittest.TestCase):
     def test_get_available_models_info(self):
