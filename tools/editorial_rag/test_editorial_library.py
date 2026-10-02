@@ -9,11 +9,13 @@ if __package__:
     from .editorial_criteria import fingerprint, parse_criterion
     from .editorial_library import LibraryError, ranklocal, read_library
     from .library_config import PROJECT_URL, LibraryConfig
+    from .real_history import DEFAULT_GUIDANCE, MAX_GUIDANCE
     from .test_editorial_criteria import OWNER, VECTOR, row
 else:
     from editorial_criteria import fingerprint, parse_criterion
     from editorial_library import LibraryError, ranklocal, read_library
     from library_config import PROJECT_URL, LibraryConfig
+    from real_history import DEFAULT_GUIDANCE, MAX_GUIDANCE
     from test_editorial_criteria import OWNER, VECTOR, row
 
 def token(owner=OWNER):
@@ -61,7 +63,19 @@ class LibraryTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 ranklocal((criterion,), vectors)
         with self.assertRaises(ValueError):
-            ranklocal((criterion,), [VECTOR], max_results=3)
+            ranklocal((criterion,), [VECTOR], max_results=MAX_GUIDANCE + 1)
+
+    def test_guidance_ceiling_preserves_default_behavior(self):
+        criterion = parse_criterion(row(), OWNER)
+        self.assertEqual(DEFAULT_GUIDANCE, 2)
+        self.assertEqual(ranklocal((criterion,), [VECTOR], max_results=DEFAULT_GUIDANCE),
+                         ranklocal((criterion,), [VECTOR]))
+        ranked = ranklocal((criterion,), [VECTOR], max_results=MAX_GUIDANCE)
+        self.assertEqual(len(ranked), 1)
+        self.assertEqual(ranked[0].rank, 1)
+        for invalid in (0, -1, True, MAX_GUIDANCE + 1):
+            with self.assertRaises(ValueError):
+                ranklocal((criterion,), [VECTOR], max_results=invalid)
 
     def test_http_boundaries(self):
         def transport_with(patch):

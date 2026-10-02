@@ -22,3 +22,6 @@ node_modules/
 **/node_modules/
 dist/
 **/dist/
+
+# Artefactos de siembra de un solo uso: llevan UUID de aprobacion.
+tools/editorial_rag/app_rules/seed-plan/

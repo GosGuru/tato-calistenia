@@ -10,6 +10,7 @@ __pycache__
 **/.venv
 node_modules
 tools/editorial_rag/web/node_modules
+tools/editorial_rag/embedding_node/node_modules
 chats
 docs
 odd

@@ -3,9 +3,9 @@ import json
 from dataclasses import dataclass
 
 if __package__:
-    from .real_history import MAX_CHARACTERS
+    from .real_history import MAX_CHARACTERS, MAX_GUIDANCE
 else:
-    from real_history import MAX_CHARACTERS
+    from real_history import MAX_CHARACTERS, MAX_GUIDANCE
 
 
 def valid_raw_text(value):
@@ -28,7 +28,7 @@ class RawHistoryPacket:
             raise ValueError('Invalid raw packet')
         fields = {'phase', 'gate', 'situation', 'last_assistant_move', 'proposed_move',
                   'positive_voice', 'negative_repetition'}
-        if type(self.guidance) is not tuple or len(self.guidance) > 2:
+        if type(self.guidance) is not tuple or len(self.guidance) > MAX_GUIDANCE:
             raise ValueError('Invalid guidance')
         for item in self.guidance:
             if (type(item) is not dict or set(item) != fields

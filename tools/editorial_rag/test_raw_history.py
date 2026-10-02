@@ -9,7 +9,11 @@ from tools.editorial_rag.raw_history import (  # pyright: ignore[reportMissingIm
     parse_raw_result,
     raw_prompt,
 )
-from tools.editorial_rag.real_history import RULE_PATHS, load_real_rules  # pyright: ignore[reportMissingImports]
+from tools.editorial_rag.real_history import (  # pyright: ignore[reportMissingImports]
+    MAX_GUIDANCE,
+    RULE_PATHS,
+    load_real_rules,
+)
 
 
 class RawHistoryTests(unittest.TestCase):
@@ -60,10 +64,24 @@ class RawHistoryTests(unittest.TestCase):
             self.assertIn(phrase, prompt)
         self.assertIn('seven complete rules', prompt)
         self.assertEqual(json.loads(prompt.split('UNTRUSTED RAW HISTORY JSON\n')[1]), {'history': packet.history})
-        for invalid in ((guidance,) * 3, ({**guidance, 'owner_id': 'fictional'},),
+        for invalid in ((guidance,) * (MAX_GUIDANCE + 1), ({**guidance, 'owner_id': 'fictional'},),
                         ({**guidance, 'phase': 'x' * 2001},), [guidance]):
             with self.assertRaises(ValueError):
                 raw_prompt(replace(packet, guidance=invalid))
+
+    def test_guidance_ceiling_accepts_max_and_rejects_one_more(self):
+        guidance = dict.fromkeys((
+            'phase', 'gate', 'situation', 'last_assistant_move', 'proposed_move',
+            'positive_voice', 'negative_repetition'), 'fictional condition')
+        self.assertEqual(MAX_GUIDANCE, 8)
+        accepted = RawHistoryPacket('fictional history', 'synthetic rules', True,
+                                    (guidance,) * MAX_GUIDANCE)
+        accepted.validate()
+        prompt = raw_prompt(accepted)
+        guidance_json = prompt.split('CONDITIONAL GUIDANCE JSON\n')[1].split('\n')[0]
+        self.assertEqual(len(json.loads(guidance_json)), MAX_GUIDANCE)
+        with self.assertRaises(ValueError):
+            raw_prompt(replace(accepted, guidance=(guidance,) * (MAX_GUIDANCE + 1)))
 
     def test_packet_strict_and_unicode_bounded(self):
         packet = RawHistoryPacket('🪁' * 24000, 'synthetic rules', True)

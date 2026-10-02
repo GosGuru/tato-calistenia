@@ -15,6 +15,7 @@ if __package__:
     )
     from .library_config import LibraryConfig
     from .model_setup import SPEC
+    from .real_history import DEFAULT_GUIDANCE, MAX_GUIDANCE
 else:
     import supabase_reader as legacy
     from editorial_criteria import (
@@ -26,6 +27,7 @@ else:
     )
     from library_config import LibraryConfig
     from model_setup import SPEC
+    from real_history import DEFAULT_GUIDANCE, MAX_GUIDANCE
 
 MAX_BYTES = 2 * 1024 * 1024
 MAX_CRITERIA = 50
@@ -85,12 +87,12 @@ class RankedCriterion:
     advisory: str = 'Conditional guidance only; not confidence, phase or permission to convert.'
 
 
-def ranklocal(criteria, queryvectors, max_results=2):
+def ranklocal(criteria, queryvectors, max_results=DEFAULT_GUIDANCE):
     """Exact cosine; maximum over ALL query chunks, no threshold or phase filter."""
     if (type(criteria) not in (tuple, list) or len(criteria) > MAX_CRITERIA
             or type(queryvectors) not in (tuple, list)
             or not 1 <= len(queryvectors) <= SPEC['max_chunks']
-            or type(max_results) is not int or not 1 <= max_results <= 2):
+            or type(max_results) is not int or not 1 <= max_results <= MAX_GUIDANCE):
         raise ValueError('Invalid ranking bounds')
     queries = tuple(validate_vector(vector) for vector in queryvectors)
     seen, owners, scores = set(), set(), []

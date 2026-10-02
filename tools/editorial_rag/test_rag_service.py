@@ -1,4 +1,5 @@
 """Retrieval is advisory and never an extra provider generation."""
+import inspect
 import unittest
 from dataclasses import replace
 from unittest.mock import Mock, patch
@@ -9,6 +10,9 @@ from tools.editorial_rag.editorial_criteria import (  # pyright: ignore[reportMi
     EmbeddingRecord,
     fingerprint,
 )
+from tools.editorial_rag.editorial_library import (  # pyright: ignore[reportMissingImports]
+    ranklocal,
+)
 from tools.editorial_rag.library_config import (  # pyright: ignore[reportMissingImports]
     PROJECT_URL,
     LibraryConfig,
@@ -17,6 +21,10 @@ from tools.editorial_rag.prototype import Card  # pyright: ignore[reportMissingI
 from tools.editorial_rag.rag_service import (  # pyright: ignore[reportMissingImports]
     GUIDANCE_FIELDS,
     retrieve,
+)
+from tools.editorial_rag.real_history import (  # pyright: ignore[reportMissingImports]
+    DEFAULT_GUIDANCE,
+    MAX_GUIDANCE,
 )
 
 OWNER = '11111111-1111-4111-8111-111111111111'
@@ -33,17 +41,17 @@ def criterion(identity='fictional-one', owner=OWNER):
 
 
 class RetrievalTests(unittest.TestCase):
-    def test_fresh_local_ranking_supplies_only_two_content_records(self):
+    def test_fresh_local_ranking_supplies_only_the_ceiling_of_content_records(self):
         auth = Mock()
         auth.snapshot.return_value = (1, 'connected', 'fictional-token', CONFIG)
         history = 'complete fictional history'
-        rows = (criterion('fictional-a'), criterion('fictional-b'), criterion('fictional-c'))
+        rows = tuple(criterion('fictional-' + letter) for letter in 'abcdefghi')
         with patch('tools.editorial_rag.rag_service.read_library', side_effect=[rows, ()]) as read, \
              patch('tools.editorial_rag.rag_service.embed_query', return_value=[VECTOR]) as embed:
             revision, guidance, status = retrieve(auth, history)
             self.assertEqual(revision, 1)
-            self.assertEqual(status, {'status': 'supplied', 'count': 2})
-            self.assertEqual(len(guidance), 2)
+            self.assertEqual(status, {'status': 'supplied', 'count': 8})
+            self.assertEqual(len(guidance), 8)
             self.assertEqual(set(guidance[0]), set(GUIDANCE_FIELDS))
             self.assertNotIn('fictional-provenance', repr(guidance))
             read.assert_called_with('fictional-token', CONFIG)
@@ -51,6 +59,22 @@ class RetrievalTests(unittest.TestCase):
             self.assertEqual(retrieve(auth, history)[1:], ((), {'status': 'empty', 'count': 0}))
             self.assertEqual(read.call_count, 2)
             embed.assert_called_once()
+
+    def test_request_size_is_the_ceiling_while_the_library_default_stays_pinned(self):
+        auth = Mock()
+        auth.snapshot.return_value = (1, 'connected', 'fictional-token', CONFIG)
+        rows = tuple(criterion('fictional-' + letter) for letter in 'abcdefghi')
+        with patch('tools.editorial_rag.rag_service.read_library', return_value=rows), \
+             patch('tools.editorial_rag.rag_service.embed_query', return_value=[VECTOR]), \
+             patch('tools.editorial_rag.rag_service.ranklocal', wraps=ranklocal) as rank:
+            revision, guidance, status = retrieve(auth, 'complete fictional history')
+        self.assertEqual(revision, 1)
+        self.assertEqual(status, {'status': 'supplied', 'count': 8})
+        self.assertEqual(len(guidance), 8)
+        self.assertEqual(rank.call_args.kwargs['max_results'], MAX_GUIDANCE)
+        self.assertEqual(inspect.signature(ranklocal).parameters['max_results'].default, DEFAULT_GUIDANCE)
+        self.assertEqual(DEFAULT_GUIDANCE, 2)
+        self.assertEqual(MAX_GUIDANCE, 8)
 
     def test_stale_revoked_and_wrong_owner_never_embed_or_supply(self):
         stale, revoked = criterion(), criterion()

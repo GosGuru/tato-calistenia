@@ -116,3 +116,37 @@ class SessionStore:
             return True
         except Exception:
             return False
+
+
+class EnvSessionStore:
+    """In-memory equivalent of the persisted session for a deployment credential.
+
+    Implements the same ``config``/``load``/``save``/``clear`` surface as
+    ``SessionStore`` so ``AppAuth`` composes unchanged and every owner, project
+    and authenticated RLS check still runs. It never touches disk: the
+    deployment environment supplies the seed credential and rotation is held in
+    memory for the life of the process only. No credential value is logged,
+    printed, returned or placed in an exception message; failures stay fixed and
+    content-free.
+    """
+    def __init__(self, config, token=None):
+        if type(config) is not LibraryConfig:
+            raise ValueError('Validated configuration required')
+        config.__post_init__()
+        if token is not None and not valid_refresh(token):
+            raise ValueError('Validated refresh credential required')
+        self.config = config
+        self._token = token
+
+    def load(self):
+        return self._token if valid_refresh(self._token) else None
+
+    def save(self, token):
+        if not valid_refresh(token):
+            return False
+        self._token = token
+        return True
+
+    def clear(self):
+        self._token = None
+        return True

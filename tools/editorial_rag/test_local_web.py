@@ -91,6 +91,7 @@ class LocalWebTests(unittest.TestCase):
     def test_complete_primary_composition_with_two_fictional_criteria(self):
         from pathlib import Path
 
+        from .app_rules import load_app_rules
         from .real_history import RULE_PATHS
         from .test_app_auth import CONFIG, OWNER
         from .test_rag_service import VECTOR, criterion
@@ -123,9 +124,11 @@ class LocalWebTests(unittest.TestCase):
         self.assertEqual(json.loads(prompt.split('UNTRUSTED RAW HISTORY JSON\n')[1]), {'history': history})
         guidance = json.loads(prompt.split('CONDITIONAL GUIDANCE JSON\n')[1].split('\nUNTRUSTED RAW HISTORY JSON')[0])
         self.assertEqual(len(guidance), 2)
+        # The composed prompt carries the lean app pack and none of the seven normative sources.
+        self.assertIn(load_app_rules(), prompt)
         self.assertEqual(len(RULE_PATHS), 7)
         for path in RULE_PATHS:
-            self.assertIn((Path(__file__).resolve().parents[2] / path).read_bytes().decode('utf-8'), prompt)
+            self.assertNotIn((Path(__file__).resolve().parents[2] / path).read_bytes().decode('utf-8'), prompt)
         self.assertNotIn('secret-token-sentinel', prompt)
         self.assertNotIn(OWNER, prompt)
         embed.assert_called_once_with(history)
@@ -161,15 +164,15 @@ class LocalWebTests(unittest.TestCase):
                 self.assertFalse(web._FLIGHT.locked())
 
     def test_raw_bootstrap_independent_and_single_typed_call(self):
+        from tools.editorial_rag.app_rules import (  # pyright: ignore[reportMissingImports]
+            load_app_rules,
+        )
         from tools.editorial_rag.raw_history import (  # pyright: ignore[reportMissingImports]
             RawHistoryPacket,
         )
-        from tools.editorial_rag.real_history import (  # pyright: ignore[reportMissingImports]
-            load_real_rules,
-        )
 
         with patch.object(web, 'synthetic_case', side_effect=ValueError('invented failure')), \
-                patch.object(web, 'load_real_rules', side_effect=ValueError('invented failure')), \
+                patch.object(web, 'load_app_rules', side_effect=ValueError('invented failure')), \
                 patch.object(web, 'retrieve', side_effect=ValueError('invented failure')), \
                 patch.object(web.AppAuth, 'status', side_effect=ValueError('invented failure')):
             bootstrap = self.client.get('/api/bootstrap')
@@ -188,7 +191,7 @@ class LocalWebTests(unittest.TestCase):
             packet = self.factory.return_value.call_args.args[0]
             self.assertIs(type(packet), RawHistoryPacket)
             self.assertEqual(packet.history, history)
-            self.assertEqual(packet.current_rules, load_real_rules())
+            self.assertEqual(packet.current_rules, load_app_rules())
             self.assertIs(packet.consent, True)
 
     def test_persistence_metadata_is_optional_lazy_and_contains_no_credentials(self):
@@ -319,7 +322,7 @@ class LocalWebTests(unittest.TestCase):
             self.assertFalse(web._FLIGHT.locked())
 
     def test_raw_rule_failure_before_runner_and_bootstrap_security(self):
-        with patch.object(web, 'load_real_rules', side_effect=RuntimeError('invented failure')):
+        with patch.object(web, 'load_app_rules', side_effect=RuntimeError('invented failure')):
             result = self.post({'history': 'inventado', 'consent': True}, path='/api/raw-draft')
         self.assertEqual(result.status_code, 502)
         self.assertEqual(result.json(), {'error': web.DRAFT_FAILURE})
@@ -421,16 +424,18 @@ class LocalWebTests(unittest.TestCase):
         self.factory.assert_not_called()
 
     def test_real_rule_failure_is_fixed_before_runner(self):
-        with patch.object(web, 'load_real_rules', side_effect=RuntimeError('fictional internal detail')):
+        with patch.object(web, 'load_app_rules', side_effect=RuntimeError('fictional internal detail')):
             response = self.draft()
         self.assertEqual(response.status_code, 502)
         self.assertEqual(response.json(), {'error': web.DRAFT_FAILURE})
         self.factory.assert_not_called()
 
     def test_real_single_call_server_rules_and_no_history_response(self):
+        from tools.editorial_rag.app_rules import (  # pyright: ignore[reportMissingImports]
+            load_app_rules,
+        )
         from tools.editorial_rag.real_history import (  # pyright: ignore[reportMissingImports]
             RealPacket,
-            load_real_rules,
         )
 
         self.factory.return_value.return_value = 'qué querés mejorar?'
@@ -440,7 +445,7 @@ class LocalWebTests(unittest.TestCase):
         self.factory.return_value.assert_called_once()
         packet = self.factory.return_value.call_args.args[0]
         self.assertIs(type(packet), RealPacket)
-        self.assertEqual(packet.current_rules, load_real_rules())
+        self.assertEqual(packet.current_rules, load_app_rules())
         self.assertNotIn('quiero fuerza', response.text)
 
     def test_real_failures_fixed_no_retry_and_lock_released(self):

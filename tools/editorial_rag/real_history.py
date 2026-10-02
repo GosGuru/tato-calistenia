@@ -9,6 +9,10 @@ MAX_MESSAGES = 100
 MAX_MESSAGE_CHARACTERS = 4_000
 # Enough for 24k astral characters encoded as JSON surrogate pairs plus schema.
 MAX_BODY_BYTES = 300_000
+# Hard ceiling for retrieved editorial guidance items at every layer.
+MAX_GUIDANCE = 8
+# Behavior-preserving default retrieval size; today every caller uses this value.
+DEFAULT_GUIDANCE = 2
 RULE_PATHS = tuple('.agents/skills/tato-calistenia/' + path for path in (
     'SKILL.md', 'references/motor-agentico.md', 'references/voz-escrita-tato.md',
     'references/operativa-dm.md', 'references/contexto-maestro.md',

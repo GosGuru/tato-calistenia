@@ -41,6 +41,18 @@ opcional `/api/auth/persistence` significa persistencia no activada. La función
 posterior coordinado; no interrumpir una generación para activarla. Bootstrap/status conservan sus
 esquemas. `create_app()` por defecto sigue siendo memory-only; solo el launcher compone el store.
 
+### Fuente de configuración en cloud — fix de conexión
+
+En un deploy gestionado (Railway/Render, detectado por `PORT`, `RAILWAY_ENVIRONMENT` o `RENDER`) no
+existen el archivo local ni el store DPAPI. `production_auth()` compone
+`AppAuth(config_source=env_config)` y la configuración pública acotada se inyecta por entorno:
+`TATO_LIBRARY_PUBLISHABLE_KEY` y `TATO_LIBRARY_OWNER_ID`; versión y proyecto siguen fijos en código.
+Faltantes o inválidas fallan cerrado con `ConfigError`, sin fallback al archivo y sin leer
+credenciales del usuario — la clave publishable es pública por diseño y el dueño es un UUID opaco.
+Ambos valores se acotan antes de validar y un fallo no filtra su contenido al traceback. El camino
+local no cambia: sigue leyendo solo el archivo. La persistencia de sesión NO se activa en cloud: el
+JWT vive únicamente en memoria del proceso, así que cada restart o deploy vuelve a pedir login.
+
 No se cambiaron motor, reglas, prompts, RAG, fichas, embeddings, SQL, CRM, dependencias ni CSP.
 Arneses actualizados, sin ejecución de navegador por el writer; aprobación visual y eficacia semántica
 no demostradas. #59 no utilizado. Incidente del primer RED Auth y evidencia nueva detallados en

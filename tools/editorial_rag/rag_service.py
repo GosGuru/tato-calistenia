@@ -3,6 +3,7 @@ from .editorial_criteria import Criterion
 from .editorial_library import ranklocal, read_library
 from .local_embedding import embed_query
 from .raw_history import valid_raw_text
+from .real_history import DEFAULT_GUIDANCE, MAX_GUIDANCE
 
 GUIDANCE_FIELDS = ('phase', 'gate', 'situation', 'last_assistant_move', 'proposed_move',
                    'positive_voice', 'negative_repetition')
@@ -23,7 +24,9 @@ def retrieve(auth, history):
             criterion.__post_init__()
             if any(not valid_raw_text(getattr(criterion.card, name)) for name in GUIDANCE_FIELDS):
                 raise ValueError('Invalid guidance text')
-        ranked = ranklocal(criteria, embed_query(history), max_results=2)
+        # The app retrieves at the ceiling while DEFAULT_GUIDANCE remains the library's
+        # behavior-preserving default; the two are deliberately different.
+        ranked = ranklocal(criteria, embed_query(history), max_results=MAX_GUIDANCE)
         guidance = tuple({name: getattr(item.criterion.card, name) for name in GUIDANCE_FIELDS}
                          for item in ranked)
         return revision, guidance, {'status': 'supplied', 'count': len(guidance)}

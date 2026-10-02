@@ -28,6 +28,7 @@ from .api_runner import (
     test_provider_connection,
 )
 from .app_auth import AppAuth
+from .app_rules import load_app_rules
 from .codex_runner import CodexSessionRunner
 from .generation_diagnostics import GenerationDiagnostics
 from .organization import OrganizationPacket, parse_assignments, parse_blocks
@@ -38,7 +39,6 @@ from .real_history import (
     MAX_BODY_BYTES,
     MAX_CHARACTERS,
     RealPacket,
-    load_real_rules,
     parse_history,
     parse_messages,
 )
@@ -342,7 +342,7 @@ def create_app(auth=None):
             if selected_revision != revision or not auth.current(revision, require_connected):
                 return diagnosed(error(409, changed))
             with diagnostics.stage('rules'):
-                rules = load_real_rules()
+                rules = load_app_rules()
             with diagnostics.stage('packet'):
                 packet = RawHistoryPacket(body.history, rules, body.consent, guidance)
                 packet.validate()
@@ -398,7 +398,7 @@ def create_app(auth=None):
             return error(409, BUSY)
         try:
             messages = parse_messages(body.messages) if body.messages is not None else parse_history(body.history)
-            packet = RealPacket(messages, load_real_rules(), body.reviewed, body.consent)
+            packet = RealPacket(messages, load_app_rules(), body.reviewed, body.consent)
             packet.validate()
             runner = (CodexSessionRunner()
                       if (body.provider_config is None or body.provider_config.provider == 'codex')
@@ -464,12 +464,62 @@ def create_app(auth=None):
     return app
 
 
+# Names only for the deployment credential variables: their values are read
+# from the process environment at startup and are never assigned into code,
+# logged, printed, written to disk or placed in an exception message.
+ENV_CREDENTIAL_VARS = ('TATO_LIBRARY_REFRESH_TOKEN', 'TATO_LIBRARY_EMAIL', 'TATO_LIBRARY_PASSWORD')
+
+
+def _env_credential(name):
+    """Non-empty environment text only; any other value counts as absent."""
+    value = os.environ.get(name)
+    return value if type(value) is str and value else None
+
+
+def environment_auth():
+    """Startup session from explicit deployment credentials; None when unset.
+
+    A complete credential set opts in: the refresh token alone (preferred) or
+    the email/password pair. The refresh token seeds the in-memory equivalent of
+    the persisted session so ``restore()`` can renew and verify it; the pair is
+    used once at startup to sign in. Owner match, the pinned project and the
+    authenticated Supabase read all still run. Without a complete set the caller
+    keeps today's behaviour unchanged. Failures return a bare disconnected
+    ``AppAuth``: no credential value is logged, printed, written to disk or
+    placed in an exception message.
+    """
+    refresh_var, email_var, password_var = ENV_CREDENTIAL_VARS
+    refresh = _env_credential(refresh_var)
+    email = _env_credential(email_var)
+    password = _env_credential(password_var)
+    if refresh is None and (email is None or password is None):
+        return None
+    try:
+        from .library_config import env_config
+        from .session_store import EnvSessionStore
+
+        config = env_config()
+        if refresh is not None:
+            auth = AppAuth(store=EnvSessionStore(config, refresh))
+            auth.restore()
+            return auth
+        auth = AppAuth(store=EnvSessionStore(config))
+        auth.login(email, password)
+        return auth
+    except Exception:
+        del refresh, email, password
+        return AppAuth()
+
+
 def production_auth():
     """Only the foreground launcher opts into current-user persistence."""
     from .library_config import env_config, load_config
     from .session_store import SessionStore
 
     try:
+        auth = environment_auth()
+        if auth is not None:
+            return auth
         if is_cloud_env():
             # Managed deployment: no local file and no persisted session exist here,
             # so the bounded public configuration is injected explicitly.
