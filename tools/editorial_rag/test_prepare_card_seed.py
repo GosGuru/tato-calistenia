@@ -44,6 +44,14 @@ EXPECTED_PACK_TOKENS = {
     'tech-traduccion-corporal': 204,
     'voice-invitacion-calida': 229,
     'voice-objecion-dignidad': 223,
+    'voice-humor-calibrado': 231,
+    'voice-apertura-coloquial-cadencia': 240,
+    'values-filtro-indiferencia': 217,
+    'voice-estas-a-tiempo': 225,
+    'voice-punto-b': 213,
+    'voice-cambio-fisico-proceso': 198,
+    'voice-followup-concreto': 210,
+    'voice-sondeo-evasion-serena': 234,
 }
 
 
@@ -229,7 +237,7 @@ class SeedTests(unittest.TestCase):
 
     def test_pack_passages_fit_the_real_embedder_token_ceiling(self):
         cards = load_app_cards()
-        self.assertEqual(len(cards), 12)
+        self.assertEqual(len(cards), 20)
         self.assertEqual(seed.PASSAGE_TOKEN_CEILING, 512)
         for card in cards:
             with self.subTest(card=card.card_id):

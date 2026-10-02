@@ -8,15 +8,15 @@ fuentes siguen intactas y el hash de `load_real_rules()` que usa el banco offlin
 ## Por qué: la proporción medida
 
 Todos los números de esta sección se miden sobre el contenido real de este pack con
-`len()`: el texto de `base.md` y los pasajes de `criterion_passage()` de las 12 cards.
+`len()`: el texto de `base.md` y los pasajes de `criterion_passage()` de las 20 cards.
 
-- `base.md` pesa **10,966 caracteres** (techo duro: 25,000).
-- Los 12 pasajes de las cards suman **10,644 caracteres** y promedian **887 caracteres**
-  cada uno.
+- `base.md` pesa **12,019 caracteres** (techo duro: 25,000).
+- Los 20 pasajes de las cards suman **17,910 caracteres** y promedian **896 caracteres**
+  cada uno (895.5 exactos).
 - Ventana de 2 cards (`DEFAULT_GUIDANCE`, la ventana actual de recuperación):
-  10,966 / (2 × 887) = proporción base–guía de **6.2:1**.
+  12,019 / (2 × 895.5) = proporción base–guía de **6.7:1**.
 - Ventana de 8 cards (`MAX_GUIDANCE`, el nuevo techo de recuperación):
-  10,966 / (8 × 887) = proporción base–guía de **1.5:1**.
+  12,019 / (8 × 895.5) = proporción base–guía de **1.7:1**.
 
 La ventana de 8 cards acerca la guía recuperada a la base siempre activa; con 2 cards la
 guía que llega al modelo sigue siendo una fracción chica del contexto.
@@ -41,9 +41,9 @@ de líneas, tomados literalmente de las siete referencias. El test
 `test_app_rules.py::InvariantInventoryTests` parsea ese inventario y verifica que cada
 cita siga apareciendo en el rango citado: si cambia una línea fuente que sostiene un
 invariante listado, el test falla. También verifica que cada `base_anchor` esté en
-`base.md`. Conteos: **63 invariantes capturados** (formato 9, voz–contrato 12, oferta y
-agenda 12, seguridad y salud 10, secuencia y conversión 20) y **12 grupos juzgados
-expresivos**, repartidos en 12 cards.
+`base.md`. Conteos: **65 invariantes capturados** (formato 9, voz–contrato 13, oferta y
+agenda 12, seguridad y salud 10, secuencia y conversión 21) y **20 grupos juzgados
+expresivos**, repartidos en 20 cards.
 
 ## Cards y tamaño por pasaje
 
@@ -74,16 +74,24 @@ hoy:
 | `tech-traduccion-corporal` | 880 | 204 |
 | `voice-invitacion-calida` | 977 | 229 |
 | `voice-objecion-dignidad` | 889 | 223 |
+| `voice-humor-calibrado` | 944 | 231 |
+| `voice-apertura-coloquial-cadencia` | 929 | 240 |
+| `values-filtro-indiferencia` | 939 | 217 |
+| `voice-estas-a-tiempo` | 907 | 225 |
+| `voice-punto-b` | 876 | 213 |
+| `voice-cambio-fisico-proceso` | 832 | 198 |
+| `voice-followup-concreto` | 878 | 210 |
+| `voice-sondeo-evasion-serena` | 961 | 234 |
 
-Total 10,644 caracteres y **2,547 tokens**; máximo observado **229 tokens**
-(`voice-invitacion-calida`), menos de la mitad del techo real de 512. La relación
-observada es de unos **4.2 caracteres por token** (rango por card 3.97–4.36), muy por
-deajo de la suposición conservadora anterior. El proxy de **1,200 caracteres** queda solo
+Total 17,910 caracteres y **4,315 tokens**; máximo observado **240 tokens**
+(`voice-apertura-coloquial-cadencia`), menos de la mitad del techo real de 512. La relación
+observada es de unos **4.2 caracteres por token** (rango por card 3.87–4.36), muy por
+debajo de la suposición conservadora anterior. El proxy de **1,200 caracteres** queda solo
 como guardia barata del loader (`app_rules.py`, que no tokeniza en runtime) y equivale a
-unos 287 tokens al ratio observado; el límite que gobierna es el real de 512 tokens.
+unos 289 tokens al ratio observado; el límite que gobierna es el real de 512 tokens.
 
 La validación contra el techo real vive en `test_prepare_card_seed.py`, que cuenta tokens
-reales de las 12 cards, y `prepare_card_seed.py` rechaza cualquier pasaje sobre el techo
+reales de las 20 cards, y `prepare_card_seed.py` rechaza cualquier pasaje sobre el techo
 antes de planificar el seed. Ninguna card del pack necesita acortarse hoy.
 
 ## Flujo de dos pasos hacia la base: candidatos y luego aprobación con embedding
@@ -107,10 +115,10 @@ plan y un reporte. Un plan no es autorización.
 
    Con `--per-card`, en lugar del plan batch emite **un plan autocontenido por card**
    (`card-seed-<card_id>.sql`, cada uno con su `BEGIN`/`COMMIT`, su `LOCK` y todos los guards
-   escalados a 1) más un índice `card-seed-per-card-report.json`. Las doce huellas y los
+   escalados a 1) más un índice `card-seed-per-card-report.json`. Las veinte huellas y los
    hashes de wire coinciden con el reporte batch para el mismo snapshot, pero cada plan es
    atómico y se aplica de a uno: si uno falla, el fallo se aísla en esa card. El plan batch
-   sin el flag sigue saliendo byte a byte igual. Las doce cards comparten un único
+   sin el flag sigue saliendo byte a byte igual. Las veinte cards comparten un único
    `approval_id` porque el batch es un solo evento de aprobación.
 
 Contrato compartido por ambos artefactos:

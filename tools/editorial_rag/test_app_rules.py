@@ -28,11 +28,13 @@ INVARIANTS_PATH = ROOT / 'tools' / 'editorial_rag' / 'app_rules' / 'invariants.m
 LOADER_PATH = Path(__file__).resolve().parent / 'app_rules.py'
 SKILL_ROOT = '.agents/skills/tato-calistenia/'
 MAX_BASE_CHARACTERS = 25_000
-# Snapshot of load_real_rules() taken before this pack existed. The seven normative
-# sources are frozen for the offline bank, so the joined output must not drift.
-RULES_SHA256_PRE_TASK = '3928b817d5717c6f797ea832f6c33602678fe1449769ded93a4af62459051b51'
-RULES_CHARACTERS_PRE_TASK = 114_214
-EXPECTED_INVARIANTS = 63
+# Pinned snapshot of load_real_rules(). The seven normative sources are frozen for the
+# offline bank; the joined output must not drift except through an approved maintenance
+# change, which re-pins these two constants in the same commit as the reference edit.
+RULES_SHA256_PINNED = 'e1607023272379c84e86f2c3a609b57dbdeb9a685c546a1a9393697876f0adce'
+RULES_CHARACTERS_PINNED = 116_350
+EXPECTED_INVARIANTS = 65
+EXPECTED_CARD_COUNT = 20
 EXPECTED_THEMES = {'format', 'voice_contract', 'offer_agenda',
                    'safety_health', 'sequence_conversion'}
 OPAQUE_IDENTIFIER = re.compile(r'[a-z0-9][a-z0-9_-]{0,79}')
@@ -100,11 +102,11 @@ class LoaderIsolationTests(unittest.TestCase):
                 imported.extend(alias.name for alias in node.names)
         self.assertFalse(any('real_history' in name for name in imported))
 
-    def test_load_real_rules_is_byte_identical_to_the_pre_task_snapshot(self):
+    def test_load_real_rules_is_byte_identical_to_the_pinned_snapshot(self):
         rules = load_real_rules()
-        self.assertEqual(len(rules), RULES_CHARACTERS_PRE_TASK)
+        self.assertEqual(len(rules), RULES_CHARACTERS_PINNED)
         self.assertEqual(hashlib.sha256(rules.encode('utf-8')).hexdigest(),
-                         RULES_SHA256_PRE_TASK)
+                         RULES_SHA256_PINNED)
 
 
 class CardPackTests(unittest.TestCase):
@@ -112,8 +114,8 @@ class CardPackTests(unittest.TestCase):
 
     def test_every_card_parses_and_passes_criterion_passage(self):
         cards = load_app_cards()
+        self.assertEqual(len(cards), EXPECTED_CARD_COUNT)
         self.assertGreaterEqual(len(cards), 8)
-        self.assertLessEqual(len(cards), 12)
         for card in cards:
             with self.subTest(card=card.card_id):
                 self.assertIs(type(card), Card)

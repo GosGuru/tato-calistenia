@@ -18,16 +18,16 @@ All paths are repository-relative. Character counts are current file sizes (UTF-
 
 | Source | Characters | Role in the split |
 |---|---|---|
-| `.agents/skills/tato-calistenia/SKILL.md` | 5,493 | invariants |
-| `.agents/skills/tato-calistenia/references/motor-agentico.md` | 21,338 | invariants (decision order, sequence contracts) |
-| `.agents/skills/tato-calistenia/references/voz-escrita-tato.md` | 16,362 | split: invariants here, expressiveness to cards |
-| `.agents/skills/tato-calistenia/references/operativa-dm.md` | 15,713 | invariants (phases, gates, conversion) |
-| `.agents/skills/tato-calistenia/references/contexto-maestro.md` | 10,208 | invariants (offer, safety, privacy) |
-| `.agents/skills/tato-calistenia/references/objeciones-agenda.md` | 8,002 | invariants (money, agenda, follow-up, closes) |
-| `.agents/skills/tato-calistenia/references/biblioteca-tecnica-tato.md` | 31,685 | split: limits here, technique knowledge to cards |
+| `.agents/skills/tato-calistenia/SKILL.md` | 5,476 | invariants |
+| `.agents/skills/tato-calistenia/references/motor-agentico.md` | 22,302 | invariants (decision order, sequence contracts) |
+| `.agents/skills/tato-calistenia/references/voz-escrita-tato.md` | 19,172 | split: invariants here, expressiveness to cards |
+| `.agents/skills/tato-calistenia/references/operativa-dm.md` | 16,196 | invariants (phases, gates, conversion) |
+| `.agents/skills/tato-calistenia/references/contexto-maestro.md` | 10,971 | invariants (offer, safety, privacy) |
+| `.agents/skills/tato-calistenia/references/objeciones-agenda.md` | 8,017 | invariants (money, agenda, follow-up, closes) |
+| `.agents/skills/tato-calistenia/references/biblioteca-tecnica-tato.md` | 32,669 | split: limits here, technique knowledge to cards |
 
-Total of the seven references: 108,801 characters. The two split files are
-`voz-escrita-tato.md` (16,362) and `biblioteca-tecnica-tato.md` (31,685).
+Total of the seven references: 114,803 characters. The two split files are
+`voz-escrita-tato.md` (19,172) and `biblioteca-tecnica-tato.md` (32,669).
 
 ## Where the line is drawn
 
@@ -47,10 +47,10 @@ Total of the seven references: 108,801 characters. The two split files are
 
 ## Counts
 
-- Invariants captured: **63** entries across 5 themes (format 9, voice contract 12,
-  offer and agenda 12, safety and health 10, sequence and conversion 20).
-- Content groups judged expressive instead of invariant: **12** (listed below), distributed
-  over 12 retrieval cards in `cards.json`.
+- Invariants captured: **65** entries across 5 themes (format 9, voice contract 13,
+  offer and agenda 12, safety and health 10, sequence and conversion 21).
+- Content groups judged expressive instead of invariant: **20** (listed below), distributed
+  over 20 retrieval cards in `cards.json`.
 
 ## Judged expressive (moved to cards, not counted as invariants)
 
@@ -66,6 +66,14 @@ Total of the seven references: 108,801 characters. The two split files are
 10. Route articulation: "La ruta puede decir: qué conviene ordenar primero; qué capacidad se necesita construir" (`voz-escrita-tato.md`, "Ruta sin voz de vendedor") → `voice-ruta-contextual`.
 11. Warm invitation: "reconocer brevemente la aceptación ... y enlazar la propuesta con iniciativa cálida" (`voz-escrita-tato.md`, "Movimientos comerciales con voz humana") → `voice-invitacion-calida`.
 12. Technique pedagogy and cues: "Usar ejemplos simples, puntos de apoyo e intenciones de movimiento" and the curated pattern cues (`biblioteca-tecnica-tato.md`, "Voz pedagogica de Tato" and pattern sections) → `tech-traduccion-corporal`, `tech-orientar-sin-corregir`.
+13. Humour and its hard limits: "Sirve para bajar tensión y aparece cuando el lead ya hizo un chiste o ya mostró buena onda" (`voz-escrita-tato.md`, "Humor") → `voice-humor-calibrado`.
+14. Colloquial opening and short-line burst: "Aperturas tipo `Buenas buenas` o `Buenas` más el nombre cuando el nombre consta" (`voz-escrita-tato.md`, "Cadencia y aperturas") → `voice-apertura-coloquial-cadencia`.
+15. Values filter: "La firmeza `lo más cómodo es rendirse` se usa solo con quien ya mostró compromiso" (`operativa-dm.md`, "Filtro por valores") → `values-filtro-indiferencia`.
+16. The "you are still in time" reframe: "cerrar con el reencuadre de que está a tiempo" (`biblioteca-tecnica-tato.md`, the `depende` plus para qué branch) → `voice-estas-a-tiempo`.
+17. Point B framing: "El punto B es llegar fuerte y capaz a los sesenta y poder usar el cuerpo durante muchos años" (`contexto-maestro.md`, "Punto B y cambio físico") → `voice-punto-b`.
+18. Physical change as process evidence: "La evidencia del proceso es un video de prueba al primer día y al día noventa" (`contexto-maestro.md`, "Punto B y cambio físico") → `voice-cambio-fisico-proceso`.
+19. Concrete follow-up with an easy exit: "una sola pregunta concreta sobre una acción pendiente, con salida fácil" (`objeciones-agenda.md`, "Follow-up en cualquier fase") → `voice-followup-concreto`.
+20. Calm objection probe, phrasing side: "Se reconoce sin drama y se hace una sola pregunta tranquila que descubra el freno real" (`motor-agentico.md`, "Evadir no es rechazar") → `voice-sondeo-evasion-serena`.
 
 ## Machine-readable inventory
 
@@ -150,7 +158,7 @@ those lines joined with `\n`).
       "base_anchor": "Ignorar avisos de interfaz, pausas de automatización y metadatos de plataforma",
       "citations": [
         {"source": ".agents/skills/tato-calistenia/SKILL.md", "lines": [69, 69], "quote": "- ignorar avisos de interfaz;"},
-        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [115, 115], "quote": "- Separar mensajes reales de avisos de interfaz. Una pausa de automatización, asignación, etiqueta, estado de entrega o notificación de plataforma no aporta hechos del lead y no se refleja en el DM."}
+        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [125, 125], "quote": "- Separar mensajes reales de avisos de interfaz. Una pausa de automatización, asignación, etiqueta, estado de entrega o notificación de plataforma no aporta hechos del lead y no se refleja en el DM."}
       ]
     },
     {
@@ -169,7 +177,7 @@ those lines joined with `\n`).
       "citations": [
         {"source": ".agents/skills/tato-calistenia/references/voz-escrita-tato.md", "lines": [41, 41], "quote": "- Tato habla siempre en primera persona con el prospecto: `conmigo`, `lo vemos`, `lo conversamos`; nunca se nombra como `Tato` ni habla de sí mismo en tercera persona."},
         {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [44, 44], "quote": "- hablar siempre en primera persona con el prospecto; nunca referirse a sí mismo como `Tato` ni usar tercera persona. `Lo vemos` o `lo conversamos` son suficientes; no insertar `conmigo` donde fuerce la gramática;"},
-        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [211, 211], "quote": "Si el lead pregunta directamente cuánto sale, cargar `objeciones-agenda.md`, responder que depende del tiempo que trabajen juntos y del objetivo, con una razón corta que no suene a esquive y una sola pregunta sobre lo que busca, sin mostrar el importe; la pregunta por precio no propone llamada ni agenda. Tato habla siempre en primera persona con el prospecto y nunca se refiere a sí mismo como `Tato`. Si plantea otro freno económico, responderlo sin avanzar por reflejo. USD 300 permanece interno. No mencionar cuotas, reserva, descuentos ni duración de la llamada."}
+        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [221, 221], "quote": "Si el lead pregunta directamente cuánto sale, cargar `objeciones-agenda.md`, responder que depende del tiempo que trabajen juntos y del objetivo, con una razón corta que no suene a esquive y una sola pregunta sobre lo que busca, sin mostrar el importe; la pregunta por precio no propone llamada ni agenda. Tato habla siempre en primera persona con el prospecto y nunca se refiere a sí mismo como `Tato`. Si plantea otro freno económico, responderlo sin avanzar por reflejo. USD 300 permanece interno. No mencionar cuotas, reserva, descuentos ni duración de la llamada."}
       ]
     },
     {
@@ -187,7 +195,7 @@ those lines joined with `\n`).
       "theme": "voice_contract",
       "base_anchor": "Si la respuesta no cambiaría ninguna decisión pendiente, no preguntes",
       "citations": [
-        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [233, 233], "quote": "La pregunta debe tener una consecuencia identificable: su respuesta cambia qué falta conocer, si corresponde avanzar o qué paso ya acordado hay que resolver. Si cualquier respuesta dejaría la misma decisión y solo añade detalle, no hacer esa pregunta."},
+        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [243, 243], "quote": "La pregunta debe tener una consecuencia identificable: su respuesta cambia qué falta conocer, si corresponde avanzar o qué paso ya acordado hay que resolver. Si cualquier respuesta dejaría la misma decisión y solo añade detalle, no hacer esa pregunta."},
         {"source": ".agents/skills/tato-calistenia/references/operativa-dm.md", "lines": [34, 34], "quote": "- La pregunta no se agrega por reflejo: abre la primera evidencia pendiente que cambia la decisión."}
       ]
     },
@@ -237,7 +245,7 @@ those lines joined with `\n`).
       "base_anchor": "sin copiar ejemplos ni frases de referencia",
       "citations": [
         {"source": ".agents/skills/tato-calistenia/SKILL.md", "lines": [70, 70], "quote": "- redactar desde hechos, sin copiar ejemplos;"},
-        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [245, 245], "quote": "6. No buscar una frase parecida, combinar ejemplos ni rellenar una secuencia de validación, lectura y pregunta. Los casos de mantenimiento evalúan decisiones, nunca suministran texto."}
+        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [255, 255], "quote": "6. No buscar una frase parecida, combinar ejemplos ni rellenar una secuencia de validación, lectura y pregunta. Los casos de mantenimiento evalúan decisiones, nunca suministran texto."}
       ]
     },
     {
@@ -245,7 +253,7 @@ those lines joined with `\n`).
       "theme": "voice_contract",
       "base_anchor": "Nunca inventar precio visible, disponibilidad, reserva, duración, testimonio ni resultado",
       "citations": [
-        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [266, 266], "quote": "12. **Verdad:** no inventa precio visible, disponibilidad, reserva, duración, testimonio ni resultado."},
+        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [276, 276], "quote": "12. **Verdad:** no inventa precio visible, disponibilidad, reserva, duración, testimonio ni resultado."},
         {"source": ".agents/skills/tato-calistenia/SKILL.md", "lines": [19, 19], "quote": "- No inventar precio, agenda, resultados, diagnósticos ni testimonios."}
       ]
     },
@@ -282,7 +290,7 @@ those lines joined with `\n`).
       "base_anchor": "El dinero solo aparece si el lead lo trae",
       "citations": [
         {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [18, 18], "quote": "No preguntar por inversión, presupuesto ni capacidad económica antes de invitar a llamada. La ausencia del tema no es una evidencia pendiente ni un freno."},
-        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [209, 209], "quote": "3. No anunciar pago ni preguntar por inversión si el lead no abrió ese tema."}
+        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [219, 219], "quote": "3. No anunciar pago ni preguntar por inversión si el lead no abrió ese tema."}
       ]
     },
     {
@@ -338,7 +346,7 @@ those lines joined with `\n`).
         {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [107, 107], "quote": "Enviar exactamente este enlace:"},
         {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [109, 109], "quote": "`https://cal.com/tato-ramon/reunion-auditoria`"},
         {"source": ".agents/skills/tato-calistenia/references/contexto-maestro.md", "lines": [127, 127], "quote": "`https://cal.com/tato-ramon/reunion-auditoria`"},
-        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [218, 218], "quote": "- `llamada_aceptada`: sin frenos activos, enviar el Cal.com oficial en línea propia, pedir elegir día y hora y cerrar con una única pregunta natural de confirmación."}
+        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [228, 228], "quote": "- `llamada_aceptada`: sin frenos activos, enviar el Cal.com oficial en línea propia, pedir elegir día y hora y cerrar con una única pregunta natural de confirmación."}
       ]
     },
     {
@@ -376,7 +384,7 @@ those lines joined with `\n`).
       "base_anchor": "No diagnostico ni trato",
       "citations": [
         {"source": ".agents/skills/tato-calistenia/references/contexto-maestro.md", "lines": [21, 21], "quote": "| Límite de salud | El agente no diagnostica ni trata. Ante una molestia, Tato habla como entrenador y puede adaptar el movimiento; una lesión real, un dolor que impide entrenar, una emergencia o un caso fuera del entrenamiento frena la venta y se orienta al profesional de salud correspondiente. |"},
-        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [261, 261], "quote": "7. **Seguridad:** no diagnostica ni usa vulnerabilidad como palanca."}
+        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [271, 271], "quote": "7. **Seguridad:** no diagnostica ni usa vulnerabilidad como palanca."}
       ]
     },
     {
@@ -396,7 +404,7 @@ those lines joined with `\n`).
       "citations": [
         {"source": ".agents/skills/tato-calistenia/references/biblioteca-tecnica-tato.md", "lines": [36, 36], "quote": "8. Si la charla es temprana, responder lo puntual y hacer como maximo una pregunta que permita entender su situacion. Ante una traba relatada o una duda tecnica se puede pedir un video, o una foto de una posicion concreta del movimiento cuando no haya video posible, siempre que ese material cambie la lectura; despues se devuelve una lectura orientadora y breve por caso, sin diagnostico, sin prescribir la ejecución y sin abrir seguimiento gratis."},
         {"source": ".agents/skills/tato-calistenia/references/biblioteca-tecnica-tato.md", "lines": [164, 164], "quote": "- Grabarse puede ayudar a contrastar sensacion y ejecucion, y el material que la persona aporta se usa para una lectura orientadora breve por caso; la foto es de una posicion del movimiento, nunca del cuerpo, y no se ofrece seguimiento gratis."},
-        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [161, 161], "quote": "6. Conectar esa lectura con la evidencia pendiente; no pegar una pregunta genérica después de una corrección técnica. Se puede pedir un video, o una foto de una posición concreta del movimiento cuando no haya video posible, si ese material cambia la lectura, y devolver una lectura orientadora y breve por caso, sin abrir rutina ni seguimiento gratis."},
+        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [171, 171], "quote": "6. Conectar esa lectura con la evidencia pendiente; no pegar una pregunta genérica después de una corrección técnica. Se puede pedir un video, o una foto de una posición concreta del movimiento cuando no haya video posible, si ese material cambia la lectura, y devolver una lectura orientadora y breve por caso, sin abrir rutina ni seguimiento gratis."},
         {"source": ".agents/skills/tato-calistenia/references/biblioteca-tecnica-tato.md", "lines": [378, 386], "quote": "La ayuda puntual termina antes de:\n\n- analizar videos o fotos de forma continuada o convertir la devolucion en seguimiento gratuito;\n- elegir ejercicios o asistencia;\n- indicar series, repeticiones, tiempos o frecuencia;\n- armar una progresion o modificar una rutina;\n- hacer una segunda ronda de correcciones;\n- concluir causas de dolor;\n- prometer un resultado."}
       ]
     },
@@ -474,7 +482,7 @@ those lines joined with `\n`).
       "base_anchor": "Un solo movimiento por DM",
       "citations": [
         {"source": ".agents/skills/tato-calistenia/references/operativa-dm.md", "lines": [27, 27], "quote": "Una respuesta equivale a un movimiento."},
-        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [244, 244], "quote": "5. No responder, calificar, vender e invitar en el mismo DM."}
+        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [254, 254], "quote": "5. No responder, calificar, vender e invitar en el mismo DM."}
       ]
     },
     {
@@ -509,7 +517,7 @@ those lines joined with `\n`).
       "citations": [
         {"source": ".agents/skills/tato-calistenia/SKILL.md", "lines": [21, 21], "quote": "- Entender objetivo y brecha antes de realidad cotidiana o ruta; no exigir emoción."},
         {"source": ".agents/skills/tato-calistenia/SKILL.md", "lines": [22, 22], "quote": "- Antes de ruta, conocer realidad cotidiana y voluntad de proceso; constancia sola no prueba compromiso."},
-        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [171, 171], "quote": "Antes de presentar la ruta deben estar suficientemente claros:"}
+        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [181, 181], "quote": "Antes de presentar la ruta deben estar suficientemente claros:"}
       ]
     },
     {
@@ -534,7 +542,7 @@ those lines joined with `\n`).
       "base_anchor": "La realidad cotidiana se pregunta abiertamente, sin ofrecer trabajo, estudio ni ambos como opciones",
       "citations": [
         {"source": ".agents/skills/tato-calistenia/references/operativa-dm.md", "lines": [118, 118], "quote": "Antes de presentar la ruta, conocer de manera adaptativa la realidad cotidiana cuando todavía no consta. Después de que objetivo y brecha estén suficientemente claros, no cambiar de tema en seco: reconocer lo que el lead acaba de revelar y usar un puente breve si mejora la continuidad antes de preguntar abiertamente qué hace en su día a día. No ofrecer categorías como trabajo, estudio o ambos y no repreguntar cuando el historial ya aporta rutina y hábitos suficientes. Los ejemplos aprobados sirven para conservar intención y transición, no para repetir frases."},
-        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [180, 180], "quote": "Después de que destino y brecha tengan contexto suficiente, si la realidad cotidiana todavía no consta, abrir esa pregunta antes de ruta o llamada. Evitar el cambio brusco de fase: reflejar el dato concreto del lead y sumar, cuando haga falta, un puente como `para entenderte mejor, antes de seguir` o `contáme`. La pregunta sigue siendo abierta sobre qué hace en su día a día y no sugiere trabajo, estudio o ambos. Los ejemplos de Maxi fijan la intención conectiva, no una redacción para copiar. Si el historial ya muestra una rutina cotidiana suficiente, no repreguntar."}
+        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [190, 190], "quote": "Después de que destino y brecha tengan contexto suficiente, si la realidad cotidiana todavía no consta, abrir esa pregunta antes de ruta o llamada. Evitar el cambio brusco de fase: reflejar el dato concreto del lead y sumar, cuando haga falta, un puente como `para entenderte mejor, antes de seguir` o `contáme`. La pregunta sigue siendo abierta sobre qué hace en su día a día y no sugiere trabajo, estudio o ambos. Los ejemplos de Maxi fijan la intención conectiva, no una redacción para copiar. Si el historial ya muestra una rutina cotidiana suficiente, no repreguntar."}
       ]
     },
     {
@@ -551,8 +559,8 @@ those lines joined with `\n`).
       "theme": "sequence_conversion",
       "base_anchor": "país o nacionalidad no prueban dinero ni encaje",
       "citations": [
-        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [150, 150], "quote": "- No inferir capacidad económica por profesión, ubicación, perfil o apariencia."},
-        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [149, 149], "quote": "- No preguntar edad por rutina ni inferir fragilidad por edad."},
+        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [160, 160], "quote": "- No inferir capacidad económica por profesión, ubicación, perfil o apariencia."},
+        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [159, 159], "quote": "- No preguntar edad por rutina ni inferir fragilidad por edad."},
         {"source": ".agents/skills/tato-calistenia/references/contexto-maestro.md", "lines": [62, 62], "quote": "- País y nacionalidad tampoco prueban dinero o encaje; solo una imposibilidad expresada autoriza el cierre económico."},
         {"source": ".agents/skills/tato-calistenia/references/contexto-maestro.md", "lines": [64, 64], "quote": "- La edad nunca demuestra fragilidad, enfermedad, disciplina ni dinero."}
       ]
@@ -563,7 +571,7 @@ those lines joined with `\n`).
       "base_anchor": "La ruta debe explicar por qué esa ayuda responde a la brecha del caso",
       "citations": [
         {"source": ".agents/skills/tato-calistenia/references/operativa-dm.md", "lines": [149, 149], "quote": "La ruta debe hacer comprensible la relación entre la brecha y la función de la ayuda propuesta. Ordenar o adaptar por sí solos no explican por qué acompañarse serviría en ese caso. Elegir el mecanismo pertinente y su utilidad sin prometer resultados ni convertirlo en una lista o frase fija."},
-        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [201, 201], "quote": "Hacer visible por qué el acompañamiento ayudaría con esa brecha: conectar una necesidad concreta con la función de un mecanismo real. Decir solamente que se ordenará la práctica o se adaptará al horario no explica esa relación. No convertirla en una fórmula verbal, promesa causal ni prescripción; después de presentarla, la aceptación sigue siendo un paso separado de la llamada."}
+        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [211, 211], "quote": "Hacer visible por qué el acompañamiento ayudaría con esa brecha: conectar una necesidad concreta con la función de un mecanismo real. Decir solamente que se ordenará la práctica o se adaptará al horario no explica esa relación. No convertirla en una fórmula verbal, promesa causal ni prescripción; después de presentarla, la aceptación sigue siendo un paso separado de la llamada."}
       ]
     },
     {
@@ -572,7 +580,7 @@ those lines joined with `\n`).
       "base_anchor": "Pedir una reacción clara y esperar; no invitar en el mismo movimiento",
       "citations": [
         {"source": ".agents/skills/tato-calistenia/references/operativa-dm.md", "lines": [153, 153], "quote": "La decisión interna ubica punto actual, prioridad, capacidad a construir y autonomía buscada. Esos componentes orientan el razonamiento, pero no forman una secuencia verbal obligatoria. Después se pide una reacción clara y se espera. No invitar en el mismo turno."},
-        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [208, 208], "quote": "2. Esperar aceptación antes de enviar la agenda."}
+        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [218, 218], "quote": "2. Esperar aceptación antes de enviar la agenda."}
       ]
     },
     {
@@ -618,7 +626,7 @@ those lines joined with `\n`).
       "citations": [
         {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [123, 123], "quote": "Se permiten como máximo dos si no hubo rechazo claro."},
         {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [14, 14], "quote": "- Un rechazo claro se responde una vez con un cierre respetuoso y cancela ambos follow-ups. Si la persona reabre más adelante, se recupera el estado anterior."},
-        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [222, 222], "quote": "- `seguimiento`: retomar la fase pendiente; máximo dos intentos y ninguno tras un rechazo claro."}
+        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [232, 232], "quote": "- `seguimiento`: retomar la fase pendiente; máximo dos intentos y ninguno tras un rechazo claro."}
       ]
     },
     {
@@ -645,7 +653,25 @@ those lines joined with `\n`).
       "base_anchor": "Un DM preparado no es un envío",
       "citations": [
         {"source": ".agents/skills/tato-calistenia/SKILL.md", "lines": [27, 27], "quote": "- No contar borradores como envíos ni enviar el formulario EOD sin autorización."},
-        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [124, 124], "quote": "- Distinguir borradores, envíos observados y envíos verificados sin persistirlos. Un DM preparado no es un envío."}
+        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [134, 134], "quote": "- Distinguir borradores, envíos observados y envíos verificados sin persistirlos. Un DM preparado no es un envío."}
+      ]
+    },
+    {
+      "id": "sequence-evasion-no-es-rechazo",
+      "theme": "sequence_conversion",
+      "base_anchor": "Una evasión no es un rechazo.",
+      "citations": [
+        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [110, 116], "quote": "### Evadir no es rechazar\n\nUna evasión no es un rechazo. Una demora cortés, un agradecimiento que se despide, un `te aviso si decido avanzar`, un `por ahora solo sigo la página`, o una persona que se excluye sola por un costo que dio por supuesto y nunca consultó, son evasiones. Ninguna de ellas cierra la conversación.\n\nAnte una evasión no se cierra y no se le desea buena suerte. Se reconoce sin drama y se hace una sola pregunta tranquila que descubra el freno real antes de avanzar. No se discute, no se presiona, no se repite la propuesta y no se rebate el supuesto como si fuera un dato confirmado.\n\nSe cierra sin pregunta únicamente ante un rechazo claro, una imposibilidad declarada, una incompatibilidad confirmada, o los límites de seguridad y de seguimientos ya documentados. Todo lo demás sigue conversando."},
+        {"source": ".agents/skills/tato-calistenia/references/voz-escrita-tato.md", "lines": [206, 212], "quote": "## Evadir no es rechazar\n\nUna demora cortés, un agradecimiento que se despide, un `te aviso si decido avanzar`, un `por ahora solo sigo la página`, o una persona que se excluye sola por un costo que dio por supuesto y nunca consultó, son evasiones y no un no.\n\nAnte una evasión no se cierra y no se le desea buena suerte. Reconocer lo que dijo sin drama y hacer una sola pregunta tranquila, concreta y sin carga, que asome el freno real antes de seguir. No discutir, no presionar, no repetir la propuesta y no rebatir su supuesto como si fuera un dato que consta.\n\nLa calidez no reemplaza la dirección. Cerrar con amabilidad sobre una evasión abandona la conversación en el único momento en que todavía había algo que descubrir. Un cierre sin pregunta corresponde únicamente al rechazo claro, la imposibilidad declarada, la incompatibilidad confirmada y los límites de seguridad y de seguimientos ya documentados."}
+      ]
+    },
+    {
+      "id": "voice-intencion-por-turno",
+      "theme": "voice_contract",
+      "base_anchor": "Un turno que reconoce, califica y cierra sin avanzar es un defecto",
+      "citations": [
+        {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [118, 118], "quote": "Cada turno debe perseguir algo. Un turno que reconoce, califica y cierra sin avanzar es un defecto aunque cada frase sea correcta. El criterio es la intención del movimiento, no su cortesía."},
+        {"source": ".agents/skills/tato-calistenia/references/voz-escrita-tato.md", "lines": [214, 214], "quote": "Cada turno persigue algo. Un turno que reconoce, califica y despide sin avanzar es un defecto aunque cada frase sea correcta. El criterio es la intención del movimiento, no su cortesía."}
       ]
     }
   ]
