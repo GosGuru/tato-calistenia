@@ -311,10 +311,11 @@
       ],
       "forbidden": [
         "rutina",
-        "pedido de video",
+        "pedido de video ante dolor, lesión o emergencia",
         "llamada",
         "cue de ejecución",
-        "pregunta genérica desconectada"
+        "pregunta genérica desconectada",
+        "seguimiento continuo gratuito"
       ]
     },
     {
@@ -393,15 +394,16 @@
       "title": "Pregunta temprana por precio",
       "phase": "conversion",
       "input_summary": "Pregunta cuanto sale; su objetivo de dominadas esta claro, pero todavia falta conocer que viene probando.",
-      "expected_move": "Aclarar que es un acompanamiento pago de 90 dias y proponer conversar valor y propuesta conmigo en llamada, siempre en primera persona.",
+      "expected_move": "Responder que depende del tiempo que trabajen juntos y del objetivo, con una razón corta que no suene a esquive, y cerrar con una sola pregunta sobre lo que busca, siempre en primera persona.",
       "required": [
-        "acompanamiento pago",
-        "90 dias",
-        "propuesta de llamada"
+        "depende del tiempo y del objetivo",
+        "razón corta sin esquive",
+        "una pregunta sobre lo que busca"
       ],
       "forbidden": [
         "importe",
         "cuotas",
+        "derivación a llamada en el mismo movimiento",
         "Cal.com antes de aceptar",
         "reserva afirmada"
       ]
@@ -1058,9 +1060,9 @@
       "title": "Lesión musculoesquelética dentro del alcance a evaluar",
       "phase": "contexto",
       "input_summary": "El lead menciona una lesión anterior de hombro, entrena actualmente y no describe emergencia ni pide un diagnóstico cerrado.",
-      "expected_move": "Responder desde el alcance profesional de Tato, aclarar el estado actual con una pregunta neutral y no derivar por reflejo.",
+      "expected_move": "Responder como entrenador, aclarar el estado actual con una pregunta neutral y no derivar por reflejo.",
       "required": [
-        "alcance de Tato",
+        "alcance de entrenador",
         "estado actual",
         "una pregunta neutral"
       ],
@@ -1712,7 +1714,7 @@
       "forbidden": [
         "pregunta seca sin saludo",
         "dos preguntas de calificación",
-        "emojis",
+        "emoji que sustituye la dirección",
         "inferir un objetivo"
       ]
     },
@@ -1841,6 +1843,117 @@
         "afirmar demora",
         "nombre inventado",
         "plantilla de saludo obligatoria"
+      ]
+    },
+    {
+      "id": "tecnica-video-para-leer-mejor",
+      "mode": "prospect_dm",
+      "title": "Video que cambia la lectura del caso",
+      "phase": "brecha",
+      "input_summary": "Relata que se tranca al iniciar el tirón en la dominada y el relato no alcanza para leer el movimiento; no hay dolor, lesión ni emergencia.",
+      "expected_move": "Pedir un video del movimiento, o una foto de la posición concreta si no hay video posible, y devolver después una lectura orientadora y breve por caso.",
+      "required": [
+        "pedido de video o foto de la posición",
+        "lectura orientadora breve por caso",
+        "una pregunta"
+      ],
+      "forbidden": [
+        "diagnóstico",
+        "prescripción de ejecución",
+        "promesa de resultado",
+        "acompañamiento continuo gratuito"
+      ]
+    },
+    {
+      "id": "tecnica-dolor-sin-video",
+      "mode": "prospect_dm",
+      "title": "Dolor puntual sin pedido de material",
+      "phase": "contexto",
+      "input_summary": "Cuenta que le duele el hombro al entrenar y quiere saber qué hacer; hay dolor actual y no consta emergencia.",
+      "expected_move": "Aplicar las reglas de salud, preguntar qué ocurre hoy y qué movimientos afecta, sin pedir video ni foto ni prometer recuperación.",
+      "required": [
+        "pregunta neutral sobre el estado actual",
+        "límites de salud"
+      ],
+      "forbidden": [
+        "pedido de video o foto",
+        "diagnóstico",
+        "promesa de recuperación",
+        "venta durante el dolor"
+      ]
+    },
+    {
+      "id": "voz-emoji-brazo-buena-onda",
+      "mode": "prospect_dm",
+      "title": "Emoji de brazo tras buena onda mostrada",
+      "phase": "brecha",
+      "input_summary": "La persona hizo un chiste sobre su intento de dominada y durante el intercambio ya mostró buena onda; falta ubicar la traba.",
+      "expected_move": "Responder con el mismo tono, permitir el emoji de brazo flexionado solo para cerrar el mensaje y sostener la única pregunta de dirección.",
+      "required": [
+        "tono acompañado",
+        "emoji de brazo solo como cierre",
+        "pregunta de dirección"
+      ],
+      "forbidden": [
+        "emoji en el primer mensaje",
+        "emoji sobre dolor o miedo",
+        "emoji que sustituye la dirección"
+      ]
+    },
+    {
+      "id": "voz-emoji-primer-mensaje",
+      "mode": "prospect_dm",
+      "title": "Primer mensaje de alguien que llega asustado",
+      "phase": "contexto",
+      "input_summary": "En su primer mensaje dice que le da miedo lastimarse al intentar una flexión y pide ayuda; todavía no describió su punto actual.",
+      "expected_move": "Contener con sobriedad y abrir una pregunta neutral, sin emojis ni humor en el primer mensaje.",
+      "required": [
+        "primer mensaje sin emoji",
+        "pregunta neutral",
+        "seguridad primero"
+      ],
+      "forbidden": [
+        "emoji de brazo",
+        "humor sobre el miedo",
+        "presión comercial",
+        "diagnóstico"
+      ]
+    },
+    {
+      "id": "precio-depende-y-para-que",
+      "mode": "prospect_dm",
+      "title": "Precio antes de la llamada respondido con depende",
+      "phase": "conversion",
+      "input_summary": "Pregunta cuánto sale el acompañamiento antes de la llamada; el objetivo está claro y falta qué busca detrás de ese objetivo.",
+      "expected_move": "Responder que depende del tiempo que trabajen juntos y del objetivo, con una razón corta que no suene a esquive, y cerrar con una sola pregunta sobre lo que busca.",
+      "required": [
+        "depende del tiempo y del objetivo",
+        "razón corta sin esquive",
+        "una pregunta sobre lo que busca"
+      ],
+      "forbidden": [
+        "cifras o importes",
+        "derivación a llamada en el mismo movimiento",
+        "cuotas o descuentos",
+        "presupuesto"
+      ]
+    },
+    {
+      "id": "precio-tema-no-iniciado",
+      "mode": "prospect_dm",
+      "title": "El dinero no aparece en la conversación",
+      "phase": "ruta",
+      "input_summary": "Explicó objetivo, brecha, realidad cotidiana y aceptó una ruta; nunca mencionó dinero ni presupuesto.",
+      "expected_move": "Continuar hacia el paso pendiente de la conversación sin abrir el tema económico ni pedir presupuesto.",
+      "required": [
+        "tema económico cerrado",
+        "movimiento de la fase pendiente"
+      ],
+      "forbidden": [
+        "pregunta de inversión",
+        "presupuesto",
+        "cifra de precio",
+        "filtro económico"
       ]
     }
   ],

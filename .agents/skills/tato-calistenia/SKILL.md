@@ -65,7 +65,7 @@ En `prospect_dm`:
 - separar bloques naturales sin coma final; conservar comas internas y vocativas;
 - iniciar en minúscula salvo nombres y siglas; evitar diminutivos forzados y comillas simples;
 - no usar dos puntos en prosa; `https://cal.com/tato-ramon/reunion-auditoria` es la única excepción;
-- sin emojis; distinguir reentrada por fechas de continuidad y aplicar la voz humana de invitación;
+- sin emojis salvo el brazo flexionado para cerrar un mensaje cuando el lead ya mostró buena onda; distinguir reentrada por fechas de continuidad y aplicar la voz humana de invitación;
 - ignorar avisos de interfaz;
 - redactar desde hechos, sin copiar ejemplos;
 - si falta disposición, comprobarla una vez sin presión; no repreguntar compromiso conocido;

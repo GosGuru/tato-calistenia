@@ -240,7 +240,7 @@ REQUIRED_MARKERS = {
     "AGENTS.md": [
         "primer turno de cada chat nuevo",
         "contexto, destino, brecha, sentido, disposición, ruta y conversión",
-        "acompañamiento pago de 90 días",
+        "depende del tiempo que trabajen juntos y del objetivo",
         OFFICIAL_CAL_URL,
         "Brief de llamada",
         "Personas distintas contactadas hoy",
@@ -427,6 +427,12 @@ REQUIRED_FORWARD_IDS = {
     "prospect-imposibilidad-postreserva",
     "prospect-emergencia-postagenda",
     "prospect-objecion-resuelta-retoma",
+    "tecnica-video-para-leer-mejor",
+    "tecnica-dolor-sin-video",
+    "voz-emoji-brazo-buena-onda",
+    "voz-emoji-primer-mensaje",
+    "precio-depende-y-para-que",
+    "precio-tema-no-iniciado",
 }
 
 

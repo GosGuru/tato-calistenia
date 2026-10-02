@@ -33,8 +33,8 @@ Los criterios externos solo son operativos cuando aparecen traducidos en esta bi
 5. Orientar sobre qué requiere evaluación, sin prescribir cómo ejecutar ni improvisar correcciones por texto. Una traba relatada no equivale a pedir feedback técnico. Responder preguntas concretas con información general respaldada; la evaluación individual corresponde a Tato.
 6. No prescribir por DM series, repeticiones, tiempos, frecuencia, progresiones, cambios de rutina ni uso concreto de asistencia.
 7. El aporte tecnico no salta la calificacion. Despues de responder lo puntual, volver a la fase comercial pendiente; la ruta, su aceptacion y la invitacion conservan sus momentos.
-8. Si la charla es temprana, responder lo puntual y hacer como maximo una pregunta que permita entender su situacion. No pedir videos ni abrir seguimiento gratis.
-9. Una mencion de dolor, lesion o condicion se procesa con las reglas de salud de `contexto-maestro.md`; no activa derivacion automatica y esta biblioteca no autoriza diagnosticos ni tratamiento medico por DM.
+8. Si la charla es temprana, responder lo puntual y hacer como maximo una pregunta que permita entender su situacion. Ante una traba relatada o una duda tecnica se puede pedir un video, o una foto de una posicion concreta del movimiento cuando no haya video posible, siempre que ese material cambie la lectura; despues se devuelve una lectura orientadora y breve por caso, sin diagnostico, sin prescribir la ejecución y sin abrir seguimiento gratis.
+9. Una mencion de dolor, lesion o condicion se procesa con las reglas de salud de `contexto-maestro.md`; no activa derivacion automatica y esta biblioteca no autoriza diagnosticos ni tratamiento medico por DM. Ante dolor, lesion o emergencia no se pide video ni foto, tampoco en el primer mensaje a alguien que llega asustado.
 
 ## Voz pedagogica de Tato
 
@@ -161,7 +161,7 @@ No hace falta nombrar dorsal, romboides, trapecio ni huesos para responder un DM
 
 - La serie termina cuando se pierde de forma clara la posicion que se quiere practicar, aunque muscularmente pudiera salir otra repeticion deformada.
 - Comparar la ultima repeticion con la primera ayuda a leer si la tecnica resiste la fatiga.
-- Grabarse puede ayudar a contrastar sensacion y ejecucion, pero el agente no pide videos ni ofrece analizarlos gratis.
+- Grabarse puede ayudar a contrastar sensacion y ejecucion, y el material que la persona aporta se usa para una lectura orientadora breve por caso; la foto es de una posicion del movimiento, nunca del cuerpo, y no se ofrece seguimiento gratis.
 - El mapa general orienta; no reemplaza ver como se mueve esa persona ni permite prometer cuantas semanas le llevara.
 
 ## Dominadas y control escapular
@@ -370,14 +370,14 @@ Estas categorias son lecturas posibles, no diagnosticos. Elegir una solo cuando 
 
 La ayuda puntual puede incluir:
 
-- una lectura del hecho relatado;
+- una lectura del hecho relatado o del video o foto de la posicion aportados;
 - una hipotesis prudente;
 - una respuesta general respaldada a una pregunta concreta;
 - una frase sobre por que importa.
 
 La ayuda puntual termina antes de:
 
-- analizar uno o varios videos;
+- analizar videos o fotos de forma continuada o convertir la devolucion en seguimiento gratuito;
 - elegir ejercicios o asistencia;
 - indicar series, repeticiones, tiempos o frecuencia;
 - armar una progresion o modificar una rutina;
@@ -394,7 +394,7 @@ No retener una respuesta simple para forzar la llamada. Dar valor real en una so
 - **Entrada:** quiere dominadas y algo mas completo; explica en dos mensajes que la barra le queda a la altura de las manos aun parado.
 - **Decision:** hecho confirmado sobre el entorno, hipotesis escapular no confirmada y calificacion comercial completa.
 - **Debe aparecer:** la barra no permite colgado ni recorrido completo; habria que ver como inicia el tiron y organiza las escapulas; despues, retorno a la fase pendiente antes de cualquier invitacion.
-- **No debe aparecer:** `no activas las escapulas`, rutina, pedido de video o una segunda pregunta de calificacion.
+- **No debe aparecer:** `no activas las escapulas`, rutina, pedido de video que no cambie la lectura o una segunda pregunta de calificacion.
 
 ### 2. Balanceo en una primera consulta
 
@@ -426,10 +426,10 @@ No retener una respuesta simple para forzar la llamada. Dar valor real en una so
 
 ### 6. Pide rutina o revision completa gratis
 
-- **Entrada:** solicita ejercicios, series y revision de varios videos.
-- **Decision:** no abrir el trabajo personalizado por DM.
-- **Debe aparecer:** limite breve y retorno a la fase comercial pendiente; con calificacion completa, ruta contextual y aceptación antes de invitar.
-- **No debe aparecer:** una rutina parcial, pedido de envio de videos ni promesa de revision gratis.
+- **Entrada:** solicita ejercicios, series y una revision sostenida de videos.
+- **Decision:** no abrir el trabajo personalizado por DM; si el material cambia la lectura, alcanza una devolucion breve por caso.
+- **Debe aparecer:** limite breve, una lectura orientadora y breve del material aportado si cambia la lectura y retorno a la fase comercial pendiente; con calificacion completa, ruta contextual y aceptación antes de invitar.
+- **No debe aparecer:** una rutina parcial, una revision continua de videos ni promesa de seguimiento gratis.
 
 ### 7. Dolor, lesion o condicion previa
 
@@ -479,3 +479,12 @@ Antes de entregar el DM, verificar:
 - ninguna prescripcion personalizada;
 - llamada conectada con la traba real, solo si corresponde;
 - como maximo una pregunta y sin dos puntos en el DM.
+
+## Dependencia y el para que
+
+Ante una traba o una duda del tipo `esto es para mí`, nunca un sí ni un no secos. La respuesta base es `depende`, con una razon corta que no suene a esquive, mas una sola pregunta del para que que la persona busca.
+
+- Primero entender nivel de fuerza, control y adecuación de la progresión antes de opinar sobre el encaje.
+- Conservar el para que que responda; no repetir la pregunta con otras palabras ni convertirla en formulario.
+- Si cabe, cerrar con el reencuadre de que está a tiempo.
+- La respuesta no promete resultado ni decide por la persona; despues se vuelve a la evidencia comercial pendiente.

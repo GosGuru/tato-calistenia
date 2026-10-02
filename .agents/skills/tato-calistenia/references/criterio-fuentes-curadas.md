@@ -200,6 +200,23 @@ Maxi aprobó las cuatro fichas de esta sección el 2026-08-31. Sus criterios son
 - **Traducción Tato:** el audio ajusta criterio y elección de palabras, pero la salida conserva claridad escrita, líneas cortas y las reglas actuales de conversión.
 - **Riesgo y límites:** las transcripciones permanecen en `chats/`, fuera de Git; nunca se consultan en runtime ni se convierten en ejemplos para copiar.
 
+## Entrevista de Tato (octubre 2026)
+
+Fuente propia de Tato: una entrevista de calibración cuya destilación llegó como material externo que se declaraba superior a las referencias y citaba un público desactualizado. Esa pretensión no se honra; el material se traduce aquí y en los dueños del runtime con la aprobación explícita de Maxi del 2026-10-01. El texto crudo no entra al repositorio y ninguna frase de la entrevista se recupera para copiar.
+
+### Calibración de voz, técnica y conversión
+
+- `source`: entrevista de calibración con Tato, octubre de 2026
+- `lessons`: video o foto del movimiento, emoji de brazo, precio con `depende`, humor, filtro por valores, duda de encaje, seguimiento, cadencia y punto B
+- `domain`: comercial, operativo y técnico
+- `status`: `approved`
+- `reviewer`: Maxi
+- `reviewed_on`: 2026-10-01
+- **Rescatar:** pedir material del movimiento cuando cambia la lectura y devolver una lectura breve por caso; el emoji de brazo flexionado como cierre cuando ya hay buena onda mostrada; el precio como `depende` del tiempo que trabajen juntos y del objetivo; humor para bajar tensión; firmeza solo ante indiferencia expresada por el lead; `depende` más una sola pregunta del para qué; seguimiento concreto sobre una acción pendiente con salida fácil; ráfagas de líneas cortas y aperturas cotidianas; el punto B como llegar fuerte y capaz a los sesenta y usar el cuerpo muchos años, con el video de prueba al primer día y al día noventa como parte del proceso; su frase propia `el miedo se mata con conocimiento` para orientar con conocimiento.
+- **Rechazar:** diagnosticar o prescribir ante dolor, lesión o condición; prometer resultado ni transformación; analizar el cuerpo por su apariencia; convertir la devolución en acompañamiento continuo gratuito; derivar por reflejo; las frases de presión que él nunca usa, `no pain no gain`, `sin excusas`, `última oportunidad`, la urgencia de cupos limitados o de aprovechar hoy, la promesa de transformar el cuerpo en 90 días, la idea de que con la edad es normal que duela y `yo me encargo de todo`; usar el miedo como palanca; y la pretensión del material de prevalecer sobre las referencias.
+- **Traducción Tato:** los nueve puntos viven en sus dueños — video y duda de encaje en `biblioteca-tecnica-tato.md`, con la forma en `voz-escrita-tato.md`; emoji, humor y cadencia en `voz-escrita-tato.md`; precio y seguimiento en `objeciones-agenda.md`; filtro por valores en `operativa-dm.md`; punto B y cambio físico en `contexto-maestro.md`. Los tres reversos quedan registrados en `assets/feedback-ledger.json` como `video-o-foto-del-movimiento`, `emoji-brazo-flexionado` y `precio-depende-tiempo-y-objetivo`, con aprobación explícita y fixtures refutables. Los rieles duros siguen intactos: la foto, si se pide, es de una posición del movimiento, nunca del cuerpo.
+- **Riesgo y límites:** la traducción no habilita frases literales, cifras, diagnósticos ni promesas; la fuente no sustituye al motor ni a las referencias y cualquier criterio adicional permanece como candidato hasta aprobación explícita de Maxi.
+
 ## Reglas de promoción
 
 Para mover una ficha de `candidate` a `approved`:

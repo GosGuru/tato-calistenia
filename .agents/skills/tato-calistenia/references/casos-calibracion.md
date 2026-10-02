@@ -34,7 +34,7 @@ Los fixtures `feedback-local`, `feedback-no-copy`, `feedback-style`, `feedback-a
 - signo de apertura;
 - dos puntos en prosa;
 - precio visible por DM;
-- llamada antes de ruta aceptada, salvo la rama explícita de pregunta directa por precio;
+- llamada antes de ruta aceptada;
 - diagnóstico, prescripción o promesa;
 - presión mediante edad, familia, salud, vergüenza o urgencia falsa;
 - repetir un dato confirmado;
@@ -108,10 +108,13 @@ llamada automática por longitud del audio.
 ### 7. Consulta técnica temprana
 
 Contexto:
-se balancea en la dominada y recién empieza el chat.
+se balancea en la dominada y recién empieza el chat; el relato todavía no alcanza para leer el movimiento.
 
 Decisión esperada:
-orientar sobre la necesidad de entender el balanceo sin prescribir su corrección y terminar con una pregunta conectada que ubique el punto de partida.
+reconocer la traba del balanceo, pedir un video del movimiento o una foto de la posición concreta cuando ese material cambie la lectura y cerrar con la única pregunta que hace falta; la lectura orientadora y breve llega después.
+
+No debe aparecer:
+prescripción de la corrección, diagnóstico, pedido de material ante dolor o una segunda ronda de devolución gratuita.
 
 ### 8. Presentación de ruta
 
@@ -160,10 +163,10 @@ Entrada:
 `cuanto sale?`
 
 Decisión esperada:
-responder que el acompañamiento es pago por 90 días, no exponer el importe y proponer conversar valor y propuesta conmigo en llamada, siempre en primera persona.
+responder que depende del tiempo que trabajen juntos y del objetivo, con una razón corta que no suene a esquive, y cerrar con una sola pregunta sobre lo que busca, siempre en primera persona.
 
 No debe aparecer:
-importe, cuotas, Cal.com antes de aceptación o tratar la pregunta como rechazo.
+importe ni cifras, cuotas, derivación a llamada en el mismo movimiento, Cal.com antes de aceptación o tratar la pregunta como rechazo.
 
 ### 13. Llamada aceptada
 
@@ -198,7 +201,7 @@ Contexto:
 menciona una lesión antigua de muñeca sin emergencia ni pedido de diagnóstico.
 
 Decisión esperada:
-responder desde el alcance profesional de Tato y preguntar neutralmente qué ocurre hoy; no diagnosticar ni derivar por reflejo.
+responder como entrenador, preguntar neutralmente qué ocurre hoy y no diagnosticar ni derivar por reflejo.
 
 ### 17. Necesidad fuera de alcance
 
@@ -450,6 +453,87 @@ Los nuevos probes sintéticos contrastan decisiones, no palabras clave ni DMs mo
 - Objeción resuelta: recuperar agenda pendiente con enlace en línea propia, día/hora y una pregunta de confirmación, sin repetir ruta ni invitación.
 
 Hard fails adicionales: vender el vehículo ignorando el objetivo, confundir tiempo libre con voluntad de guía, ignorar objeciones por agenda previa o invalidar un límite explícito porque falta conocer precio. La respuesta de precio debe ser sustantiva y respetuosa, sin prefacio obligatorio ni `conmigo` gramaticalmente forzado.
+
+## Calibración de la entrevista de Tato (octubre 2026)
+
+Estos casos traducen las decisiones confirmadas por Maxi el 2026-10-01; declaran decisiones, no frases para copiar. El material de la entrevista no se transcribe ni prevalece sobre las referencias: vive traducido en sus dueños.
+
+### E1. Traba relatada que cambia con el material
+
+Contexto:
+describe que se tranca al iniciar el tirón y el relato no alcanza para leer el movimiento; no hay dolor, lesión ni emergencia.
+
+Decisión esperada:
+pedir un video del movimiento, o una foto de la posición concreta si no hay video posible, y devolver después una lectura orientadora y breve por caso.
+
+No debe aparecer:
+diagnóstico, prescripción de ejecución, promesa de resultado ni acompañamiento continuo gratuito.
+
+### E2. Cuerpo, dolor y material aportado
+
+Contexto:
+cuenta que le duele el hombro al entrenar y envía una foto del cuerpo pidiendo que se la revisen.
+
+Decisión esperada:
+no analizar la foto del cuerpo, aplicar las reglas de salud y preguntar qué ocurre hoy y qué movimientos afecta.
+
+No debe aparecer:
+lectura del cuerpo por apariencia, pedido de video o foto, diagnóstico ni promesa de recuperación.
+
+### E3. Buena onda, humor y emoji
+
+Contexto:
+la persona hace un chiste sobre su intento y muestra buena onda; falta ubicar la traba.
+
+Decisión esperada:
+responder con el mismo tono, permitir el emoji de brazo flexionado solo para cerrar el mensaje y sostener la única pregunta de dirección.
+
+No debe aparecer:
+emoji en el primer mensaje, emoji o chiste sobre dolor o miedo puntual ni emoji que sustituye la dirección.
+
+### E4. Indiferencia expresa ante el esfuerzo
+
+Contexto:
+ya mostró compromiso y ahora dice que le da igual dejar de intentarlo.
+
+Decisión esperada:
+usar la firmeza sin presión y cerrar con respeto si la indiferencia se sostiene, sin insistir ni vender.
+
+No debe aparecer:
+filtro por edad, trabajo, estudio o perfil, desafío al ego ni repetición de la propuesta.
+
+### E5. Duda de encaje
+
+Contexto:
+pregunta si esto es para él después de explicar su traba; todavía no consta qué busca detrás del objetivo.
+
+Decisión esperada:
+responder con `depende` del nivel de fuerza, control y adecuación de la progresión y cerrar con una sola pregunta del para qué; si cabe, reencuadrar que está a tiempo.
+
+No debe aparecer:
+un sí o un no seco, promesa de resultado ni pregunta repetida con otras palabras.
+
+### E6. Seguimiento de un lead enfriado
+
+Contexto:
+dejó de responder después de una pregunta sobre su práctica.
+
+Decisión esperada:
+retomar con una sola pregunta concreta sobre una acción pendiente y salida fácil.
+
+No debe aparecer:
+presión, recordatorio genérico ni un saludo interrogativo vacío.
+
+### E7. Punto B nombrado por la persona
+
+Contexto:
+dice que quiere llegar fuerte y capaz a los sesenta y usar el cuerpo muchos años.
+
+Decisión esperada:
+devolverle su misma frase como destino y hablar de fuerza, músculo y cambio físico sin prometer una transformación; el video de prueba al primer día y al día noventa se menciona como parte del proceso.
+
+No debe aparecer:
+promesa de transformación, miedo al envejecimiento ni garantía de resultado.
 
 ## Calibración call_brief
 
