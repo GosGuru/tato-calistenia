@@ -7,6 +7,7 @@ import { StaticMarkdown } from './components/workspace/DraftMessage';
 import { createCompletionSound } from './lib/completionSound';
 import { getActiveProviderPayload, modelDisplayLabel, providerDisplayName } from './ModelSelector.jsx';
 import LiquidOrb from './components/ui/LiquidOrb.jsx';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from './components/ui/sheet';
 
 const THINKING_STAGES = [
   { id: 'context', icon: Compass, text: 'Analizando historial y contexto del prospecto…' },
@@ -16,6 +17,8 @@ const THINKING_STAGES = [
 ];
 
 const FAILURE = 'No se pudo generar el DM. No se devolvió ningún borrador. Sin reintentos automáticos.';
+// Hard ceiling for supplied editorial guidance count; mirrors the server MAX_GUIDANCE.
+const MAX_GUIDANCE_COUNT = 8;
 const validText = value => typeof value === 'string' && !!value.trim()
   && [...value].length <= 24000 && [...value].every(char => {
     const code = char.codePointAt(0);
@@ -38,7 +41,7 @@ function validEnvelope(value) {
     && retrieval && typeof retrieval === 'object' && !Array.isArray(retrieval)
     && Object.keys(retrieval).sort().join(',') === 'count,status'
     && Number.isInteger(retrieval.count)
-    && (retrieval.status === 'supplied' ? retrieval.count >= 1 && retrieval.count <= 2
+    && (retrieval.status === 'supplied' ? retrieval.count >= 1 && retrieval.count <= MAX_GUIDANCE_COUNT
       : ['off', 'empty', 'expired', 'unavailable'].includes(retrieval.status) && retrieval.count === 0);
 }
 
@@ -48,6 +51,8 @@ export default function RawDM({ token, modelConfig, authRevision = 0, authTransi
   const [result, setResult] = useState(null);
   const [thinking, setThinking] = useState('');
   const [copied, setCopied] = useState(false);
+  const [copiedHistory, setCopiedHistory] = useState(false);
+  const [thinkingOpen, setThinkingOpen] = useState(false);
   const [error, setError] = useState('');
   const [status, setStatus] = useState('');
   const [stageIndex, setStageIndex] = useState(0);
@@ -205,16 +210,27 @@ export default function RawDM({ token, modelConfig, authRevision = 0, authTransi
     }
   }
 
+  async function copyHistory() {
+    if (!submittedHistory) return;
+    try { await navigator.clipboard.writeText(submittedHistory); setCopiedHistory(true); setTimeout(() => setCopiedHistory(false), 2000); } catch {}
+  }
+
   const hasResponse = !!(submittedHistory || result || error || status || loading);
   return <section className="raw-composer" data-state={hasResponse ? 'response' : 'start'} aria-label="Preparar un DM" aria-busy={requestPending}>
     {!hasResponse && <div className="conversation-start"><h2>Qué conversación preparamos?</h2></div>}
     {hasResponse && <div className="raw-thread" aria-label="Intercambio actual">
     {submittedHistory && <section className="raw-submitted response-enter-up" aria-label="Historial enviado para preparar el DM">
-      <div className="raw-submitted-heading"><span>Tu historial</span><Button type="button" variant="ghost" disabled={loading} onClick={editSubmitted}>Editar historial</Button></div>
+      <div className="raw-submitted-heading raw-submitted-heading--icons">
+        <Button type="button" variant="ghost" className="icon-only" onClick={copyHistory} aria-label="Copiar historial">
+          {copiedHistory ? <Check aria-hidden="true" width={14} height={14} /> : <Copy aria-hidden="true" width={14} height={14} />}
+        </Button>
+        <Button type="button" variant="ghost" className="icon-only" disabled={loading} onClick={editSubmitted} aria-label="Editar historial">
+          <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+        </Button>
+      </div>
       <div className="raw-submitted-text" role="region" aria-label="Historial enviado completo" tabIndex={0}>{submittedHistory}</div>
     </section>}
     {hasResponse && <section className={`raw-panel raw-draft-panel ${loading ? 'is-loading' : ''}`} aria-label="Borrador">
-      {!loading && <div className="raw-panel-heading"><h2>{result?.type === 'needs_context' ? 'Aclaración pendiente' : 'Borrador'}</h2><span className="footnote">Revisión manual</span></div>}
       <div role="status" className="status">
         {loading && (
           <span className="generation-mark" aria-hidden="true">
@@ -232,26 +248,30 @@ export default function RawDM({ token, modelConfig, authRevision = 0, authTransi
               </span>
               <span className="shimmer-text">{THINKING_STAGES[stageIndex].text}</span>
             </div>
-            <small>Este historial se usa para preparar una respuesta. No se envía a Instagram.</small>
           </span>
-        ) : (
-          status
-        )}
+        ) : null}
       </div>
       {error && <p role="alert" className="error">{error}</p>}
       {thinking && !loading && (
-        <details className="thinking-accordion" open>
-          <summary className="thinking-summary">
-            <div className="thinking-summary-title">
-              <Brain className="thinking-summary-icon" aria-hidden="true" />
-              <span>Razonamiento y pensamiento del modelo</span>
-            </div>
-            <span className="thinking-badge">Proceso analítico</span>
-          </summary>
-          <div className="thinking-content" role="region" aria-label="Razonamiento interno del modelo">
-            <StaticMarkdown text={thinking} />
-          </div>
-        </details>
+        <>
+          <Button type="button" variant="ghost" className="thinking-trigger-btn" onClick={() => setThinkingOpen(true)}>
+            <Brain aria-hidden="true" />
+            Razonamiento y pensamiento
+          </Button>
+          <Sheet open={thinkingOpen} onOpenChange={setThinkingOpen}>
+            <SheetContent side="right" className="thinking-sheet">
+              <SheetHeader>
+                <SheetTitle className="thinking-sheet-title">
+                  <Brain aria-hidden="true" />
+                  Razonamiento y pensamiento del modelo
+                </SheetTitle>
+              </SheetHeader>
+              <div className="thinking-sheet-body">
+                <StaticMarkdown text={thinking} />
+              </div>
+            </SheetContent>
+          </Sheet>
+        </>
       )}
       {result && <div className="raw-draft-scroll response-enter" role="region" aria-label="Borrador completo" tabIndex={0}>
         {result?.type === 'needs_context' && <section aria-label="Aclaración para quien opera">
@@ -268,7 +288,7 @@ export default function RawDM({ token, modelConfig, authRevision = 0, authTransi
     <section className="raw-panel raw-input-panel" aria-label="Historial preparado">
     <label htmlFor="raw-history">Historial completo</label>
     <PromptInput className="history-composer">
-    <PromptInputTextarea id="raw-history" rows={2} value={history} autoComplete="off" spellCheck={false} aria-describedby="raw-disclosure" placeholder="Pegá el historial completo, sin separar autores…"
+    <PromptInputTextarea id="raw-history" rows={2} value={history} autoComplete="off" spellCheck={false} placeholder="Pegá el historial completo, sin separar autores…"
       onChange={event => change(event.target.value)}
       onCompositionStart={() => { composing.current = true; }} onCompositionEnd={() => { composing.current = false; }}
       onKeyDown={event => {
@@ -281,16 +301,10 @@ export default function RawDM({ token, modelConfig, authRevision = 0, authTransi
       <span className="composer-hint">Enter genera · Shift+Enter nueva línea</span>
       <div className="actions">
       <Button type="button" variant="ghost" onClick={reset}><Eraser aria-hidden="true" />Limpiar</Button>
-      <Button type="button" className="primary generate-draft" aria-label="Generar borrador" title="Generar borrador" aria-describedby="raw-disclosure" disabled={!token || connection?.current.available === false || !!authTransition?.current.pending || requestPending || (!validText(history) && !validText(submittedHistory))} onClick={generate}><ArrowUp aria-hidden="true" /><span>{modelConfig && modelConfig.provider !== 'codex' ? `Generar con ${modelDisplayLabel(modelConfig)}` : 'Generar con Codex'}</span></Button>
+      <Button type="button" className="primary generate-draft" aria-label="Generar borrador" title="Generar borrador" disabled={!token || connection?.current.available === false || !!authTransition?.current.pending || requestPending || (!validText(history) && !validText(submittedHistory))} onClick={generate}><ArrowUp aria-hidden="true" /><span>{modelConfig && modelConfig.provider !== 'codex' ? `Generar con ${modelDisplayLabel(modelConfig)}` : 'Generar con Codex'}</span></Button>
       </div>
     </PromptInputFooter>
     </PromptInput>
     </section>
-    <div className="raw-caption">
-      <p id="raw-disclosure">{modelConfig && modelConfig.provider !== 'codex' ? `Al generar, autorizás una llamada a ${providerDisplayName(modelConfig.provider)} con el historial completo. No se envía a Instagram.` : 'Al generar, autorizás una llamada a OpenAI con el historial completo. No se envía a Instagram.'}</p>
-      {requestPending && !loading && <p role="status">La solicitud anterior sigue en curso. Esperá para generar otra.</p>}
-      <div className="raw-metadata"><span>{[...history].length} / 24.000 caracteres Unicode</span></div>
-      {history && !validText(history) && <p className="error">Usá texto no vacío, sin controles inválidos y hasta 24.000 caracteres.</p>}
-    </div>
   </section>;
 }
