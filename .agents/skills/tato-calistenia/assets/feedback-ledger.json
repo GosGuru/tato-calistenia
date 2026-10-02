@@ -180,6 +180,26 @@
         "decision": "explicit",
         "principle": "Si el lead pregunta precio antes de la llamada, responder que depende del tiempo que trabajen juntos y del objetivo, con una razón corta que no suene a esquive y una sola pregunta sobre lo que busca, sin inventar cifras ni revelar el importe interno."
       }
+    },
+    {
+      "id": "evasion-no-es-rechazo",
+      "status": "applied",
+      "kind": "general_rule",
+      "owner": ".agents/skills/tato-calistenia/references/motor-agentico.md",
+      "principle": "Una evasión no es un rechazo. Ante una demora cortés, un agradecimiento que se despide, un `te aviso si decido avanzar`, un `por ahora solo sigo la página` o una persona que se excluye sola por un costo que dio por supuesto y nunca consultó, no se cierra ni se le desea buena suerte. Se reconoce sin drama y se hace una sola pregunta tranquila que descubra el freno real, sin discutir, presionar ni repetir la propuesta. Se cierra sin pregunta únicamente ante un rechazo claro, una imposibilidad declarada, una incompatibilidad confirmada o los límites de seguridad y de seguimientos ya documentados, y cada turno debe perseguir algo.",
+      "scope": "Cierre frente a continuación en conversaciones activas de prospect_dm, sin cambiar fases, puertas, público, oferta, precio, duración ni agenda.",
+      "exception": "El rechazo claro, la imposibilidad declarada, la incompatibilidad confirmada, la minoridad confirmada, la emergencia o necesidad fuera del alcance y el límite de dos follow-ups siguen cerrando sin pregunta. Una evasión nunca habilita presión, discusión, repregunta ni repetición de la propuesta, y la seguridad conserva prioridad.",
+      "replaces": "El vacío que permitía tratar una demora cortés, un te aviso si decido avanzar o una autoexclusión por costo supuesto como si fueran un rechazo, y cerrar con un cálido que abandona la conversación sin descubrir el freno real.",
+      "contrast": "Una evasión recibe reconocimiento sin drama y una sola pregunta sobre lo que está esperando de verdad; un rechazo claro sigue recibiendo un cierre sin pregunta, sin seguimiento y sin una última maniobra.",
+      "change_case": "prospect-evasion-aplazamiento",
+      "no_change_case": "prospect-rechazo-claro-cierre",
+      "previous": null,
+      "replacement": null,
+      "approval": {
+        "by": "user",
+        "decision": "explicit",
+        "principle": "Una evasión no es un rechazo. Ante una demora cortés, un agradecimiento que se despide, un `te aviso si decido avanzar`, un `por ahora solo sigo la página` o una persona que se excluye sola por un costo que dio por supuesto y nunca consultó, no se cierra ni se le desea buena suerte. Se reconoce sin drama y se hace una sola pregunta tranquila que descubra el freno real, sin discutir, presionar ni repetir la propuesta. Se cierra sin pregunta únicamente ante un rechazo claro, una imposibilidad declarada, una incompatibilidad confirmada o los límites de seguridad y de seguimientos ya documentados, y cada turno debe perseguir algo."
+      }
     }
   ]
 }

@@ -535,6 +535,28 @@ devolverle su misma frase como destino y hablar de fuerza, músculo y cambio fí
 No debe aparecer:
 promesa de transformación, miedo al envejecimiento ni garantía de resultado.
 
+### E8. Agradecimiento que se despide sin decir que no
+
+Contexto:
+recibe la invitación y contesta que agradece el momento, que si decide avanzar avisa y que por ahora se limita a seguir la página. Antes había dicho que entiende que su tiempo y trabajo tiene precio y que por eso se limita a eso. En ningún momento dijo que no.
+
+Decisión esperada:
+reconocer sin drama y hacer una sola pregunta tranquila que descubra qué está esperando de verdad antes de seguir, sin cerrar, sin desearle buena suerte y sin repetir la propuesta.
+
+No debe aparecer:
+cierre cálido sobre una evasión, discusión del supuesto de precio como si fuera un dato, presión, repregunta ni segunda pregunta.
+
+### E9. Rechazo claro frente a la misma evasión
+
+Contexto:
+tras la pregunta tranquila responde que no, que no le interesa seguir y que no quiere que le escriban más.
+
+Decisión esperada:
+cerrar sin pregunta con respeto, cancelar los follow-ups y sin una última maniobra.
+
+No debe aparecer:
+segunda pregunta, despedida con buena suerte genérica, seguimiento posterior ni repetición de la ruta.
+
 ## Calibración call_brief
 
 El brief aprobado:

@@ -1955,6 +1955,44 @@
         "cifra de precio",
         "filtro económico"
       ]
+    },
+    {
+      "id": "prospect-evasion-aplazamiento",
+      "mode": "prospect_dm",
+      "title": "Agradecimiento que se despide sin decir que no",
+      "phase": "conversion",
+      "input_summary": "Antes dijo que entiende que el tiempo y el trabajo de un entrenador tiene precio y que por eso se limita a seguir la página. Al recibir la invitación contesta que agradece el momento, que si decide avanzar avisa y que por ahora se queda ahí. No dijo que no y no declaró una imposibilidad.",
+      "expected_move": "Reconocer sin drama y hacer una sola pregunta tranquila que descubra qué está esperando de verdad antes de seguir, sin cerrar la conversación.",
+      "required": [
+        "evasión reconocida sin drama",
+        "una sola pregunta sobre el freno real",
+        "conversación abierta"
+      ],
+      "forbidden": [
+        "cierre cálido sobre una evasión",
+        "buena suerte",
+        "presión o repetición de la propuesta",
+        "rebatir el supuesto de precio como dato"
+      ]
+    },
+    {
+      "id": "prospect-rechazo-claro-cierre",
+      "mode": "prospect_dm",
+      "title": "Rechazo claro después de la pregunta tranquila",
+      "phase": "conversion",
+      "input_summary": "Sobre la misma demora cortés, responde que no, que no le interesa seguir y que no quiere que le escriban más. Es un rechazo claro, no una evasión.",
+      "expected_move": "Cerrar sin pregunta con respeto, cancelar los follow-ups y sin una última maniobra.",
+      "required": [
+        "cierre sin pregunta",
+        "rechazo respetado una sola vez",
+        "follow-ups cancelados"
+      ],
+      "forbidden": [
+        "pregunta final",
+        "seguimiento posterior",
+        "última maniobra",
+        "repetición de la ruta"
+      ]
     }
   ],
   "batch_rubric": {

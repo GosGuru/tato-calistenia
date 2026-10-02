@@ -92,6 +92,8 @@ REQUIRED_MARKERS = {
         "realidad cotidiana",
         "intención conectiva",
         "comprometerse con un proceso",
+        "### Evadir no es rechazar",
+        "Cada turno debe perseguir algo",
     ],
     "tracking-eod.md": [
         "## Privacidad y almacenamiento",
@@ -157,6 +159,8 @@ REQUIRED_MARKERS = {
         "## Longitud proporcional",
         "No buscar ejemplos similares",
         "transición en varias líneas",
+        "## Evadir no es rechazar",
+        "Cada turno persigue algo",
     ],
     "operativa-maseteo.md": [
         "## Alcance",
@@ -433,6 +437,8 @@ REQUIRED_FORWARD_IDS = {
     "voz-emoji-primer-mensaje",
     "precio-depende-y-para-que",
     "precio-tema-no-iniciado",
+    "prospect-evasion-aplazamiento",
+    "prospect-rechazo-claro-cierre",
 }
 
 
