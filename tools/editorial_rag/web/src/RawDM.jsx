@@ -231,26 +231,22 @@ export default function RawDM({ token, modelConfig, authRevision = 0, authTransi
       <div className="raw-submitted-text" role="region" aria-label="Historial enviado completo" tabIndex={0}>{submittedHistory}</div>
     </section>}
     {hasResponse && <section className={`raw-panel raw-draft-panel ${loading ? 'is-loading' : ''}`} aria-label="Borrador">
-      <div role="status" className="status">
-        {loading && (
-          <span className="generation-mark" aria-hidden="true">
-            <LiquidOrb size={40} />
-            <span>T</span>
-            <i />
-          </span>
-        )}
-        {loading ? (
-          <span className="generation-copy">
-            <strong>{status}</strong>
-            <div className="thinking-stage-row" aria-hidden="true">
-              <span className="thinking-stage-icon">
-                {React.createElement(THINKING_STAGES[stageIndex].icon, { className: 'stage-lucide-icon' })}
-              </span>
-              <span className="shimmer-text">{THINKING_STAGES[stageIndex].text}</span>
-            </div>
-          </span>
-        ) : null}
-      </div>
+      {loading && <div role="status" className="status">
+        <span className="generation-mark" aria-hidden="true">
+          <LiquidOrb size={40} />
+          <span>T</span>
+          <i />
+        </span>
+        <span className="generation-copy">
+          <strong>{status}</strong>
+          <div className="thinking-stage-row" aria-hidden="true">
+            <span className="thinking-stage-icon">
+              {React.createElement(THINKING_STAGES[stageIndex].icon, { className: 'stage-lucide-icon' })}
+            </span>
+            <span className="shimmer-text">{THINKING_STAGES[stageIndex].text}</span>
+          </div>
+        </span>
+      </div>}
       {error && <p role="alert" className="error">{error}</p>}
       {thinking && !loading && (
         <>

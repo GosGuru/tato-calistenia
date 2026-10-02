@@ -18,32 +18,30 @@ describe('compact presentation', () => {
     fireEvent.change(input(), { target: { value: 'ficticio' } });
     fireEvent.click(send());
     expect(screen.getByRole('status')).toHaveTextContent('Preparando el próximo DM');
-    expect(screen.getByRole('status')).toHaveTextContent('Este historial se usa para preparar una respuesta. No se envía a Instagram.');
+    expect(screen.queryByText('Este historial se usa para preparar una respuesta. No se envía a Instagram.')).not.toBeInTheDocument();
     expect(input()).toHaveValue('');
     expect(screen.getByRole('region', { name: 'Historial enviado completo' })).toHaveTextContent('ficticio');
     expect(document.querySelector('.generation-mark')).not.toBeNull();
     expect(screen.queryByRole('region', { name: 'Borrador completo' })).not.toBeInTheDocument();
     expect(screen.queryByText('Privacidad y límites')).not.toBeInTheDocument();
     await act(async () => finish(response(dm)));
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Copiar DM' }).querySelector('svg')).not.toBeNull();
   });
 });
 
 describe('editorial composition', () => {
-  it('keeps only entry and actions inside the rounded surface, with visible adjacent informed captions', () => {
+  it('keeps only entry and actions inside the rounded surface, without bottom caption blocks', () => {
     vi.stubGlobal('fetch', vi.fn());
     render(<RawDM token="fictional" />);
     const surface = input().closest('.raw-input-panel');
     expect(surface).toContainElement(send());
-    expect(surface).not.toContainElement(screen.getByText(/Al generar, autorizás/));
+    expect(screen.queryByText(/Al generar, autorizás/)).not.toBeInTheDocument();
     expect(screen.queryByText(/quitá datos sensibles/)).not.toBeInTheDocument();
-    expect(surface).not.toContainElement(screen.getByText(/24.000 caracteres Unicode/));
+    expect(screen.queryByText(/24.000 caracteres Unicode/)).not.toBeInTheDocument();
     expect(input()).toHaveAttribute('rows', '2');
     expect(screen.queryByText('Historial preparado')).not.toBeInTheDocument();
-    const caption = surface.nextElementSibling;
-    expect(caption).toContainElement(screen.getByText(/Al generar, autorizás/));
-    expect(caption).toBeVisible();
-    expect(send()).toHaveAttribute('aria-describedby', 'raw-disclosure');
+    expect(send()).not.toHaveAttribute('aria-describedby');
   });
   it('starts with one composer, no empty draft panel, and preserves its node through disclosures', () => {
     const fetch = vi.fn(); vi.stubGlobal('fetch', fetch);
@@ -183,11 +181,10 @@ describe('composer disabled-state boundary', () => {
     expect(screen.getByRole('button', { name: 'Limpiar' })).toBeEnabled();
     fireEvent.click(send());
     expect(input()).toBeEnabled();
-    const disclosure = screen.getByText(/Al generar, autorizás/);
-    expect(disclosure).toBeVisible();
+    expect(screen.queryByText(/Al generar, autorizás/)).not.toBeInTheDocument();
     // jsdom does not execute Tailwind's nested CSS. Protect the ancestor styling
     // contract here; the independent Chrome harness checks computed opacity.
-    for (const element of [input(), disclosure]) {
+    for (const element of [input()]) {
       for (let ancestor = element; ancestor; ancestor = ancestor.parentElement) {
         expect(ancestor.className).not.toMatch(/(?:^|\s)\S*has-disabled:opacity-/);
       }
@@ -264,14 +261,11 @@ describe('safe static presentation', () => {
 });
 
 describe('pegado directo', () => {
-  it('keeps concise consent and limits visible without a new popup or main-chat disclosure blocks', () => {
+  it('keeps consent and limits out of the composer without a popup or main-chat disclosure blocks', () => {
     const fetch = vi.fn(); vi.stubGlobal('fetch', fetch);
     render(<RawDM token="fictional" />);
-    const notice = screen.getByText(/Al generar, autorizás/);
-    expect(notice).toBeVisible();
-    expect(notice).toHaveTextContent('una llamada a OpenAI con el historial completo');
-    expect(notice).toHaveTextContent('No se envía a Instagram');
-    expect(send()).toHaveAttribute('aria-describedby', notice.id);
+    expect(screen.queryByText(/Al generar, autorizás/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/No se envía a Instagram/)).not.toBeInTheDocument();
     expect(screen.queryByText('Privacidad y límites')).not.toBeInTheDocument();
     expect(fetch).not.toHaveBeenCalled();
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
@@ -287,7 +281,7 @@ describe('pegado directo', () => {
     expect(fetch).not.toHaveBeenCalled();
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-    expect(screen.getByText(/Al generar, autorizás/)).toHaveTextContent('OpenAI');
+    expect(screen.queryByText(/Al generar, autorizás/)).not.toBeInTheDocument();
     await userEvent.dblClick(send());
     expect(fetch).toHaveBeenCalledTimes(1);
     const [url, options] = fetch.mock.calls[0];
@@ -319,6 +313,7 @@ describe('pegado directo', () => {
     ['off', 0, 'Biblioteca desconectada'], ['empty', 0, 'Biblioteca consultada sin criterios disponibles'],
     ['expired', 0, 'Sesión editorial vencida'], ['unavailable', 0, 'Biblioteca o búsqueda local no disponible'],
     ['supplied', 2, '2 criterios aportados, no necesariamente aplicados'],
+    ['supplied', 8, '8 criterios aportados, no necesariamente aplicados'],
   ])('passes truthful retrieval status %s to secondary settings', async (status, count) => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => ({
       result: dm, retrieval: { status, count }, revision: 4,
@@ -334,7 +329,7 @@ describe('pegado directo', () => {
   it.each([
     { result: dm, retrieval: { status: 'supplied', count: 0 }, revision: 0 },
     { result: dm, retrieval: { status: 'off', count: 1 }, revision: 0 },
-    { result: dm, retrieval: { status: 'supplied', count: 3 }, revision: 0 },
+    { result: dm, retrieval: { status: 'supplied', count: 9 }, revision: 0 },
     { result: dm, retrieval: { status: 'applied', count: 1 }, revision: 0 },
     { result: dm, retrieval: { status: 'off', count: 0 }, revision: -1 },
     { result: dm, retrieval: { status: 'off', count: 0, jwt: 'fictional' }, revision: 0 },
@@ -356,8 +351,9 @@ describe('pegado directo', () => {
     await userEvent.click(send());
     expect(await screen.findByText('quién escribió la última línea ficticia?')).toBeVisible();
     expect(screen.getByText('Falta contexto para preparar el DM')).toBeVisible();
-    expect(screen.getByRole('status')).not.toHaveTextContent('Borrador disponible');
-    expect(screen.getByRole('status')).toHaveTextContent('Falta contexto. No se generó un DM.');
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(screen.queryByText('Borrador disponible')).not.toBeInTheDocument();
+    expect(screen.queryByText('Falta contexto. No se generó un DM.')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Copiar DM' })).not.toBeInTheDocument();
   });
 
@@ -427,7 +423,8 @@ describe('pegado directo', () => {
     expect(writeText).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole('button', { name: 'Copiar DM' }));
     expect(writeText).toHaveBeenCalledWith(output.text);
-    await screen.findByText('DM copiado. No se envió.');
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(screen.queryByText('DM copiado. No se envió.')).not.toBeInTheDocument();
     writeText.mockRejectedValueOnce(new Error('invented detail'));
     fireEvent.click(screen.getByRole('button', { name: 'Copiar DM' }));
     expect(await screen.findByRole('alert')).toHaveTextContent('No se pudo copiar el DM.');
