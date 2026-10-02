@@ -156,3 +156,13 @@ it('clears credentials on attempt and discards a late login after disconnect', a
   expect(screen.getByText('Biblioteca desconectada.')).toBeVisible();
   expect(change).toHaveBeenCalledTimes(2);
 });
+
+it.each(['Email editorial', 'Contraseña editorial'])('submits the login when Enter is pressed in the %s field', async label => {
+  const fetch = plannedAuth({ login: response({ ...status, revision: 1 }), metadataReads: 2 });
+  render(<AppAuth token="fictional" onChange={vi.fn()} />);
+  await userEvent.click(screen.getByText('Biblioteca'));
+  fireEvent.change(screen.getByLabelText('Email editorial'), { target: { value: 'fictional@example.invalid' } });
+  fireEvent.change(screen.getByLabelText('Contraseña editorial'), { target: { value: 'fictional-password' } });
+  await userEvent.type(screen.getByLabelText(label), '{Enter}');
+  expect(fetch.mock.calls.filter(([url]) => url === '/api/auth/login')).toHaveLength(1);
+});

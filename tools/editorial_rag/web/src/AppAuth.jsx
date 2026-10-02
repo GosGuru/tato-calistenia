@@ -197,6 +197,14 @@ export default function AppAuth({ token, onChange, connection, connectionEpoch =
     }
   }
 
+  // Enter in either credential field submits, mirroring the Connect button.
+  function submitOnEnter(event) {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    if (!token || busy || !email || !password) return;
+    change(true);
+  }
+
   return <details ref={detailsRef} className="privacy-details library-settings" onToggle={event => {
     const expanded = event.currentTarget.open;
     setOpen(expanded);
@@ -226,10 +234,10 @@ export default function AppAuth({ token, onChange, connection, connectionEpoch =
       <p>No uses credenciales de ChatGPT ni Instagram. Esta conexión es opcional.</p>
       <label htmlFor="editorial-email">Email editorial</label>
       <input id="editorial-email" type="email" autoComplete="off" value={email} maxLength={320}
-        onChange={event => setEmail(event.target.value)} />
+        onChange={event => setEmail(event.target.value)} onKeyDown={submitOnEnter} />
       <label htmlFor="editorial-password">Contraseña editorial</label>
       <input id="editorial-password" type="password" autoComplete="off" value={password} maxLength={4096}
-        onChange={event => setPassword(event.target.value)} />
+        onChange={event => setPassword(event.target.value)} onKeyDown={submitOnEnter} />
       </>}
       <div className="actions">
         {observedCount === null && <button type="button" disabled={!token || busy || !email || !password} onClick={() => change(true)}><Plug aria-hidden="true" />Conectar</button>}
