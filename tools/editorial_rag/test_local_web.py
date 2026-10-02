@@ -794,5 +794,25 @@ class LocalWebTests(unittest.TestCase):
             mock_create.assert_called_once()
 
 
+class CloudAuthTests(unittest.TestCase):
+    """A managed deployment injects the bounded public configuration explicitly."""
+
+    def test_cloud_injects_the_explicit_env_source(self):
+        with patch.object(web, 'is_cloud_env', return_value=True), \
+                patch('tools.editorial_rag.library_config.env_config') as source, \
+                patch.object(web, 'AppAuth') as auth_class:
+            web.production_auth()
+        auth_class.assert_called_once_with(config_source=source)
+
+    def test_off_cloud_keeps_the_local_file_source(self):
+        with patch.object(web, 'is_cloud_env', return_value=False), \
+                patch.object(web, 'os') as os_module, \
+                patch('tools.editorial_rag.library_config.env_config') as source:
+            os_module.name = 'posix'
+            auth = web.production_auth()
+        source.assert_not_called()
+        self.assertIsInstance(auth, web.AppAuth)
+
+
 if __name__ == '__main__':
     unittest.main()

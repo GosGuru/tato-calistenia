@@ -3,8 +3,14 @@ import unittest
 from unittest.mock import Mock, patch
 
 # Both authorized unittest commands resolve namespace packages from the repo root.
-from tools.editorial_rag.app_auth import AppAuth  # pyright: ignore[reportMissingImports]
-from tools.editorial_rag.library_config import PROJECT_URL, LibraryConfig  # pyright: ignore[reportMissingImports]
+from tools.editorial_rag.app_auth import (
+    AppAuth,  # pyright: ignore[reportMissingImports]
+)
+from tools.editorial_rag.library_config import (  # pyright: ignore[reportMissingImports]
+    PROJECT_URL,
+    ConfigError,
+    LibraryConfig,
+)
 
 OWNER = '11111111-1111-4111-8111-111111111111'
 CONFIG = LibraryConfig(1, PROJECT_URL, 'sb_publishable_test', OWNER)
@@ -184,3 +190,30 @@ class AppAuthTests(unittest.TestCase):
             self.assertFalse(auth.status()['connected'])
             self.assertEqual(auth.status()['revision'], 1)
             self.assertEqual(auth.snapshot()[1], 'expired')
+
+
+class InjectedConfigSourceTests(unittest.TestCase):
+    """A managed deployment injects the bounded public configuration explicitly."""
+
+    def setUp(self):
+        for name, value in [('sign_in', 'fictional-jwt')]:
+            patcher = patch('tools.editorial_rag.app_auth.' + name, return_value=value)
+            patcher.start()
+            self.addCleanup(patcher.stop)
+        patcher = patch('socket.socket', side_effect=AssertionError('No network in auth tests'))
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def test_injected_source_replaces_the_missing_local_file(self):
+        source = Mock(return_value=CONFIG)
+        auth = AppAuth(config_source=source)
+        with patch('tools.editorial_rag.app_auth._claims', return_value=OWNER), \
+                patch('tools.editorial_rag.app_auth.read_library', return_value=()):
+            self.assertTrue(auth.login('fictional@example.invalid', 'fictional-password'))
+            self.assertTrue(auth.status()['connected'])
+        source.assert_called_once_with()
+
+    def test_failing_injected_source_fails_closed(self):
+        auth = AppAuth(config_source=Mock(side_effect=ConfigError('unavailable')))
+        self.assertFalse(auth.login('fictional@example.invalid', 'fictional-password'))
+        self.assertFalse(auth.status()['connected'])

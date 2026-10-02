@@ -1,4 +1,5 @@
-"""Public, bounded library configuration; no environment or credential discovery."""
+"""Public, bounded library configuration from explicit local or injected sources."""
+import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -11,6 +12,10 @@ else:
 PROJECT_URL = 'https://' + PROJECT_REF + '.supabase.co'
 DEFAULT_PATH = Path('C:/Users/Maxim/AppData/Local/TatoEditorialRag/library-config.json')
 MAX_BYTES = 8192
+# Managed deployment injection. These hold the same bounded public fields as the file.
+ENV_PUBLISHABLE_KEY = 'TATO_LIBRARY_PUBLISHABLE_KEY'
+ENV_OWNER_ID = 'TATO_LIBRARY_OWNER_ID'
+ENV_MAX_CHARS = 512
 
 
 class ConfigError(RuntimeError):
@@ -50,4 +55,21 @@ def load_config(path=DEFAULT_PATH):
         return _load(path)
     except Exception:
         del path
+    raise ConfigError('Editorial library configuration unavailable or rejected')
+
+
+def env_config():
+    """Explicit managed-deployment source; the local file stays the only default.
+
+    Absent or invalid variables fail closed instead of falling back. No user
+    credential is read here: the publishable key is public by design and the
+    owner is an opaque project UUID, both bounded before validation.
+    """
+    publishable_key = str(os.environ.get(ENV_PUBLISHABLE_KEY, ''))[:ENV_MAX_CHARS].strip()
+    owner_id = str(os.environ.get(ENV_OWNER_ID, ''))[:ENV_MAX_CHARS].strip()
+    try:
+        return LibraryConfig(version=1, project_url=PROJECT_URL,
+                             publishable_key=publishable_key, owner_id=owner_id)
+    except Exception:
+        del publishable_key, owner_id
     raise ConfigError('Editorial library configuration unavailable or rejected')

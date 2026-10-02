@@ -9,8 +9,9 @@ from .supabase_reader import _claims
 
 
 class AppAuth:
-    def __init__(self, store=None):
+    def __init__(self, store=None, config_source=None):
         self._store = store
+        self._config_source = config_source
         self._lock = threading.RLock()
         self._login_lock = threading.Lock()
         self._revision = 0
@@ -87,7 +88,7 @@ class AppAuth:
                 revision = self._revision
                 self._clear()
                 self._forget()
-            config = self._store.config if self._store is not None else load_config()
+            config = self._store.config if self._store is not None else (self._config_source or load_config)()
             if self._store is None:
                 jwt, refresh = sign_in(email, password, config=config), None
             else:

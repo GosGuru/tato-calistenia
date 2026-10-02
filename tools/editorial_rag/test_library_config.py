@@ -1,12 +1,30 @@
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 if __package__:
-    from .library_config import PROJECT_URL, ConfigError, LibraryConfig, load_config
+    from .library_config import (
+        ENV_OWNER_ID,
+        ENV_PUBLISHABLE_KEY,
+        PROJECT_URL,
+        ConfigError,
+        LibraryConfig,
+        env_config,
+        load_config,
+    )
 else:
-    from library_config import PROJECT_URL, ConfigError, LibraryConfig, load_config
+    from library_config import (
+        ENV_OWNER_ID,
+        ENV_PUBLISHABLE_KEY,
+        PROJECT_URL,
+        ConfigError,
+        LibraryConfig,
+        env_config,
+        load_config,
+    )
 
 OWNER = '11111111-1111-4111-8111-111111111111'
 
@@ -40,3 +58,24 @@ class ConfigTests(unittest.TestCase):
                 path.write_text(text, encoding='utf-8')
                 with self.assertRaises(ConfigError):
                     load_config(path)
+
+
+class InjectedConfigTests(unittest.TestCase):
+    def test_injected_source_is_bounded_trimmed_and_strict(self):
+        injected = {ENV_PUBLISHABLE_KEY: '  sb_publishable_injected\n', ENV_OWNER_ID: OWNER + ' '}
+        with patch.dict(os.environ, injected, clear=True):
+            self.assertEqual(env_config(),
+                             LibraryConfig(1, PROJECT_URL, 'sb_publishable_injected', OWNER))
+
+    def test_absent_or_invalid_injection_fails_closed_without_leaking(self):
+        marker = 'fictional-injected-secret'
+        cases = [{}, {ENV_PUBLISHABLE_KEY: marker, ENV_OWNER_ID: OWNER},
+                 {ENV_PUBLISHABLE_KEY: 'sb_publishable_ok'}, {ENV_OWNER_ID: OWNER},
+                 {ENV_PUBLISHABLE_KEY: 'sb_publishable_ok', ENV_OWNER_ID: 'not-a-uuid'}]
+        for case in cases:
+            with patch.dict(os.environ, case, clear=True):
+                with self.assertRaises(ConfigError) as caught:
+                    env_config()
+                self.assertNotIn(marker, str(caught.exception))
+                self.assertIsNone(caught.exception.__context__)
+                self.assertIsNone(caught.exception.__cause__)

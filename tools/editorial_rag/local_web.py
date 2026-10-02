@@ -466,10 +466,14 @@ def create_app(auth=None):
 
 def production_auth():
     """Only the foreground launcher opts into current-user persistence."""
-    from .library_config import load_config
+    from .library_config import env_config, load_config
     from .session_store import SessionStore
 
     try:
+        if is_cloud_env():
+            # Managed deployment: no local file and no persisted session exist here,
+            # so the bounded public configuration is injected explicitly.
+            return AppAuth(config_source=env_config)
         if os.name != 'nt':
             return AppAuth()
         root = Path(os.environ.get('LOCALAPPDATA', ''))
@@ -496,6 +500,7 @@ def main():
         is_cloud = is_cloud_env()
         raw_port = os.environ.get('PORT')
         port = int(raw_port) if isinstance(raw_port, str) and raw_port.isdigit() else 8765
+        # pi-lens-ignore: S104
         host = '0.0.0.0' if is_cloud else '127.0.0.1'
 
         reserved = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
