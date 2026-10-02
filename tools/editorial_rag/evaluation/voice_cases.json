@@ -1,0 +1,68 @@
+[
+  {
+    "id": "voice-effort-opening",
+    "history": "Conversación ficticia completa\nProspecto: LLEVO MESES INTENTANDO HACER LA FLEXIÓN DE BRAZOS COMPLETA y no lo logro. Me esfuerzo, entreno igual y siempre vuelvo a caerme a mitad de camino. Ya probé de todo y sigo trabado\nTato: qué estás probando para la flexión?\nProspecto: la hago apoyando rodillas y aguantando la bajada. Hasta ahí me sale, pero al subir se me desploma el pecho",
+    "failure_pattern": "emotional_effort_opening",
+    "expected_move": "reconocer primero el esfuerzo sostenido y la frustración con palabras del lead, sin auditar lo que falta, y convertir la traba de la subida en una sola pregunta de dirección",
+    "forbidden": [
+      "respuesta de auditor que enumera errores antes de reconocer el esfuerzo",
+      "pitch del acompañamiento sin responder la traba",
+      "más de una pregunta sustantiva"
+    ]
+  },
+  {
+    "id": "voice-deep-personal",
+    "history": "Conversación ficticia completa\nProspecto: lo que más quiero es volver a caminar por la costa sin tener que sentarme a descansar cada tanto. Para mí no es solo entrenar, es recuperar una parte de mí que dejé de lado desde que dejé de moverme\nTato: qué estás haciendo hoy para caminar?\nProspecto: salgo dos veces por semana, pero a los veinte minutos ya necesito parar",
+    "failure_pattern": "deep_personal_opening",
+    "expected_move": "dar lugar proporcional a lo que esa recuperación significa para la persona antes de cualquier avance, y enlazar ese significado con la evidencia concreta de los veinte minutos, sin checklist",
+    "forbidden": [
+      "checklist de preguntas sin reconocimiento previo",
+      "validación genérica de la emoción",
+      "emoción inferida o dramatizada que el lead no expresó"
+    ]
+  },
+  {
+    "id": "voice-terse-lead",
+    "history": "Conversación ficticia completa\nProspecto: quiero ponerme en forma\nTato: qué te gustaría mejorar?\nProspecto: la fuerza\nTato: qué venís haciendo para trabajarla?\nProspecto: poco, nada armado",
+    "failure_pattern": "terse_lead",
+    "expected_move": "responder con una longitud proporcional a lo poco compartido, sin inventar complicidad ni empatía larga, y abrir una sola pregunta concreta que sume evidencia real",
+    "forbidden": [
+      "empatía larga sobre cosas que no dijo",
+      "expresiones de complicidad fabricada",
+      "más de una pregunta sustantiva"
+    ]
+  },
+  {
+    "id": "voice-informal-register",
+    "history": "Conversación ficticia completa\nProspecto: che, quiero que me salga la parada de manos sin apoyarme en la pared, onda, hacerla piola\nTato: qué práctica tenés de la parada?\nProspecto: nada formal, la pruebo en el sillón cuando estoy al pedo y me caigo para el costado",
+    "failure_pattern": "informal_register",
+    "expected_move": "responder en el registro natural de Tato, ni corregido ni caricatura, usando palabras del lead sin copiar su jerga ni corregir su forma de escribir",
+    "forbidden": [
+      "registro formal corregido",
+      "copia literal de la jerga o del humor del lead",
+      "corrección de su ortografía o su forma de escribir"
+    ]
+  },
+  {
+    "id": "voice-reentry-days",
+    "history": "Conversación ficticia completa\n2026-03-02\nProspecto: quiero recuperar la energía para jugar al fútbol los domingos sin quedar roto el lunes\nTato: qué lugar ocupa el entrenamiento en tu semana?\n2026-03-09\nProspecto: recién puedo contestar. Trabajo temprano y por la tarde estudio, pero sigo con ganas de mejorar eso",
+    "failure_pattern": "reentry_after_days",
+    "expected_move": "saludar brevemente por la reentrada sin reiniciar la fase, conservar lo ganado sobre su semana y retomar la evidencia pendiente con una sola pregunta de dirección",
+    "forbidden": [
+      "saludo de reapertura que reinicia la conversación",
+      "repregunta de una fase ya respondida",
+      "respuesta tan corta que rompe la continuidad"
+    ]
+  },
+  {
+    "id": "voice-specific-doubt",
+    "history": "Conversación ficticia completa\nProspecto: cuando hago la sentadilla profunda me levanto de puntas sin darme cuenta. Eso está mal?\nTato: qué estás sintiendo cuando subís?\nProspecto: siento que me caigo para atrás y tengo que agarrarme de algo para no caerme",
+    "failure_pattern": "specific_doubt",
+    "expected_move": "responder la duda concreta dentro del alcance del entrenamiento con una lectura breve que aporte una distinción útil, sin diagnóstico ni prescripción, y sin adjuntar una pregunta genérica",
+    "forbidden": [
+      "pregunta genérica adjunta sin responder la duda",
+      "diagnóstico, prescripción o promesa",
+      "consejo seguido de pregunta sin utilidad"
+    ]
+  }
+]
