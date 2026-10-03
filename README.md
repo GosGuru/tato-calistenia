@@ -88,7 +88,35 @@ Este README, `AGENTS.md` y el diseño son resúmenes, no nuevos dueños de regla
 
 [Correcciones controladas](.agents/skills/tato-calistenia/references/feedback-controlado.md) define el ciclo de mantenimiento. `Me gusta más así` afecta solo la instancia; no se guardan chats ni frases. Antes de cualquier escritura durable se muestra principio, alcance, excepción, contraste y regla reemplazada para aprobación explícita actual. El ledger vacío no inventa aprobaciones ni activa reglas. Revertir exige editar el dueño real; cambiar un estado no es rollback.
 
-La validación de gobernanza se incluye por defecto sin CRM. Sus tests se ejecutan con `python -B .agents/skills/tato-calistenia/scripts/test_runtime_governance.py`. Son controles estructurales, no prueba de identidad humana ni evaluación automática de DMs. La guardia mecánica de DM pertenece a otra unidad.
+La validación de gobernanza se incluye por defecto sin CRM. Sus tests se ejecutan con `python -B .agents/skills/tato-calistenia/scripts/test_runtime_governance.py`. Son controles estructurales, no prueba de identidad humana ni evaluación automática de DMs.
+
+### Guardia mecánica de DM (`dm_guard.py`)
+
+`dm_guard.py` es un CLI de solo lectura que recibe un JSON por stdin y devuelve un JSON por stdout con el resultado de checks objetivos. No guarda nada, no envía nada, no accede a red ni CRM.
+
+```powershell
+# Uso manual
+echo '{"mode":"prospect_dm","dm":"qué objetivo tenés?","state":{"call_accepted":false,"followup_count":0,"explicit_rejection":false,"movement":"prospect","closure_reason":null},"allowed_resource_urls":[]}' | python -B .agents/skills/tato-calistenia/scripts/dm_guard.py
+```
+
+Checks mecánicos implementados:
+
+| Check | Qué verifica |
+|---|---|
+| `nonempty` | El DM no está vacío |
+| `no_opening_punctuation` | No empieza con `¿` ni `¡` |
+| `question_count` | Exactamente 1 pregunta en conversaciones activas; 0 permitidas en cierres declarados |
+| `no_code_fence` | Sin bloques de código (` ``` `) |
+| `no_analysis_label` | Sin etiquetas de análisis evidentes |
+| `no_bare_colon` | Dos puntos solo dentro de una URL `https://` |
+| `no_internal_price` | Sin referencias con moneda al precio interno (USD 300 / $300 / 300 dólares); 300 reps pasa |
+| `agenda_url` | La URL de agenda solo aparece si `call_accepted: true` |
+| `agenda_movement` | Cuando `movement=agenda`: URL oficial + pregunta de confirmación |
+| `followup_cap` | No enviar más de 2 followups sin respuesta; rechazos explícitos bloqueados |
+
+**`mechanical_pass: true` no es aprobación semántica.** `semantic_review_required` es siempre `true`. La revisión de calidad, fidelidad, fase y posicionamiento sigue siendo manual.
+
+Los tests se ejecutan con `python -B .agents/skills/tato-calistenia/scripts/test_dm_guard.py` (40 tests, sin datos privados).
 
 ## Mantenimiento
 
