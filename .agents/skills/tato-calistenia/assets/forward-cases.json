@@ -1993,6 +1993,148 @@
         "última maniobra",
         "repetición de la ruta"
       ]
+    },
+    {
+      "id": "objecion-escepticismo-desarme",
+      "mode": "prospect_dm",
+      "title": "Escepticismo defensivo y sospecha de venta",
+      "phase": "conversion",
+      "input_summary": "La persona duda con desconfianza, preguntando si es una trampa para venderle algo o diciendo que ya le cobraron sin resultados otros entrenadores.",
+      "expected_move": "Validar la desconfianza con serenidad sin ponerse a la defensiva ni debatir credenciales, y presentar la reunión de auditoría como un espacio objetivo de evaluación mutua.",
+      "required": [
+        "validación serena de la desconfianza",
+        "auditoría como evaluación mutua",
+        "sin debate de credenciales ni ego"
+      ],
+      "forbidden": [
+        "discusión o justificación a la defensiva",
+        "descalificación de su postura",
+        "forzar la llamada"
+      ]
+    },
+    {
+      "id": "objecion-escepticismo-rechazo-cierre",
+      "mode": "prospect_dm",
+      "title": "Rechazo tajante sin apertura a evaluar",
+      "phase": "conversion",
+      "input_summary": "La persona afirma de forma tajante que no le interesa hablar con nadie, que no le escriban más y que no va a pagar nada.",
+      "expected_move": "Cerrar con respeto sin pregunta, cancelando los follow-ups y sin insistir ni justificar la propuesta.",
+      "required": [
+        "cierre respetuoso sin pregunta",
+        "cancelación de follow-ups"
+      ],
+      "forbidden": [
+        "pregunta final",
+        "justificación de la llamada",
+        "insistencia"
+      ]
+    },
+    {
+      "id": "objecion-tiempo-adaptabilidad",
+      "mode": "prospect_dm",
+      "title": "Objeción de tiempo con viabilidad adaptada",
+      "phase": "conversion",
+      "input_summary": "La persona dice que no tiene tiempo porque trabaja muchas horas y tiene familia, pero quiere entrenar.",
+      "expected_move": "Desmitificar la necesidad de vivir en el gimnasio dos horas al día, mostrar que la estructura se adapta a su meta y consultar con firmeza si está dispuesto a comprometerse con esa estructura mínima.",
+      "required": [
+        "desmitificar volumen excesivo",
+        "adaptabilidad al contexto",
+        "cuestionar compromiso con naturalidad"
+      ],
+      "forbidden": [
+        "plantilla rígida de minutos",
+        "culpa o reproche",
+        "forzar la llamada"
+      ]
+    },
+    {
+      "id": "objecion-tiempo-imposibilidad-cierre",
+      "mode": "prospect_dm",
+      "title": "Imposibilidad horaria total y persistente",
+      "phase": "conversion",
+      "input_summary": "La persona explica que está en una emergencia familiar insalvable que le consume las 24 horas y no puede asumir ningún compromiso en este momento.",
+      "expected_move": "Cerrar con respeto y desapego sin mendigar la llamada ni insistir.",
+      "required": [
+        "cierre respetuoso sin pregunta",
+        "autoridad y desapego"
+      ],
+      "forbidden": [
+        "insistencia o presión",
+        "repregunta para forzar llamada",
+        "minimizar su situación"
+      ]
+    },
+    {
+      "id": "objecion-lesion-cronica-adaptacion",
+      "mode": "prospect_dm",
+      "title": "Lesión crónica o antecedente que permite entrenar",
+      "phase": "conversion",
+      "input_summary": "La persona menciona que tiene dos hernias discales o una tendinitis vieja en el hombro, pero entrena y quiere progresar sin lastimarse.",
+      "expected_move": "Indagar si hoy puede moverse y entrenar, y mostrar que el trabajo de fuerza guiado y progresivo es justamente lo que protege el cuerpo y previene el empeoramiento.",
+      "required": [
+        "indagar estado actual del movimiento",
+        "fuerza guiada como protección",
+        "progresión adaptada"
+      ],
+      "forbidden": [
+        "derivación médica innecesaria ante caso ambulatorio",
+        "promesa mágica de curación",
+        "kinesiofobia o alarmismo"
+      ]
+    },
+    {
+      "id": "objecion-dolor-agudo-derivacion",
+      "mode": "prospect_dm",
+      "title": "Dolor agudo o trauma incapacitante",
+      "phase": "conversion",
+      "input_summary": "La persona relata una lesión aguda reciente que le impide moverse y le genera dolor intenso incluso en reposo.",
+      "expected_move": "Frenar la venta con calidez humana y orientar a consulta médica o traumatológica sin calificar comercialmente.",
+      "required": [
+        "freno de venta",
+        "orientación al profesional de salud",
+        "calidez humana"
+      ],
+      "forbidden": [
+        "invitación a llamada comercial",
+        "diagnóstico por DM",
+        "minimizar el dolor agudo"
+      ]
+    },
+    {
+      "id": "tecnica-biomecanica-anillas-palanca",
+      "mode": "prospect_dm",
+      "title": "Molestia articular y duda de escalabilidad en 40+",
+      "phase": "brecha",
+      "input_summary": "Lead de 48 años dice que le tiran los codos al colgarse en barra fija y teme que la calistenia sea demasiado lesiva para su edad.",
+      "expected_move": "Orientar sobre la libertad de giro de las anillas para descomprimir articulaciones y cómo la carga se modula con palancas y apoyos, sin diagnosticar patologías.",
+      "required": [
+        "orientación sobre anillas o rotación libre",
+        "escalabilidad por palanca",
+        "tono pedagógico de entrenador"
+      ],
+      "forbidden": [
+        "diagnóstico clínico por DM",
+        "prescripción de rutina o series",
+        "minimizar la molestia"
+      ]
+    },
+    {
+      "id": "tecnica-diagnostico-clinico-evitado",
+      "mode": "prospect_dm",
+      "title": "Petición de diagnóstico o prescripción médica",
+      "phase": "brecha",
+      "input_summary": "El lead pide que le digan si tiene tendinitis y cuántas series hacer para curarse.",
+      "expected_move": "Marcar con serenidad el límite profesional: no diagnosticar por texto, orientar con criterio general y preguntar cómo le afecta hoy el movimiento.",
+      "required": [
+        "límite claro de salud",
+        "sin diagnóstico ni prescripción",
+        "pregunta neutral de movimiento"
+      ],
+      "forbidden": [
+        "diagnosticar tendinitis",
+        "indicar series o ejercicios terapéuticos",
+        "prometer curación"
+      ]
     }
   ],
   "batch_rubric": {

@@ -239,6 +239,15 @@ No hace falta nombrar dorsal, romboides, trapecio ni huesos para responder un DM
 - **Falta por observar:** experiencia, comodidad, molestias, objetivo y calidad en cada agarre.
 - **Limite:** no afirmar que el supino siempre es mas facil ni prescribir una secuencia fija para todos.
 
+### Anillas y libertad articular rotacional
+
+- **Senales necesarias:** el lead dice que siente un tiron o molestia en codos (epicondilo o epitroclea) o en la cara anterior del hombro al colgarse o traccionar en barra fija rigida.
+- **Lectura prudente:** la barra fija restringe la muneca a un solo plano rotacional; si falta movilidad de hombro o muneca, el torque torsional se descarga en codos y hombros. Las anillas permiten que la mano rote libremente segun los ejes articulares naturales de la persona.
+- **Cue posible:** explorar el trabajo de traccion o fondos en anillas donde la muneca pueda rotar con naturalidad de pronacion a neutro o supinacion.
+- **Para que:** descomprime tendones y permite seguir construyendo fuerza sin sobrecargar articulaciones sensibles.
+- **Falta por observar:** si la molestia aparece solo bajo fatiga, con un agarre especifico o si persiste fuera de la practica.
+- **Limite:** no diagnosticar tendinopatias ni prescribir ejercicios terapeuticos o tratamientos medicos por DM.
+
 ## Balanceo en barra
 
 ### Pendulo en dominadas, retracciones o muscle-up
@@ -308,6 +317,15 @@ No hace falta nombrar dorsal, romboides, trapecio ni huesos para responder un DM
 - **Falta por observar:** respiracion, objetivo y momento exacto donde pierde posicion.
 - **Limite:** no dar porcentajes de contraccion ni protocolos respiratorios personalizados por DM.
 
+### Escalabilidad por palanca e inclinacion
+
+- **Senales necesarias:** duda sobre si la calistenia es viable para su nivel porque no puede levantar su peso corporal completo en flexiones o fondos.
+- **Lectura prudente:** en calistenia la carga se calibra modificando el brazo de palanca y la inclinacion respecto a la gravedad (apoyo elevado, pies asistidos o variantes intermedias); no es un requerimiento de todo o nada.
+- **Cue posible:** entender que la intensidad se modula ajustando la inclinacion del cuerpo y los puntos de apoyo para trabajar con control total.
+- **Para que:** desmitifica la barrera de entrada y muestra que se puede progresar desde cualquier punto de partida.
+- **Falta por observar:** nivel actual de fuerza basica, apoyos disponibles en su entorno y comodidad articular.
+- **Limite:** no disenar tablas fijas de progresiones ni dosificar series y repeticiones por DM.
+
 ## Pino
 
 ### Cadera lejos de la base
@@ -365,6 +383,15 @@ No hace falta nombrar dorsal, romboides, trapecio ni huesos para responder un DM
 - **Fatiga:** la calidad cambia entre las primeras y las ultimas repeticiones.
 
 Estas categorias son lecturas posibles, no diagnosticos. Elegir una solo cuando el historial aporta señales suficientes; si no, nombrar lo que falta observar.
+
+### Recuperacion articular y dosis minima en 40+
+
+- **Senales necesarias:** el lead cree que si no termina extenuado o con dolor muscular extremo no sirve, o entrena al fallo en cada serie y se estanca con molestias.
+- **Lectura prudente:** en adultos mayores de 40 años la tasa de recuperacion de tendones y tejido conectivo es mas lenta que la muscular; entrenar sistematicamente al fallo o con fatiga destructiva desgasta articulaciones y frena el progreso.
+- **Cue posible:** priorizar series de maxima calidad tecnica con repeticiones en reserva (RIR), buscando consistencia y adaptabilidad antes que agotamiento.
+- **Para que:** estimula la fuerza real sin sobrecargar el tejido conectivo ni comprometer la recuperacion semanal.
+- **Falta por observar:** frecuencia de entrenamiento, tiempo de descanso entre sesiones y respuesta articular individual.
+- **Limite:** no calcular RIR exacto ni disenar la periodizacion del mesociclo por texto.
 
 ## Limite de ayuda gratuita
 
