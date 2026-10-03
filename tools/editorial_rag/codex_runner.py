@@ -150,7 +150,7 @@ class CodexSessionRunner:
 
     def _run(self, packet):
         with self.stage('packet'):
-            prompt = _prompt(packet)
+            prompt = packet if isinstance(packet, str) else _prompt(packet)
         executable = shutil.which('codex')
         if not executable:
             self.outcome('login', 'unavailable')

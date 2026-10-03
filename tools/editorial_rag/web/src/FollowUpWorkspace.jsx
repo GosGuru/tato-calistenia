@@ -49,6 +49,7 @@ export default function FollowUpWorkspace({ token, modelConfig, onDisconnect }) 
   async function launchBrowser() {
     setConnectingBrowser(true);
     setError('');
+    setNotice('');
     try {
       const data = await localRequest('/api/manychat/launch', {
         method: 'POST',
@@ -59,9 +60,15 @@ export default function FollowUpWorkspace({ token, modelConfig, onDisconnect }) 
         body: JSON.stringify({ headless: false }),
       });
       setBrowserStatus(data);
-      setNotice('Ventana de ManyChat abierta. Si no estás logueado, iniciá sesión una sola vez.');
+      if (data.active || data.logged_in) {
+        setNotice('Ventana de ManyChat abierta. Si no estás logueado, iniciá sesión en ManyChat.');
+      } else if (data.error) {
+        setError(data.error);
+      } else {
+        setError('No se pudo abrir el navegador de ManyChat. Verificá que Playwright esté instalado.');
+      }
     } catch (e) {
-      setError('No se pudo abrir el navegador. Verificá que Playwright esté instalado.');
+      setError('No se pudo abrir el navegador. Verificá la conexión y que el servidor local esté activo.');
     } finally {
       setConnectingBrowser(false);
     }
@@ -88,10 +95,19 @@ export default function FollowUpWorkspace({ token, modelConfig, onDisconnect }) 
         }),
       });
 
+      if (data.status === 'error') {
+        setError(data.error || 'Error al escanear ManyChat.');
+        return;
+      }
+
       const fetched = data.leads || [];
       setLeads(fetched);
       const eligibleCount = fetched.filter(l => l.eligible).length;
-      setNotice(`Escaneo completo: ${fetched.length} contactos revisados, ${eligibleCount} elegibles para seguimiento.`);
+      if (fetched.length === 0) {
+        setNotice(data.notice || 'No se encontraron conversaciones para el período seleccionado.');
+      } else {
+        setNotice(`Escaneo completo: ${fetched.length} contactos revisados, ${eligibleCount} elegibles para seguimiento.`);
+      }
     } catch (e) {
       setError('Error al escanear ManyChat o evaluar los leads.');
     } finally {

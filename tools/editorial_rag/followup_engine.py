@@ -3,6 +3,8 @@
 Provides isolated classification, rule evaluation and draft generation
 without touching or mutating the primary setter conversational state.
 """
+import asyncio
+import inspect
 import json
 import re
 from typing import Any, Dict, List, Optional
@@ -149,7 +151,10 @@ async def evaluate_lead_llm(lead: LeadRecord, provider_config: Optional[Provider
     runner = create_runner(cfg)
 
     try:
-        raw_output = await runner(prompt)
+        if inspect.iscoroutinefunction(getattr(runner, '__call__', None)):
+            raw_output = await runner(prompt)
+        else:
+            raw_output = await asyncio.to_thread(runner, prompt)
         # Parse JSON from output
         json_match = re.search(r'\{.*\}', raw_output, re.DOTALL)
         if not json_match:

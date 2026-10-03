@@ -323,7 +323,7 @@ class ApiSessionRunner:
     def __call__(self, packet: Any) -> str:
         self.last_thinking = ''
         with self.stage('packet'):
-            prompt = _prompt(packet)
+            prompt = packet if isinstance(packet, str) else _prompt(packet)
 
         settings = resolve_provider_settings(self.config)
         endpoint = f"{settings['base_url']}/chat/completions"

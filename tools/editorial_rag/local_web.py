@@ -542,22 +542,40 @@ def create_app(auth=None):
     async def manychat_scan(body: ManyChatScanRequest):
         browser = get_manychat_browser()
         leads: list[LeadRecord] = []
-        if body.mock or not browser.is_active:
+        if body.mock:
             leads = get_sample_manychat_leads()
+        elif not browser.is_active:
+            return JSONResponse({
+                'status': 'error',
+                'error': 'El navegador no está conectado a ManyChat. Hacé clic en "Conectar ManyChat" primero, o usá "Demo de prueba" para simular.',
+                'leads': [],
+                'count': 0,
+            })
         else:
             try:
                 leads = await browser.scan_conversations(limit=body.limit)
-                if not leads:
-                    leads = get_sample_manychat_leads()
-            except Exception:
-                leads = get_sample_manychat_leads()
+            except Exception as exc:
+                return JSONResponse({
+                    'status': 'error',
+                    'error': f'Error al escanear ManyChat: {str(exc)[:120]}',
+                    'leads': [],
+                    'count': 0,
+                })
+
+        if not leads:
+            return JSONResponse({
+                'status': 'ok',
+                'leads': [],
+                'count': 0,
+                'notice': 'No se encontraron conversaciones activas en ManyChat para escanear.',
+            })
 
         proposals: list[dict] = []
         for lead in leads:
             prop = await evaluate_lead_llm(lead, body.provider_config)
             proposals.append(prop.model_dump())
 
-        return JSONResponse({'leads': proposals, 'count': len(proposals)})
+        return JSONResponse({'status': 'ok', 'leads': proposals, 'count': len(proposals)})
 
     @app.post('/api/manychat/send-batch')
     async def manychat_send_batch(body: ManyChatSendBatchRequest):
