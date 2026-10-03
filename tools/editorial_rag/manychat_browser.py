@@ -12,7 +12,15 @@ import random
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from playwright.async_api import BrowserContext, Page, Playwright, async_playwright
+try:
+    from playwright.async_api import BrowserContext, Page, Playwright, async_playwright
+    PLAYWRIGHT_AVAILABLE = True
+except (ImportError, ModuleNotFoundError):
+    PLAYWRIGHT_AVAILABLE = False
+    BrowserContext = Any  # type: ignore
+    Page = Any  # type: ignore
+    Playwright = Any  # type: ignore
+    async_playwright = None  # type: ignore
 
 from .followup_engine import LeadMessage, LeadRecord
 
@@ -31,16 +39,17 @@ class ManyChatBrowser:
 
     @property
     def is_active(self) -> bool:
-        return self._context is not None and self._page is not None and not self._page.is_closed()
+        return PLAYWRIGHT_AVAILABLE and self._context is not None and self._page is not None and not self._page.is_closed()
 
     async def get_status(self) -> Dict[str, Any]:
         """Check if browser is running and connected to ManyChat."""
-        if not self.is_active or not self._page:
+        if not PLAYWRIGHT_AVAILABLE or not self.is_active or not self._page:
             return {
                 "active": False,
                 "url": "",
                 "logged_in": False,
                 "profile_path": str(self.profile_dir),
+                "playwright_available": PLAYWRIGHT_AVAILABLE,
             }
         try:
             url = self._page.url
@@ -50,6 +59,7 @@ class ManyChatBrowser:
                 "url": url,
                 "logged_in": logged_in,
                 "profile_path": str(self.profile_dir),
+                "playwright_available": True,
             }
         except Exception:
             return {
@@ -57,10 +67,20 @@ class ManyChatBrowser:
                 "url": "",
                 "logged_in": False,
                 "profile_path": str(self.profile_dir),
+                "playwright_available": PLAYWRIGHT_AVAILABLE,
             }
 
     async def launch(self, headless: bool = False) -> Dict[str, Any]:
         """Launch browser with persistent user profile so login stays saved."""
+        if not PLAYWRIGHT_AVAILABLE:
+            return {
+                "active": False,
+                "url": "",
+                "logged_in": False,
+                "profile_path": str(self.profile_dir),
+                "playwright_available": False,
+                "error": "Playwright no está instalado en este entorno. El operador por navegador funciona en modo local.",
+            }
         async with self._lock:
             if self.is_active and self._page:
                 return await self.get_status()
