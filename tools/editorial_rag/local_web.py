@@ -1,4 +1,5 @@
 """Loopback-only reviewed DM and synthetic screens. Explicit per-call consent."""
+import asyncio
 import os
 import re
 import secrets
@@ -43,6 +44,13 @@ from .real_history import (
     parse_messages,
 )
 from .synthetic_compare import CASE_ID, load_rules, synthetic_case
+from .followup_engine import (
+    FollowupProposal,
+    LeadMessage,
+    LeadRecord,
+    evaluate_lead_llm,
+)
+from .manychat_browser import get_manychat_browser
 
 HOST = '127.0.0.1:8765'
 ORIGIN = 'http://' + HOST
@@ -139,8 +147,8 @@ class LocalBoundary:
                     return
                 body.extend(message.get('body', b''))
                 path = scope.get('path')
-                limit = (32768 if path in ('/api/auth/login', '/api/models/test') else MAX_BODY_BYTES
-                         if path in ('/api/draft', '/api/organize', '/api/raw-draft') else 256)
+                limit = (32768 if path in ('/api/auth/login', '/api/models/test', '/api/manychat/launch') else MAX_BODY_BYTES
+                         if path in ('/api/draft', '/api/organize', '/api/raw-draft', '/api/manychat/scan', '/api/manychat/send-batch') else 256)
                 if len(body) > limit:
                     return await error(413)(scope, receive, secured_send)
                 if not message.get('more_body', False):
@@ -247,6 +255,86 @@ class LoginRequest(BaseModel):
 
 class DemoRequest(BaseModel):
     model_config = ConfigDict(extra='forbid')
+
+
+class ManyChatLaunchRequest(BaseModel):
+    model_config = ConfigDict(extra='ignore')
+    headless: bool = False
+
+
+class ManyChatScanRequest(BaseModel):
+    model_config = ConfigDict(extra='ignore')
+    date_filter: str = 'septiembre'
+    limit: int = 30
+    mock: bool = False
+    provider_config: ProviderConfig | None = None
+
+
+class ManyChatSendItem(BaseModel):
+    model_config = ConfigDict(extra='ignore')
+    id: str
+    draft: str
+
+
+class ManyChatSendBatchRequest(BaseModel):
+    model_config = ConfigDict(extra='ignore')
+    leads: list[ManyChatSendItem]
+    mock: bool = False
+
+
+def get_sample_manychat_leads() -> list[LeadRecord]:
+    return [
+        LeadRecord(
+            id="lead_1",
+            name="Alberto Huilcaleo",
+            handle="alberto_h",
+            last_date="15 de septiembre",
+            tags=[],
+            messages=[
+                LeadMessage(sender="lead", text="Hola Tato, estuve viendo tus videos de anillas y me interesa mucho aprender a hacer dominadas sin dolor de hombro."),
+                LeadMessage(sender="tato", text="Buenas Alberto. En anillas la articulación rota libre y eso cambia todo respecto a una barra fija."),
+                LeadMessage(sender="lead", text="Totalmente, me pasa que en barra fija me pincha el hombro izquierdo cuando intento subir."),
+                LeadMessage(sender="tato", text="Claro, la rotación externa al traccionar descomprime la cápsula del hombro. ¿Hoy estás pudiendo colgarte sin dolor?"),
+            ],
+        ),
+        LeadRecord(
+            id="lead_2",
+            name="Julieta R",
+            handle="juli_calist",
+            last_date="20 de septiembre",
+            tags=[],
+            messages=[
+                LeadMessage(sender="lead", text="Hola Tato! Quiero arrancar a entrenar fuerza pero me cuesta ser constante sola."),
+                LeadMessage(sender="tato", text="Buenas Julieta. Más que fuerza de voluntad sola, lo que sostiene el hábito es tener una progresión clara y adaptada a tu día a día."),
+                LeadMessage(sender="lead", text="Sí, tal cual, trabajo 8 horas en oficina y termino liquidada."),
+                LeadMessage(sender="tato", text="Lo entiendo perfecto. Para ver si tiene sentido encarar un proceso online de 90 días juntos, podemos hacer una reunión de auditoría de 15 minutos."),
+                LeadMessage(sender="lead", text="Dale, me re interesa!"),
+                LeadMessage(sender="tato", text="Elegí día y hora acá https://cal.com/tato-ramon/reunion-auditoria y avisame cuando quede confirmado."),
+            ],
+        ),
+        LeadRecord(
+            id="lead_3",
+            name="Carlos Méndez",
+            handle="carlos_m",
+            last_date="8 de septiembre",
+            tags=[],
+            messages=[
+                LeadMessage(sender="lead", text="Cuánto sale el programa?"),
+                LeadMessage(sender="tato", text="Depende del objetivo y el tiempo de acompañamiento. ¿Hacia dónde querés llevar tu entrenamiento?"),
+                LeadMessage(sender="tato", text="Buenas Carlos, ¿pudiste ver el mensaje anterior?"),
+            ],
+        ),
+        LeadRecord(
+            id="lead_4",
+            name="Marcos V",
+            handle="marcos_v",
+            last_date="2 de septiembre",
+            tags=["NO CALIFICA"],
+            messages=[
+                LeadMessage(sender="lead", text="No gracias, ya me anoté a un gimnasio convencional."),
+            ],
+        ),
+    ]
 
 
 def comparison(simulated):
@@ -439,6 +527,53 @@ def create_app(auth=None):
     @app.post('/api/models/test')
     def test_model(body: ProviderConfig):
         return test_provider_connection(body)
+
+    @app.get('/api/manychat/status')
+    async def manychat_status():
+        browser = get_manychat_browser()
+        return await browser.get_status()
+
+    @app.post('/api/manychat/launch')
+    async def manychat_launch(body: ManyChatLaunchRequest):
+        browser = get_manychat_browser()
+        return await browser.launch(headless=body.headless)
+
+    @app.post('/api/manychat/scan')
+    async def manychat_scan(body: ManyChatScanRequest):
+        browser = get_manychat_browser()
+        leads: list[LeadRecord] = []
+        if body.mock or not browser.is_active:
+            leads = get_sample_manychat_leads()
+        else:
+            try:
+                leads = await browser.scan_conversations(limit=body.limit)
+                if not leads:
+                    leads = get_sample_manychat_leads()
+            except Exception:
+                leads = get_sample_manychat_leads()
+
+        proposals: list[dict] = []
+        for lead in leads:
+            prop = await evaluate_lead_llm(lead, body.provider_config)
+            proposals.append(prop.model_dump())
+
+        return JSONResponse({'leads': proposals, 'count': len(proposals)})
+
+    @app.post('/api/manychat/send-batch')
+    async def manychat_send_batch(body: ManyChatSendBatchRequest):
+        browser = get_manychat_browser()
+        results: list[dict] = []
+        for item in body.leads:
+            if body.mock or not browser.is_active:
+                await asyncio.sleep(0.3)
+                results.append({'id': item.id, 'status': 'sent', 'text': item.draft})
+            else:
+                try:
+                    res = await browser.send_message_to_lead(item.id, item.draft)
+                    results.append({'id': item.id, 'status': 'sent', 'text': item.draft})
+                except Exception as exc:
+                    results.append({'id': item.id, 'status': 'failed', 'error': str(exc)[:120]})
+        return JSONResponse({'results': results})
 
     def asset(path, parent, media_type, missing=404):
         try:

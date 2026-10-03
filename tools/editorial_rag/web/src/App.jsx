@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Info, RefreshCw, Unplug, Wifi } from 'lucide-react';
 import RealDM from './RealDM.jsx';
 import RawDM from './RawDM.jsx';
+import FollowUpWorkspace from './FollowUpWorkspace.jsx';
 import AppAuth, { localRequest, connectionMessage, validStatus } from './AppAuth.jsx';
 import ModelSelector, { getSavedModelConfig } from './ModelSelector.jsx';
 import * as Tabs from '@radix-ui/react-tabs';
@@ -213,8 +214,8 @@ export default function App() {
     <main className="workspace-main">
       <header className="workspace-header">
         <SidebarTrigger aria-label="Alternar navegación" />
-        <div className="header-title"><h1>{mode === 'real' ? 'Responder conversación' : mode === 'advanced' ? 'Revisión avanzada' : 'Tato · Laboratorio editorial'}</h1>
-          <p>{mode === 'real' ? 'Pegá el historial. Recibí el próximo DM.' : mode === 'advanced' ? 'Revisá cada mensaje antes de compartirlo.' : 'Comparación ficticia, sin evidencia de mejora.'}</p></div>
+        <div className="header-title"><h1>{mode === 'real' ? 'Responder conversación' : mode === 'advanced' ? 'Revisión avanzada' : mode === 'followup' ? 'Seguimientos ManyChat' : 'Tato · Laboratorio editorial'}</h1>
+          <p>{mode === 'real' ? 'Pegá el historial. Recibí el próximo DM.' : mode === 'advanced' ? 'Revisá cada mensaje antes de compartirlo.' : mode === 'followup' ? 'Escanear chats, filtrar elegibilidad y enviar con navegador como humano.' : 'Comparación ficticia, sin evidencia de mejora.'}</p></div>
         <div className="header-controls">
         <div className="connection-tools"><span className={`connection-state ${token ? 'available' : ''}`}>{token ? <Wifi aria-hidden="true" /> : <Unplug aria-hidden="true" />}{reconnecting ? 'Conectando…' : token ? 'Servidor local conectado' : 'Sin conexión local'}</span>
           <button type="button" disabled={reconnecting} onClick={() => reconnect()}><RefreshCw aria-hidden="true" />Reconectar</button></div>
@@ -235,6 +236,10 @@ export default function App() {
     <Tabs.Content value="advanced">{mode === 'advanced' && <>
       {!token && <p role="status">{connectionError || 'Cargando conexión local…'}</p>}
       <RealDM modelConfig={modelConfig} token={token} connection={connection} connectionEpoch={connectionEpoch} onDisconnect={disconnect} />
+    </>}</Tabs.Content>
+    <Tabs.Content value="followup">{mode === 'followup' && <>
+      {!token && <p role="status">{connectionError || 'Cargando conexión local…'}</p>}
+      <FollowUpWorkspace token={token} modelConfig={modelConfig} onDisconnect={disconnect} />
     </>}</Tabs.Content>
     <Tabs.Content value="synthetic">{mode === 'synthetic' && <div className="workspace">
       <aside className="panel conversation" aria-labelledby="case-title">

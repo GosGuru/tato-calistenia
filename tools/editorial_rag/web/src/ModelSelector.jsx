@@ -19,7 +19,7 @@ export const DEFAULT_PROVIDERS = [
     badge: 'API oficial',
     description: 'api.deepseek.com — Modelos V3 (deepseek-chat), R1 (deepseek-reasoner), Flash y V4 Pro.',
     requiresKey: true,
-    models: ['deepseek-chat', 'deepseek-reasoner', 'deepseek-flash', 'deepseek-v4-pro'],
+    models: ['deepseek-chat', 'deepseek-reasoner', 'deepseek-flash', 'deepseek-v4-pro', 'deepseek-v4.1-flash'],
     defaultModel: 'deepseek-chat',
     defaultBaseUrl: 'https://api.deepseek.com',
   },
@@ -88,6 +88,7 @@ export function normalizeModelName(provider, model) {
   }
   if (provider === 'deepseek') {
     const clean = m.toLowerCase().replace(/\s+/g, '-');
+    if (clean.includes('4.1') || clean.includes('v4.1')) return 'deepseek-v4.1-flash';
     if (clean.includes('flash')) return 'deepseek-flash';
     if (clean.includes('pro') || clean.includes('v4')) return 'deepseek-v4-pro';
     if (clean.includes('reason') || clean.includes('r1')) return 'deepseek-reasoner';
@@ -150,6 +151,7 @@ export function getActiveProviderPayload(modelConfig) {
 export function modelDisplayLabel(modelConfig) {
   if (!modelConfig || modelConfig.provider === 'codex') return 'Codex';
   if (modelConfig.provider === 'deepseek') {
+    if (modelConfig.model === 'deepseek-v4.1-flash') return 'DeepSeek (V4.1 Flash)';
     if (modelConfig.model === 'deepseek-reasoner') return 'DeepSeek (R1)';
     if (modelConfig.model === 'deepseek-flash') return 'DeepSeek (Flash)';
     if (modelConfig.model === 'deepseek-v4-pro') return 'DeepSeek (V4 Pro)';

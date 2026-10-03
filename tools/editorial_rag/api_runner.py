@@ -44,7 +44,7 @@ PROVIDERS = {
         'name': 'DeepSeek',
         'type': 'api',
         'default_model': 'deepseek-chat',
-        'models': ['deepseek-chat', 'deepseek-reasoner', 'deepseek-flash', 'deepseek-v4-pro'],
+        'models': ['deepseek-chat', 'deepseek-reasoner', 'deepseek-flash', 'deepseek-v4-pro', 'deepseek-v4.1-flash'],
         'default_base_url': 'https://api.deepseek.com',
         'env_key': 'DEEPSEEK_API_KEY',
         'requires_key': True,

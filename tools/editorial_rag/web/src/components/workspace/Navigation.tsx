@@ -1,11 +1,12 @@
 import * as Tabs from '@radix-ui/react-tabs';
-import { MessageSquare, ListChecks, Columns2, PanelLeftClose } from 'lucide-react';
+import { MessageSquare, ListChecks, Columns2, PanelLeftClose, Send } from 'lucide-react';
 import { Sidebar, SidebarContent, SidebarHeader, SidebarFooter, SidebarMenuButton, useSidebar } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 
 const sections = [
   { value: 'real', label: 'Responder conversación', icon: MessageSquare },
   { value: 'advanced', label: 'Revisión avanzada', icon: ListChecks },
+  { value: 'followup', label: 'Seguimientos ManyChat', icon: Send },
   { value: 'synthetic', label: 'Comparador sintético', icon: Columns2 },
 ];
 export function Navigation({ mode }: { mode: string }) {
