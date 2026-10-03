@@ -86,27 +86,57 @@ class ManyChatBrowser:
                 return await self.get_status()
 
             self.profile_dir.mkdir(parents=True, exist_ok=True)
-            self._playwright = await async_playwright().start()
+            try:
+                self._playwright = await async_playwright().start()
 
-            # Launch persistent context
-            self._context = await self._playwright.chromium.launch_persistent_context(
-                user_data_dir=str(self.profile_dir),
-                headless=headless,
-                viewport={"width": 1280, "height": 800},
-                args=[
-                    "--disable-blink-features=AutomationControlled",
-                    "--no-sandbox",
-                ],
-            )
+                launch_opts = {
+                    "user_data_dir": str(self.profile_dir),
+                    "headless": headless,
+                    "viewport": {"width": 1280, "height": 800},
+                    "args": [
+                        "--disable-blink-features=AutomationControlled",
+                        "--no-sandbox",
+                    ],
+                }
 
-            pages = self._context.pages
-            self._page = pages[0] if pages else await self._context.new_page()
+                # Try system Chrome first, then Edge, then bundled Chromium
+                for channel in ("chrome", "msedge", None):
+                    try:
+                        kwargs = dict(launch_opts)
+                        if channel:
+                            kwargs["channel"] = channel
+                        self._context = await self._playwright.chromium.launch_persistent_context(**kwargs)
+                        break
+                    except Exception:
+                        continue
 
-            # Go to ManyChat if not already there
-            if "manychat.com" not in self._page.url:
-                await self._page.goto("https://manychat.com", wait_until="domcontentloaded")
+                if not self._context:
+                    return {
+                        "active": False,
+                        "url": "",
+                        "logged_in": False,
+                        "profile_path": str(self.profile_dir),
+                        "playwright_available": True,
+                        "error": "No se pudo iniciar Chrome ni Edge con Playwright.",
+                    }
 
-            return await self.get_status()
+                pages = self._context.pages
+                self._page = pages[0] if pages else await self._context.new_page()
+
+                # Go to ManyChat if not already there
+                if "manychat.com" not in self._page.url:
+                    await self._page.goto("https://manychat.com", wait_until="domcontentloaded")
+
+                return await self.get_status()
+            except Exception as exc:
+                return {
+                    "active": False,
+                    "url": "",
+                    "logged_in": False,
+                    "profile_path": str(self.profile_dir),
+                    "playwright_available": True,
+                    "error": f"Error al iniciar el navegador: {str(exc)[:120]}",
+                }
 
     async def scan_conversations(self, limit: int = 30) -> List[LeadRecord]:
         """Scan visible conversations from ManyChat Live Chat."""

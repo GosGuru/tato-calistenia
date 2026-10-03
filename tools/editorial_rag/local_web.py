@@ -536,7 +536,15 @@ def create_app(auth=None):
     @app.post('/api/manychat/launch')
     async def manychat_launch(body: ManyChatLaunchRequest):
         browser = get_manychat_browser()
-        return await browser.launch(headless=body.headless)
+        try:
+            return await browser.launch(headless=body.headless)
+        except Exception as exc:
+            return {
+                'active': False,
+                'url': '',
+                'logged_in': False,
+                'error': f'Error al iniciar el navegador: {str(exc)[:120]}',
+            }
 
     @app.post('/api/manychat/scan')
     async def manychat_scan(body: ManyChatScanRequest):
