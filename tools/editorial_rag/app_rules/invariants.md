@@ -26,7 +26,7 @@ All paths are repository-relative. Character counts are current file sizes (UTF-
 | `.agents/skills/tato-calistenia/references/objeciones-agenda.md` | 8,017 | invariants (money, agenda, follow-up, closes) |
 | `.agents/skills/tato-calistenia/references/biblioteca-tecnica-tato.md` | 32,669 | split: limits here, technique knowledge to cards |
 
-Total of the seven references: 114,803 characters. The two split files are
+Total of the seven references: 119,342 characters. The two split files are
 `voz-escrita-tato.md` (19,172) and `biblioteca-tecnica-tato.md` (32,669).
 
 ## Where the line is drawn
@@ -124,7 +124,7 @@ those lines joined with `\n`).
       "base_anchor": "Sin dos puntos en prosa",
       "citations": [
         {"source": ".agents/skills/tato-calistenia/references/voz-escrita-tato.md", "lines": [40, 40], "quote": "- Sin dos puntos en prosa; el URL oficial conserva `https://`."},
-        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [119, 119], "quote": "El `:` del protocolo `https://` es la única excepción al veto de dos puntos. No afirmar `quedó agendado`, `reservado` o equivalente hasta recibir confirmación visible."}
+        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [135, 135], "quote": "El `:` del protocolo `https://` es la única excepción al veto de dos puntos. No afirmar `quedó agendado`, `reservado` o equivalente hasta recibir confirmación visible."}
       ]
     },
     {
@@ -325,7 +325,7 @@ those lines joined with `\n`).
       "base_anchor": "No esconder una respuesta simple para forzar la llamada",
       "citations": [
         {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [11, 11], "quote": "- No esconder una respuesta simple para forzar la llamada."},
-        {"source": ".agents/skills/tato-calistenia/references/biblioteca-tecnica-tato.md", "lines": [388, 388], "quote": "No retener una respuesta simple para forzar la llamada. Dar valor real en una sola prioridad y volver a la fase comercial pendiente. Con la calificacion completa, presentar la ruta; la llamada llega solo despues de su aceptacion, sin filtro economico proactivo."}
+        {"source": ".agents/skills/tato-calistenia/references/biblioteca-tecnica-tato.md", "lines": [415, 415], "quote": "No retener una respuesta simple para forzar la llamada. Dar valor real en una sola prioridad y volver a la fase comercial pendiente. Con la calificacion completa, presentar la ruta; la llamada llega solo despues de su aceptacion, sin filtro economico proactivo."}
       ]
     },
     {
@@ -333,8 +333,8 @@ those lines joined with `\n`).
       "theme": "offer_agenda",
       "base_anchor": "La oferta vigente es online",
       "citations": [
-        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [75, 75], "quote": "La oferta vigente es online."},
-        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [77, 77], "quote": "- Si el historial confirma una propuesta presencial previa, respetarla sin afirmar que sigue disponible."},
+        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [90, 90], "quote": "La oferta vigente es online."},
+        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [92, 92], "quote": "- Si el historial confirma una propuesta presencial previa, respetarla sin afirmar que sigue disponible."},
         {"source": ".agents/skills/tato-calistenia/references/contexto-maestro.md", "lines": [121, 121], "quote": "- No prometer que una modalidad presencial histórica siga disponible."}
       ]
     },
@@ -343,8 +343,8 @@ those lines joined with `\n`).
       "theme": "offer_agenda",
       "base_anchor": "Se envía exactamente ese enlace",
       "citations": [
-        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [107, 107], "quote": "Enviar exactamente este enlace:"},
-        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [109, 109], "quote": "`https://cal.com/tato-ramon/reunion-auditoria`"},
+        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [123, 123], "quote": "Enviar exactamente este enlace:"},
+        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [125, 125], "quote": "`https://cal.com/tato-ramon/reunion-auditoria`"},
         {"source": ".agents/skills/tato-calistenia/references/contexto-maestro.md", "lines": [127, 127], "quote": "`https://cal.com/tato-ramon/reunion-auditoria`"},
         {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [228, 228], "quote": "- `llamada_aceptada`: sin frenos activos, enviar el Cal.com oficial en línea propia, pedir elegir día y hora y cerrar con una única pregunta natural de confirmación."}
       ]
@@ -354,9 +354,9 @@ those lines joined with `\n`).
       "theme": "offer_agenda",
       "base_anchor": "No afirmar `quedó agendado`, `reservado` o equivalente hasta recibir confirmación visible",
       "citations": [
-        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [119, 119], "quote": "El `:` del protocolo `https://` es la única excepción al veto de dos puntos. No afirmar `quedó agendado`, `reservado` o equivalente hasta recibir confirmación visible."},
-        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [117, 117], "quote": "Si todavía está eligiendo, responder al impedimento real para encontrar día y hora si lo menciona; no repetir agenda, invitación ni ruta por reflejo. Mirar horarios, abrir el enlace o preferir un día no equivale a reservar. Con reserva confirmada y sin una excepción nueva, confirmar y cerrar sin pregunta."},
-        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [113, 115], "quote": "1. decirle que elija el día y la hora que mejor le queden;\n2. incluir el enlace en una línea propia;\n3. cerrar con una única pregunta natural que pida avisar al completar la reserva, sin otra calificación."}
+        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [135, 135], "quote": "El `:` del protocolo `https://` es la única excepción al veto de dos puntos. No afirmar `quedó agendado`, `reservado` o equivalente hasta recibir confirmación visible."},
+        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [133, 133], "quote": "Si todavía está eligiendo, responder al impedimento real para encontrar día y hora si lo menciona; no repetir agenda, invitación ni ruta por reflejo. Mirar horarios, abrir el enlace o preferir un día no equivale a reservar. Con reserva confirmada y sin una excepción nueva, confirmar y cerrar sin pregunta."},
+        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [129, 131], "quote": "1. decirle que elija el día y la hora que mejor le queden;\n2. incluir el enlace en una línea propia;\n3. cerrar con una única pregunta natural que pida avisar al completar la reserva, sin otra calificación."}
       ]
     },
     {
@@ -365,7 +365,7 @@ those lines joined with `\n`).
       "base_anchor": "No inventar ni prometer disponibilidad, horarios, frecuencia, duración de llamada ni datos de agenda",
       "citations": [
         {"source": ".agents/skills/tato-calistenia/references/contexto-maestro.md", "lines": [129, 129], "quote": "El enlace va en línea propia, se pide elegir día y hora y se cierra con una única pregunta natural de confirmación. Mirar horarios o preferir un día no equivale a reservar. Seguridad, rechazo, imposibilidad explícita e incompatibilidad prevalecen sobre agenda previa; preguntas y objeciones se responden antes de continuar sin perder lo aceptado. El lead elige una opción disponible en el calendario y avisa. Solo después de una confirmación visible se afirma que quedó reservado. No prometer duración de llamada ni inventar disponibilidad."},
-        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [71, 71], "quote": "No inventar frecuencia, horarios ni duración de llamada. Si el problema es sostener el entrenamiento, volver al contexto real y a la capacidad de adaptación del proceso. Si el problema es asistir a la llamada, usar el Cal.com para que elija una opción disponible."}
+        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [81, 81], "quote": "No inventar frecuencia, horarios ni duración de llamada."}
       ]
     },
     {
@@ -373,8 +373,8 @@ those lines joined with `\n`).
       "theme": "offer_agenda",
       "base_anchor": "no promete resultado, plan gratis ni duración",
       "citations": [
-        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [96, 96], "quote": "Solo ocurre con ruta aceptada y sin una excepción activa. No requiere una pregunta económica previa."},
-        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [100, 100], "quote": "- No promete resultado, plan gratis ni duración."},
+        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [112, 112], "quote": "Solo ocurre con ruta aceptada y sin una excepción activa. No requiere una pregunta económica previa."},
+        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [116, 116], "quote": "- No promete resultado, plan gratis ni duración."},
         {"source": ".agents/skills/tato-calistenia/references/operativa-dm.md", "lines": [242, 242], "quote": "La invitación se conecta con lo que la persona quiere lograr o vivir. No promete un plan gratis, un resultado ni una duración de llamada."}
       ]
     },
@@ -394,7 +394,7 @@ those lines joined with `\n`).
       "citations": [
         {"source": ".agents/skills/tato-calistenia/references/biblioteca-tecnica-tato.md", "lines": [34, 34], "quote": "6. No prescribir por DM series, repeticiones, tiempos, frecuencia, progresiones, cambios de rutina ni uso concreto de asistencia."},
         {"source": ".agents/skills/tato-calistenia/references/operativa-dm.md", "lines": [223, 223], "quote": "- indicar ejercicios, series, repeticiones, frecuencia o cargas personalizadas;"},
-        {"source": ".agents/skills/tato-calistenia/references/biblioteca-tecnica-tato.md", "lines": [479, 479], "quote": "- ninguna prescripcion personalizada;"}
+        {"source": ".agents/skills/tato-calistenia/references/biblioteca-tecnica-tato.md", "lines": [506, 506], "quote": "- ninguna prescripcion personalizada;"}
       ]
     },
     {
@@ -405,7 +405,7 @@ those lines joined with `\n`).
         {"source": ".agents/skills/tato-calistenia/references/biblioteca-tecnica-tato.md", "lines": [36, 36], "quote": "8. Si la charla es temprana, responder lo puntual y hacer como maximo una pregunta que permita entender su situacion. Ante una traba relatada o una duda tecnica se puede pedir un video, o una foto de una posicion concreta del movimiento cuando no haya video posible, siempre que ese material cambie la lectura; despues se devuelve una lectura orientadora y breve por caso, sin diagnostico, sin prescribir la ejecución y sin abrir seguimiento gratis."},
         {"source": ".agents/skills/tato-calistenia/references/biblioteca-tecnica-tato.md", "lines": [164, 164], "quote": "- Grabarse puede ayudar a contrastar sensacion y ejecucion, y el material que la persona aporta se usa para una lectura orientadora breve por caso; la foto es de una posicion del movimiento, nunca del cuerpo, y no se ofrece seguimiento gratis."},
         {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [171, 171], "quote": "6. Conectar esa lectura con la evidencia pendiente; no pegar una pregunta genérica después de una corrección técnica. Se puede pedir un video, o una foto de una posición concreta del movimiento cuando no haya video posible, si ese material cambia la lectura, y devolver una lectura orientadora y breve por caso, sin abrir rutina ni seguimiento gratis."},
-        {"source": ".agents/skills/tato-calistenia/references/biblioteca-tecnica-tato.md", "lines": [378, 386], "quote": "La ayuda puntual termina antes de:\n\n- analizar videos o fotos de forma continuada o convertir la devolucion en seguimiento gratuito;\n- elegir ejercicios o asistencia;\n- indicar series, repeticiones, tiempos o frecuencia;\n- armar una progresion o modificar una rutina;\n- hacer una segunda ronda de correcciones;\n- concluir causas de dolor;\n- prometer un resultado."}
+        {"source": ".agents/skills/tato-calistenia/references/biblioteca-tecnica-tato.md", "lines": [405, 413], "quote": "La ayuda puntual termina antes de:\n\n- analizar videos o fotos de forma continuada o convertir la devolucion en seguimiento gratuito;\n- elegir ejercicios o asistencia;\n- indicar series, repeticiones, tiempos o frecuencia;\n- armar una progresion o modificar una rutina;\n- hacer una segunda ronda de correcciones;\n- concluir causas de dolor;\n- prometer un resultado."}
       ]
     },
     {
@@ -442,7 +442,7 @@ those lines joined with `\n`).
       "citations": [
         {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [12, 12], "quote": "- No debatir, avergonzar, desafiar el ego ni fabricar urgencia."},
         {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [13, 13], "quote": "- No usar familia, salud, edad o tiempo estancado como amenaza."},
-        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [92, 92], "quote": "- Nunca usar el miedo a empeorar, el costo de salud o la familia como palanca."},
+        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [108, 108], "quote": "- No usar urgencia falsa, culpa ni miedo a empeorar como extorsión comercial."},
         {"source": ".agents/skills/tato-calistenia/references/contexto-maestro.md", "lines": [171, 171], "quote": "- usar miedo a empeorar como presión;"},
         {"source": ".agents/skills/tato-calistenia/references/contexto-maestro.md", "lines": [172, 172], "quote": "- presentar hijos, pareja o familia como culpa;"},
         {"source": ".agents/skills/tato-calistenia/SKILL.md", "lines": [25, 25], "quote": "- No convertir familia, salud, miedo, vergüenza o urgencia en presión comercial."}
@@ -463,7 +463,7 @@ those lines joined with `\n`).
       "theme": "safety_health",
       "base_anchor": "un menor confirmado no se agenda",
       "citations": [
-        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [84, 84], "quote": "No preguntar edad por rutina. Ante una señal concreta, aclararla antes de convertir. Un menor confirmado no se agenda."},
+        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [99, 99], "quote": "No preguntar edad por rutina. Ante una señal concreta, aclararla antes de convertir. Un menor confirmado no se agenda."},
         {"source": ".agents/skills/tato-calistenia/references/contexto-maestro.md", "lines": [63, 63], "quote": "- Una señal concreta de minoridad exige aclarar edad; un menor confirmado no se agenda."}
       ]
     },
@@ -473,7 +473,7 @@ those lines joined with `\n`).
       "base_anchor": "sin retomar la calificación en el mismo movimiento",
       "citations": [
         {"source": ".agents/skills/tato-calistenia/references/contexto-maestro.md", "lines": [174, 174], "quote": "- seguir calificando comercialmente durante una emergencia;"},
-        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [91, 91], "quote": "- Una emergencia o una necesidad médica fuera del alcance frena la venta."}
+        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [107, 107], "quote": "- Una emergencia médica, un dolor agudo incapacitante o una patología que impida todo movimiento frena la venta y se orienta al profesional de salud correspondiente con calidez humana."}
       ]
     },
     {
@@ -624,7 +624,7 @@ those lines joined with `\n`).
       "theme": "sequence_conversion",
       "base_anchor": "Máximo dos follow-ups",
       "citations": [
-        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [123, 123], "quote": "Se permiten como máximo dos si no hubo rechazo claro."},
+        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [139, 139], "quote": "Se permiten como máximo dos si no hubo rechazo claro."},
         {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [14, 14], "quote": "- Un rechazo claro se responde una vez con un cierre respetuoso y cancela ambos follow-ups. Si la persona reabre más adelante, se recupera el estado anterior."},
         {"source": ".agents/skills/tato-calistenia/references/motor-agentico.md", "lines": [232, 232], "quote": "- `seguimiento`: retomar la fase pendiente; máximo dos intentos y ninguno tras un rechazo claro."}
       ]
@@ -635,7 +635,7 @@ those lines joined with `\n`).
       "base_anchor": "Cerrar sin pregunta ante",
       "citations": [
         {"source": ".agents/skills/tato-calistenia/references/operativa-dm.md", "lines": [246, 254], "quote": "Cerrar sin otra pregunta ante:\n\n- menor confirmado;\n- rechazo claro o segundo no tras una aclaración;\n- inversión explícitamente imposible hoy;\n- incompatibilidad real de modalidad;\n- emergencia o necesidad fuera del alcance;\n- dos follow-ups sin respuesta;\n- reserva confirmada sin otro freno activo."},
-        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [137, 143], "quote": "Cerrar sin pregunta cuando:\n\n- expresa un rechazo claro o un segundo no tras una aclaración;\n- confirma que no puede invertir hoy;\n- existe incompatibilidad real;\n- se alcanzaron dos follow-ups;\n- el caso es menor o queda fuera de alcance."},
+        {"source": ".agents/skills/tato-calistenia/references/objeciones-agenda.md", "lines": [153, 159], "quote": "Cerrar sin pregunta cuando:\n\n- expresa un rechazo claro o un segundo no tras una aclaración;\n- confirma que no puede invertir hoy;\n- existe incompatibilidad real;\n- se alcanzaron dos follow-ups;\n- el caso es menor o queda fuera de alcance."},
         {"source": ".agents/skills/tato-calistenia/references/operativa-dm.md", "lines": [258, 258], "quote": "Estos cierres son la excepción explícita a la pregunta de dirección obligatoria en conversaciones activas."}
       ]
     },

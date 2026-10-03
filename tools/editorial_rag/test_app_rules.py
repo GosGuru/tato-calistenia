@@ -31,8 +31,8 @@ MAX_BASE_CHARACTERS = 25_000
 # Pinned snapshot of load_real_rules(). The seven normative sources are frozen for the
 # offline bank; the joined output must not drift except through an approved maintenance
 # change, which re-pins these two constants in the same commit as the reference edit.
-RULES_SHA256_PINNED = 'e1607023272379c84e86f2c3a609b57dbdeb9a685c546a1a9393697876f0adce'
-RULES_CHARACTERS_PINNED = 116_350
+RULES_SHA256_PINNED = '4ac9530d782348de555face720c2b70c7947cee4df8edc4d8a547ec23f3ead66'
+RULES_CHARACTERS_PINNED = 120_932
 EXPECTED_INVARIANTS = 65
 EXPECTED_CARD_COUNT = 20
 EXPECTED_THEMES = {'format', 'voice_contract', 'offer_agenda',
