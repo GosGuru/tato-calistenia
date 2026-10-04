@@ -9,6 +9,7 @@ Acts as a human operator:
 import asyncio
 import os
 import random
+import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -149,7 +150,6 @@ class ManyChatBrowser:
                 # If current URL has account ID like https://app.manychat.com/fb4774329/dashboard
                 current = self._page.url
                 if "app.manychat.com" in current:
-                    import re
                     m = re.search(r'(https://app\.manychat\.com/[^/]+)', current)
                     if m:
                         chat_url = f"{m.group(1)}/chat"
@@ -370,7 +370,6 @@ class ManyChatBrowser:
             if not clicked:
                 # Direct navigation fallback
                 current_url = self._page.url
-                import re
                 base_match = re.search(r'(https://app\.manychat\.com/[^/]+)', current_url)
                 base = base_match.group(1) if base_match else "https://app.manychat.com"
                 await self._page.goto(f"{base}/chat/{lead_id}", wait_until="domcontentloaded", timeout=10000)
