@@ -146,8 +146,24 @@ class ManyChatBrowser:
 
             # Ensure we are in chat
             if "/chat" not in self._page.url:
-                await self._page.goto("https://manychat.com/chat", wait_until="domcontentloaded")
-                await asyncio.sleep(2)
+                # If current URL has account ID like https://app.manychat.com/fb4774329/dashboard
+                current = self._page.url
+                if "app.manychat.com" in current:
+                    import re
+                    m = re.search(r'(https://app\.manychat\.com/[^/]+)', current)
+                    if m:
+                        chat_url = f"{m.group(1)}/chat"
+                    else:
+                        chat_url = "https://app.manychat.com/chat"
+                else:
+                    chat_url = "https://app.manychat.com/chat"
+
+                await self._page.goto(chat_url, wait_until="networkidle", timeout=15000)
+                await asyncio.sleep(3)
+
+            # Diagnostic: check frames and page title
+            print(f"[ManyChatBrowser] Current URL: {self._page.url}, title: {await self._page.title()}")
+            print(f"[ManyChatBrowser] Frames count: {len(self._page.frames)}")
 
             # 1. Click on 'Tú' or 'Asignado a mí' if not already selected
             await self._page.evaluate("""() => {
@@ -165,70 +181,50 @@ class ManyChatBrowser:
             await asyncio.sleep(1.5)
 
             # 2. Extract chats from the list
-            raw_chats = await self._page.evaluate("""() => {
-                // Find chat items in ManyChat
-                // Strategy: find rows containing contact names and snippet/time
+            raw_chats = await self._page.evaluate(r"""() => {
                 const results = [];
-                
-                // ManyChat modern UI: rows in conversation list
-                // Check common container rows or elements with avatars/dates
-                const allElements = Array.from(document.querySelectorAll('*'));
-                
-                // Let's identify conversation cards: they have a contact name, a preview text, and a time/date indicator
-                const candidateContainers = Array.from(document.querySelectorAll(
-                    '[data-qa="chat-item"], .chat-item, [class*="ConversationItem"], [class*="chatListItem"], [class*="conversation-item"], [class*="inbox-item"], [role="row"], li'
-                ));
-                
-                // If standard containers match
-                for (const item of candidateContainers) {
-                    const text = item.innerText || '';
-                    const lines = text.split('\\n').map(l => l.trim()).filter(Boolean);
+                // ManyChat renders chat items as links matching /chat/<id>
+                const chatLinks = Array.from(document.querySelectorAll('a[href*="/chat/"]'))
+                    .filter(a => /\/chat\/\d+/.test(a.getAttribute('href') || ''));
+
+                for (const link of chatLinks) {
+                    const href = link.getAttribute('href') || '';
+                    const match = href.match(/\/chat\/(\d+)/);
+                    const id = match ? match[1] : href;
+
+                    // Extract text parts: Name, time, snippet
+                    const text = link.innerText || '';
+                    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+
+                    // Typical format: [Name, Time (e.g. 32min, 1h, 2d), Snippet...]
+                    let name = '';
+                    let date = '';
+                    let snippet = '';
+
+                    if (lines.length >= 1) {
+                        name = lines[0];
+                    }
                     if (lines.length >= 2) {
-                        // Check if it looks like a chat row (e.g. contains name + snippet, short lines)
-                        // Ignore header elements or navigation links
-                        if (lines.includes('Bandeja de entrada') || lines.includes('Todos los chats') || lines.includes('Filtro')) continue;
-                        
-                        const name = lines[0];
-                        const snippet = lines[1] || '';
-                        const date = lines.find(l => l.includes('h') || l.includes('d') || l.includes('m') || l.includes('septiembre') || l.includes(':')) || '';
-                        const id = item.getAttribute('data-id') || item.getAttribute('id') || `chat_${name.replace(/\\s+/g, '_')}`;
-                        
-                        // Avoid duplicates
-                        if (!results.some(r => r.name === name)) {
-                            results.push({ id, name, snippet, date });
+                        const second = lines[1];
+                        if (/^\d+\s*(?:min|h|d|m|s)|septiembre|octubre|ayer|hoy/i.test(second)) {
+                            date = second;
+                            snippet = lines.slice(2).join(' ');
+                        } else {
+                            snippet = lines.slice(1).join(' ');
                         }
                     }
-                }
-                
-                // Fallback: if candidateContainers didn't catch, search by finding elements that look like chat row names
-                if (results.length === 0) {
-                    // Search for avatar + text siblings or common chat list structure
-                    const names = allElements.filter(el => {
-                        return el.children.length === 0 &&
-                               el.textContent.trim().length > 2 &&
-                               el.textContent.trim().length < 40 &&
-                               el.parentElement &&
-                               (el.parentElement.className.includes('name') ||
-                                el.parentElement.className.includes('title') ||
-                                el.tagName === 'STRONG' ||
-                                el.tagName === 'H4');
-                    });
-                    
-                    for (const n of names) {
-                        const row = n.closest('li, [role="row"], div') || n.parentElement;
-                        if (row && row.innerText) {
-                            const lines = row.innerText.split('\\n').map(l => l.trim()).filter(Boolean);
-                            const name = n.textContent.trim();
-                            const snippet = lines.find(l => l !== name && l.length > 5) || '';
-                            const date = lines.find(l => l !== name && l !== snippet && (l.includes('h') || l.includes('d') || l.includes('m'))) || '';
-                            const id = row.getAttribute('data-id') || row.getAttribute('id') || `chat_${name.replace(/\\s+/g, '_')}`;
-                            if (!results.some(r => r.name === name)) {
-                                results.push({ id, name, snippet, date });
-                            }
-                        }
+
+                    // Avoid duplicate entries
+                    if (!results.some(r => r.id === id)) {
+                        results.push({
+                            id: id,
+                            name: name || `Usuario ${id}`,
+                            snippet: snippet,
+                            date: date || 'reciente',
+                            href: href
+                        });
                     }
                 }
-                
                 return results;
             }""")
 
@@ -259,10 +255,11 @@ class ManyChatBrowser:
             if not self.is_active or not self._page:
                 raise RuntimeError("El navegador no está conectado.")
 
-            # Select the conversation
+            # Select the conversation by finding the link with href containing /chat/<lead_id>
             clicked = await self._page.evaluate(f"""
                 (targetId) => {{
-                    const item = document.querySelector(`[data-id="${{targetId}}"], #${{targetId}}`);
+                    const item = document.querySelector(`a[href*="/chat/${{targetId}}"]`) ||
+                                 document.querySelector(`[data-id="${{targetId}}"], #${{targetId}}`);
                     if (item) {{
                         item.click();
                         return true;
