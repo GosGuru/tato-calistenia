@@ -129,10 +129,34 @@ def evaluate_lead_static(lead: LeadRecord) -> Optional[FollowupProposal]:
     return None
 
 
+def extract_first_name(full_name: str) -> Optional[str]:
+    """Extract clean personal first name from contact name or handle."""
+    if not full_name:
+        return None
+    # Remove emojis, punctuation, brackets, symbols and underscores
+    clean = re.sub(r'[^\w\s]|_', ' ', full_name)
+    parts = clean.split()
+    if not parts:
+        return None
+    candidate = parts[0].strip()
+    # Reject numbers, very short strings, or generic words
+    if len(candidate) < 2 or candidate.isdigit():
+        return None
+    if candidate.lower() in {'usuario', 'lead', 'instagram', 'contacto', 'user', 'info', 'cliente', 'admin'}:
+        return None
+    return candidate.capitalize()
+
+
 def clean_draft_line(text: str) -> str:
-    """Enforce single line, no quotes, ending in ? if active."""
+    """Enforce single line, no quotes, no opening ¿, preserving 🙃."""
     clean = text.strip().strip('"\'`')
     clean = re.sub(r'[\r\n]+', ' ', clean).strip()
+    if not clean:
+        return ''
+    if clean == '🙃' or clean.startswith('🙃'):
+        return '🙃'
+    # Strip opening question or exclamation marks
+    clean = clean.lstrip('¿¡').strip()
     if clean and not clean.endswith('?') and not clean.endswith('.'):
         clean += '?'
     return clean
@@ -151,10 +175,11 @@ async def evaluate_lead_llm(lead: LeadRecord, provider_config: Optional[Provider
     runner = create_runner(cfg)
 
     try:
-        if inspect.iscoroutinefunction(getattr(runner, '__call__', None)):
-            raw_output = await runner(prompt)
+        call_res = runner(prompt)
+        if inspect.isawaitable(call_res):
+            raw_output = await call_res
         else:
-            raw_output = await asyncio.to_thread(runner, prompt)
+            raw_output = call_res
         # Parse JSON from output
         json_match = re.search(r'\{.*\}', raw_output, re.DOTALL)
         if not json_match:
@@ -162,7 +187,20 @@ async def evaluate_lead_llm(lead: LeadRecord, provider_config: Optional[Provider
         data = json.loads(json_match.group(0))
 
         is_eligible = bool(data.get('eligible', False))
-        draft = clean_draft_line(str(data.get('draft', ''))) if is_eligible else ''
+        fup_num = int(data.get('followup_number', 1 if is_eligible else 0))
+
+        # Enforce Holly sequence strictly
+        draft = ''
+        if is_eligible:
+            if fup_num == 2:
+                draft = '🙃'
+            else:
+                first_name = extract_first_name(lead.name)
+                if first_name:
+                    draft = f"{first_name}?"
+                else:
+                    raw_draft = clean_draft_line(str(data.get('draft', '')))
+                    draft = raw_draft if raw_draft and raw_draft != '?' else 'como va?'
 
         return FollowupProposal(
             id=lead.id,
@@ -171,7 +209,7 @@ async def evaluate_lead_llm(lead: LeadRecord, provider_config: Optional[Provider
             last_date=lead.last_date,
             eligible=is_eligible,
             reason=str(data.get('reason', '')),
-            followup_number=int(data.get('followup_number', 1 if is_eligible else 0)),
+            followup_number=fup_num,
             pending_topic=str(data.get('pending_topic', '')),
             draft=draft,
             selected=is_eligible,

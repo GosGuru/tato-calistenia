@@ -210,7 +210,7 @@ export default function FollowUpWorkspace({ token, modelConfig, onDisconnect }) 
               <Bot className="w-5 h-5 text-blue-400" /> Operador de Seguimientos ManyChat
             </h2>
             <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', color: '#888' }}>
-              Opera ManyChat como humano con perfil persistente. Reglas aisladas: máximo 2 seguimientos, 1 sola línea terminada en ?, sin dobles preguntas.
+              Opera ManyChat como humano con perfil persistente. Secuencia Holly: FUP 1 Nombre?, FUP 2 🙃. Máximo 2 toques sin respuesta.
             </p>
           </div>
 
