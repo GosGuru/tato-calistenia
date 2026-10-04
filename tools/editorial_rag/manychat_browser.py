@@ -180,61 +180,133 @@ class ManyChatBrowser:
             }""")
             await asyncio.sleep(1.5)
 
-            # 2. Extract chats from the list
-            raw_chats = await self._page.evaluate(r"""() => {
-                const results = [];
-                // ManyChat renders chat items as links matching /chat/<id>
-                const chatLinks = Array.from(document.querySelectorAll('a[href*="/chat/"]'))
-                    .filter(a => /\/chat\/\d+/.test(a.getAttribute('href') || ''));
+            # 2. Extract chats from the list with auto-scrolling to reach target limit
+            raw_chats = await self._page.evaluate(r"""async (targetLimit) => {
+                const collected = new Map();
 
-                for (const link of chatLinks) {
-                    const href = link.getAttribute('href') || '';
-                    const match = href.match(/\/chat\/(\d+)/);
-                    const id = match ? match[1] : href;
-
-                    // Extract text parts: Name, time, snippet
-                    const text = link.innerText || '';
-                    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-
-                    // Typical format: [Name, Time (e.g. 32min, 1h, 2d), Snippet...]
-                    let name = '';
-                    let date = '';
-                    let snippet = '';
-
-                    if (lines.length >= 1) {
-                        name = lines[0];
-                    }
-                    if (lines.length >= 2) {
-                        const second = lines[1];
-                        if (/^\d+\s*(?:min|h|d|m|s)|septiembre|octubre|ayer|hoy/i.test(second)) {
-                            date = second;
-                            snippet = lines.slice(2).join(' ');
-                        } else {
-                            snippet = lines.slice(1).join(' ');
+                function getScrollContainer() {
+                    const firstLink = document.querySelector('a[href*="/chat/"]');
+                    if (!firstLink) return null;
+                    let p = firstLink.parentElement;
+                    while (p && p !== document.body) {
+                        const style = window.getComputedStyle(p);
+                        const hasScroll = (style.overflowY === 'auto' || style.overflowY === 'scroll') && p.scrollHeight > p.clientHeight;
+                        if (hasScroll) {
+                            return p;
                         }
+                        p = p.parentElement;
                     }
+                    return firstLink.closest('[class*="scroll"], [class*="list"], [class*="inbox"]') || firstLink.parentElement;
+                }
 
-                    // Avoid duplicate entries
-                    if (!results.some(r => r.id === id)) {
-                        results.push({
+                function extractCurrent() {
+                    const chatLinks = Array.from(document.querySelectorAll('a[href*="/chat/"]'))
+                        .filter(a => /\/chat\/\d+/.test(a.getAttribute('href') || ''));
+
+                    for (const link of chatLinks) {
+                        const href = link.getAttribute('href') || '';
+                        const match = href.match(/\/chat\/(\d+)/);
+                        const id = match ? match[1] : href;
+                        if (!id || collected.has(id)) continue;
+
+                        const text = link.innerText || '';
+                        const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+
+                        let name = '';
+                        let date = '';
+                        let snippet = '';
+
+                        if (lines.length >= 1) {
+                            name = lines[0];
+                        }
+                        if (lines.length >= 2) {
+                            const second = lines[1];
+                            if (/^\d+\s*(?:min|h|d|m|s)|septiembre|octubre|ayer|hoy/i.test(second)) {
+                                date = second;
+                                snippet = lines.slice(2).join(' ');
+                            } else {
+                                snippet = lines.slice(1).join(' ');
+                            }
+                        }
+
+                        // Check outgoing indicator
+                        const hasOutgoingPrefix = /^(?:tú|tu|you|yo):\s*/i.test(snippet);
+                        const hasOutgoingIcon = !!link.querySelector('[class*="outgoing"], [class*="sent"], svg[data-icon*="reply"], svg[data-icon*="check"]');
+                        const isTato = hasOutgoingPrefix || hasOutgoingIcon;
+                        const cleanSnippet = snippet.replace(/^(?:tú|tu|you|yo):\s*/i, '').trim();
+
+                        // Extract tags if visible
+                        const tags = Array.from(link.querySelectorAll('[class*="tag"], [class*="badge"], [data-qa*="tag"]'))
+                            .map(el => el.textContent.trim())
+                            .filter(Boolean);
+
+                        collected.set(id, {
                             id: id,
                             name: name || `Usuario ${id}`,
-                            snippet: snippet,
+                            snippet: cleanSnippet || snippet,
+                            raw_snippet: snippet,
+                            is_tato: isTato,
                             date: date || 'reciente',
+                            tags: tags,
                             href: href
                         });
                     }
                 }
-                return results;
-            }""")
+
+                // Initial extraction
+                extractCurrent();
+
+                const container = getScrollContainer();
+                let noNewCount = 0;
+                let maxScrolls = Math.max(15, Math.ceil(targetLimit / 4));
+
+                while (collected.size < targetLimit && maxScrolls > 0) {
+                    maxScrolls--;
+                    const prevCount = collected.size;
+
+                    // Scroll last element into view to trigger viewport virtual loaders
+                    const links = document.querySelectorAll('a[href*="/chat/"]');
+                    if (links.length > 0) {
+                        links[links.length - 1].scrollIntoView({ behavior: 'smooth', block: 'end' });
+                    }
+                    if (container) {
+                        container.scrollTop += 700;
+                    }
+
+                    // Wait for ManyChat DOM update
+                    await new Promise(resolve => setTimeout(resolve, 600));
+
+                    extractCurrent();
+
+                    if (collected.size === prevCount) {
+                        noNewCount++;
+                        if (noNewCount >= 3) {
+                            // Reached end of list
+                            break;
+                        }
+                    } else {
+                        noNewCount = 0;
+                    }
+                }
+
+                // Scroll back to top
+                if (container) {
+                    container.scrollTop = 0;
+                }
+
+                return Array.from(collected.values()).slice(0, targetLimit);
+            }""", limit)
 
             leads: List[LeadRecord] = []
             for idx, c in enumerate(raw_chats[:limit]):
                 msg_list = []
-                if c.get("snippet"):
+                snippet = c.get("snippet", "")
+                if snippet:
+                    is_tato = bool(c.get("is_tato", False)) or snippet.lower().startswith(("tato:", "tú:", "tu:", "you:", "yo:"))
+                    clean_text = re.sub(r'^(?:tato|tú|tu|you|yo):\s*', '', snippet, flags=re.IGNORECASE).strip()
                     msg_list.append(LeadMessage(
-                        sender="lead" if not c["snippet"].lower().startswith("tato:") else "tato",
-                        text=c["snippet"],
+                        sender="tato" if is_tato else "lead",
+                        text=clean_text or snippet,
                         date=c.get("date"),
                     ))
 
@@ -243,7 +315,7 @@ class ManyChatBrowser:
                     name=c.get("name", f"Lead {idx + 1}"),
                     handle=c.get("name", "").replace(" ", "_").lower(),
                     last_date=c.get("date", "reciente"),
-                    tags=[],
+                    tags=c.get("tags", []),
                     messages=msg_list,
                 ))
 
@@ -256,38 +328,79 @@ class ManyChatBrowser:
                 raise RuntimeError("El navegador no está conectado.")
 
             # Select the conversation by finding the link with href containing /chat/<lead_id>
-            clicked = await self._page.evaluate(f"""
-                (targetId) => {{
-                    const item = document.querySelector(`a[href*="/chat/${{targetId}}"]`) ||
-                                 document.querySelector(`[data-id="${{targetId}}"], #${{targetId}}`);
-                    if (item) {{
+            clicked = await self._page.evaluate(r"""
+                (targetId) => {
+                    let item = document.querySelector(`a[href*="/chat/${targetId}"]`) ||
+                               document.querySelector(`[data-id="${targetId}"], #${targetId}`);
+                    if (item) {
+                        item.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         item.click();
                         return true;
-                    }}
+                    }
+
+                    // Search through sidebar scroll container if not immediately in view
+                    const firstLink = document.querySelector('a[href*="/chat/"]');
+                    if (!firstLink) return false;
+                    let p = firstLink.parentElement;
+                    while (p && p !== document.body) {
+                        const style = window.getComputedStyle(p);
+                        if ((style.overflowY === 'auto' || style.overflowY === 'scroll') && p.scrollHeight > p.clientHeight) {
+                            break;
+                        }
+                        p = p.parentElement;
+                    }
+                    const container = p || firstLink.parentElement;
+                    if (!container) return false;
+
+                    const step = 500;
+                    const maxScroll = container.scrollHeight;
+                    for (let pos = 0; pos < maxScroll; pos += step) {
+                        container.scrollTop = pos;
+                        item = document.querySelector(`a[href*="/chat/${targetId}"]`);
+                        if (item) {
+                            item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            item.click();
+                            return true;
+                        }
+                    }
                     return false;
-                }}
+                }
             """, lead_id)
 
-            await asyncio.sleep(1.0)
+            if not clicked:
+                # Direct navigation fallback
+                current_url = self._page.url
+                import re
+                base_match = re.search(r'(https://app\.manychat\.com/[^/]+)', current_url)
+                base = base_match.group(1) if base_match else "https://app.manychat.com"
+                await self._page.goto(f"{base}/chat/{lead_id}", wait_until="domcontentloaded", timeout=10000)
+                await asyncio.sleep(1.5)
+            else:
+                await asyncio.sleep(1.0)
 
             # Find textarea / message input
             input_selector = 'textarea, [contenteditable="true"], [data-qa="message-input"]'
-            await self._page.wait_for_selector(input_selector, timeout=5000)
+            try:
+                await self._page.wait_for_selector(input_selector, timeout=5000)
+            except Exception:
+                raise RuntimeError(f"No se pudo abrir la conversación {lead_id} o encontrar el campo de mensaje.")
+
+            await self._page.click(input_selector)
 
             # Type with human speed
             for char in text:
-                await self._page.type(input_selector, char, delay=random.randint(20, 60))
+                await self._page.type(input_selector, char, delay=random.randint(15, 45))
 
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(0.4)
 
             # Send via Enter or clicking Send button
             await self._page.keyboard.press("Enter")
 
             # Wait to observe the bubble appear in the chat stream
-            await asyncio.sleep(1.5)
+            await asyncio.sleep(1.2)
 
-            # Natural operator pause between 2.5 and 4 seconds
-            await asyncio.sleep(random.uniform(2.5, 4.0))
+            # Natural operator pause between 1.5 and 3.0 seconds
+            await asyncio.sleep(random.uniform(1.5, 3.0))
 
             return {
                 "status": "sent",

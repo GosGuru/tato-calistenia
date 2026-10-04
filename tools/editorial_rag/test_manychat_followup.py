@@ -117,14 +117,50 @@ class FollowupEngineStaticTests(unittest.TestCase):
         )
         mock_output = '{"eligible": true, "reason": "Segundo seguimiento", "followup_number": 2, "draft": "avísame si querés retomar?"}'
 
+    def test_extract_first_name_advanced(self):
+        self.assertEqual(extract_first_name("~𝑨𝒍𝒗𝒂𝒓𝒐 𝑻𝒐𝒎𝒂𝒔~"), "Alvaro")
+        self.assertEqual(extract_first_name("benjaa.ibanez01"), "Benja")
+        self.assertIsNone(extract_first_name("no te enteres"))
+        self.assertEqual(extract_first_name("Vicente Gómez Lucas"), "Vicente")
+
+    def test_fup2_exhausted_static(self):
+        lead = LeadRecord(
+            id="natalia_1",
+            name="Natalia Karina Altolaguirre",
+            tags=[],
+            messages=[
+                LeadMessage(sender="tato", text="🙃"),
+            ],
+        )
+        res = evaluate_lead_static(lead)
+        self.assertIsNotNone(res)
+        self.assertFalse(res.eligible)
+        self.assertIn("límite", res.reason.lower())
+
+    def test_context_safety_override(self):
+        import asyncio
+        from .followup_engine import evaluate_lead_llm
+
+        lead = LeadRecord(
+            id="diego_1",
+            name="Diego Castro",
+            tags=[],
+            messages=[
+                LeadMessage(sender="lead", text="Total"),
+            ],
+        )
+        # Model claims insufficient history/incoming message
+        mock_output = '{"eligible": false, "reason": "Historial insuficiente o ambiguo: solo hay un mensaje del prospecto (\'Total\') sin contexto de conversación.", "followup_number": 0, "draft": ""}'
+
         with patch("tools.editorial_rag.followup_engine.create_runner") as mock_create:
             mock_runner = AsyncMock(return_value=mock_output)
             mock_create.return_value = mock_runner
             res = asyncio.run(evaluate_lead_llm(lead))
+            # Must override to eligible = True and produce Diego?
             self.assertTrue(res.eligible)
-            self.assertEqual(res.followup_number, 2)
-            # Enforces Holly sequence: 🙃
-            self.assertEqual(res.draft, "🙃")
+            self.assertEqual(res.followup_number, 1)
+            self.assertEqual(res.draft, "Diego?")
+
 
 
 

@@ -122,10 +122,13 @@ export default function FollowUpWorkspace({ token, modelConfig, onDisconnect }) 
     );
   }
 
-  // Select all eligible leads
+  // Select all eligible leads with valid draft
   function selectAllEligible() {
     setLeads(prev =>
-      prev.map(lead => ({ ...lead, selected: lead.eligible }))
+      prev.map(lead => ({
+        ...lead,
+        selected: Boolean(lead.eligible && lead.draft && lead.draft.trim())
+      }))
     );
   }
 
@@ -141,60 +144,67 @@ export default function FollowUpWorkspace({ token, modelConfig, onDisconnect }) 
     );
   }
 
-  // Send batch of selected leads
+  // Send batch of selected leads with real-time per-lead progress
   async function sendSelected() {
-    const selected = leads.filter(l => l.selected && l.draft.trim());
+    const selected = leads.filter(l => l.selected && l.draft && l.draft.trim());
     if (selected.length === 0) return;
 
     setSendingBatch(true);
     setError('');
-    setNotice(`Enviando ${selected.length} seguimientos por navegador con pausas humanas...`);
+    const isMock = !browserStatus.logged_in;
+    let sentCount = 0;
 
-    // Mark them sending in UI
-    setLeads(prev =>
-      prev.map(l => (l.selected ? { ...l, status: 'sending' } : l))
-    );
+    for (let i = 0; i < selected.length; i++) {
+      const current = selected[i];
+      setNotice(`Enviando ${i + 1} de ${selected.length}: @${current.handle || current.name}...`);
 
-    try {
-      const isMock = !browserStatus.logged_in;
-      const data = await localRequest('/api/manychat/send-batch', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-Token': token,
-        },
-        body: JSON.stringify({
-          leads: selected.map(l => ({ id: l.id, draft: l.draft })),
-          mock: isMock,
-        }),
-      });
-
-      const resultMap = {};
-      (data.results || []).forEach(r => {
-        resultMap[r.id] = r;
-      });
-
+      // Update UI: mark this specific lead as 'sending'
       setLeads(prev =>
-        prev.map(l => {
-          if (resultMap[l.id]) {
-            return {
-              ...l,
-              status: resultMap[l.id].status === 'sent' ? 'sent' : 'failed',
-              error: resultMap[l.id].error,
-              selected: false,
-            };
-          }
-          return l;
-        })
+        prev.map(l => (l.id === current.id ? { ...l, status: 'sending' } : l))
       );
 
-      const sentCount = (data.results || []).filter(r => r.status === 'sent').length;
-      setNotice(`Envío completado: ${sentCount} de ${selected.length} mensajes enviados y verificados.`);
-    } catch (e) {
-      setError('Error durante el envío por navegador.');
-    } finally {
-      setSendingBatch(false);
+      try {
+        const data = await localRequest('/api/manychat/send-batch', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': token,
+          },
+          body: JSON.stringify({
+            leads: [{ id: current.id, draft: current.draft }],
+            mock: isMock,
+          }),
+        });
+
+        const res = (data.results || [])[0];
+        const ok = res && res.status === 'sent';
+        if (ok) sentCount++;
+
+        setLeads(prev =>
+          prev.map(l =>
+            l.id === current.id
+              ? {
+                  ...l,
+                  status: ok ? 'sent' : 'failed',
+                  error: res ? res.error : 'Error al enviar',
+                  selected: false,
+                }
+              : l
+          )
+        );
+      } catch (err) {
+        setLeads(prev =>
+          prev.map(l =>
+            l.id === current.id
+              ? { ...l, status: 'failed', error: 'Error de conexión', selected: false }
+              : l
+          )
+        );
+      }
     }
+
+    setNotice(`Envío completado: ${sentCount} de ${selected.length} mensajes enviados y verificados.`);
+    setSendingBatch(false);
   }
 
   const selectedCount = leads.filter(l => l.selected).length;
@@ -414,7 +424,7 @@ export default function FollowUpWorkspace({ token, modelConfig, onDisconnect }) 
                       <input
                         type="checkbox"
                         checked={lead.selected}
-                        disabled={isSent || isSending}
+                        disabled={isSent || isSending || (!lead.draft || !lead.draft.trim())}
                         onChange={() => toggleSelect(lead.id)}
                         style={{ cursor: 'pointer', width: '16px', height: '16px' }}
                       />

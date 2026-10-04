@@ -7,6 +7,7 @@ import asyncio
 import inspect
 import json
 import re
+import unicodedata
 from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -111,6 +112,21 @@ def evaluate_lead_static(lead: LeadRecord) -> Optional[FollowupProposal]:
             selected=False,
         )
 
+    # Check if Tato already sent FUP 2 (🙃)
+    if lead.messages and lead.messages[-1].sender == 'tato':
+        last_tato_text = lead.messages[-1].text.strip()
+        if '🙃' in last_tato_text:
+            return FollowupProposal(
+                id=lead.id,
+                name=lead.name,
+                handle=lead.handle,
+                last_date=lead.last_date,
+                eligible=False,
+                reason="Límite alcanzado: ya se envió FUP 2 (🙃) sin respuesta",
+                followup_number=2,
+                selected=False,
+            )
+
     # Check for obvious clear rejections in lead's latest message
     last_lead_msgs = [m for m in lead.messages if m.sender == 'lead']
     if last_lead_msgs:
@@ -133,17 +149,33 @@ def extract_first_name(full_name: str) -> Optional[str]:
     """Extract clean personal first name from contact name or handle."""
     if not full_name:
         return None
+    # Normalize unicode to handle stylized fonts like ~𝑨𝒍𝒗𝒂𝒓𝒐 𝑻𝒐𝒎𝒂𝒔~
+    normalized = unicodedata.normalize('NFKC', full_name)
     # Remove emojis, punctuation, brackets, symbols and underscores
-    clean = re.sub(r'[^\w\s]|_', ' ', full_name)
+    clean = re.sub(r'[^\w\s]|_', ' ', normalized)
     parts = clean.split()
     if not parts:
         return None
     candidate = parts[0].strip()
-    # Reject numbers, very short strings, or generic words
     if len(candidate) < 2 or candidate.isdigit():
         return None
-    if candidate.lower() in {'usuario', 'lead', 'instagram', 'contacto', 'user', 'info', 'cliente', 'admin'}:
+
+    STOPWORDS = {
+        'usuario', 'lead', 'instagram', 'contacto', 'user', 'info', 'cliente', 'admin',
+        'profile', 'cuenta', 'pagina', 'oficial', 'official', 'the', 'a', 'an', 'and',
+        'no', 'si', 'el', 'la', 'los', 'las', 'un', 'una', 'de', 'del', 'en', 'por',
+        'para', 'con', 'sin', 'yo', 'tu', 'su', 'mi', 'mis', 'tus', 'sus'
+    }
+    if candidate.lower() in STOPWORDS:
         return None
+
+    # Clean trailing repeated letters from handles (e.g. benjaa -> benja)
+    candidate = re.sub(r'([a-zA-Z])\1+$', r'\1', candidate)
+    # Strip trailing digits from handles (e.g. axel01 -> axel)
+    candidate = re.sub(r'\d+$', '', candidate)
+    if len(candidate) < 2:
+        return None
+
     return candidate.capitalize()
 
 
@@ -188,6 +220,21 @@ async def evaluate_lead_llm(lead: LeadRecord, provider_config: Optional[Provider
 
         is_eligible = bool(data.get('eligible', False))
         fup_num = int(data.get('followup_number', 1 if is_eligible else 0))
+        reason = str(data.get('reason', '')).strip()
+
+        # Safety override: lack of historical context must NEVER block FUP in ManyChat inbox
+        if not is_eligible:
+            lower_reason = reason.lower()
+            is_blocked_by_context = any(w in lower_reason for w in [
+                'insuficiente', 'ambiguo', 'poco contexto', 'sin contexto', 'falta de contexto',
+                'solo hay un mensaje', 'del prospecto', 'esperando respuesta', 'sin mensaje saliente',
+                'no fup', 'requiere respuesta', 'inicial'
+            ])
+            is_genuine_stop = any(w in lower_reason for w in ['rechazo', 'no califica', 'agendado', 'límite', 'limite', 'menor'])
+            if is_blocked_by_context and not is_genuine_stop:
+                is_eligible = True
+                fup_num = 1
+                reason = "Listo para FUP 1 (reactivación en bandeja Tú)"
 
         # Enforce Holly sequence strictly
         draft = ''
@@ -208,7 +255,7 @@ async def evaluate_lead_llm(lead: LeadRecord, provider_config: Optional[Provider
             handle=lead.handle,
             last_date=lead.last_date,
             eligible=is_eligible,
-            reason=str(data.get('reason', '')),
+            reason=reason,
             followup_number=fup_num,
             pending_topic=str(data.get('pending_topic', '')),
             draft=draft,

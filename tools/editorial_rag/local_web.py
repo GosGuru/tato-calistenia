@@ -578,12 +578,15 @@ def create_app(auth=None):
                 'notice': 'No se encontraron conversaciones activas en ManyChat para escanear.',
             })
 
-        proposals: list[dict] = []
-        for lead in leads:
-            prop = await evaluate_lead_llm(lead, body.provider_config)
-            proposals.append(prop.model_dump())
+        sem = asyncio.Semaphore(10)
 
-        return JSONResponse({'status': 'ok', 'leads': proposals, 'count': len(proposals)})
+        async def _eval_one(l: LeadRecord) -> dict:
+            async with sem:
+                prop = await evaluate_lead_llm(l, body.provider_config)
+                return prop.model_dump()
+
+        proposals = await asyncio.gather(*[_eval_one(lead) for lead in leads])
+        return JSONResponse({'status': 'ok', 'leads': list(proposals), 'count': len(proposals)})
 
     @app.post('/api/manychat/send-batch')
     async def manychat_send_batch(body: ManyChatSendBatchRequest):
