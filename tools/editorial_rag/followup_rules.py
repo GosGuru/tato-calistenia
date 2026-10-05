@@ -29,10 +29,13 @@ REGLAS DE EVALUACIÓN Y ELEGIBILIDAD:
    - NUNCA descartar por "historial insuficiente", "falta de contexto", "mensaje aislado" o "solo hay un mensaje".
    - Todo contacto activo en la bandeja 'Tú' / 'Asignados' que quedó sin concretar o sin responder hace horas/días es ELEGIBLE para seguimiento Holly (FUP 1 o FUP 2).
    - Si el historial tiene contexto amplio, usalo para determinar si está caliente/tibio y el pending_topic, pero la brevedad del texto NO impide el seguimiento.
-2. MENSAJES ENTRANTES Y SALIENTES:
-   - Tanto si el último mensaje fue saliente y no contestó, como si el prospecto dejó una respuesta corta o consulta previa hace horas y la conversación se enfrió: se aplica seguimiento Holly (FUP 1: "Nombre?").
-   - Si el último mensaje saliente ya fue el primer seguimiento (ej. "Nombre?" o similar): corresponde FUP 2 ("🙃").
+2. MENSAJES ENTRANTES VS SALIENTES (REGLA CRÍTICA):
+   - Un seguimiento (FUP) SOLO se envía si el ÚLTIMO mensaje fue enviado por TATO y el prospecto NO contestó (silencio o lo dejó en visto).
+   - Si el último mensaje fue del PROSPECTO: NUNCA corresponde seguimiento. El prospecto está esperando respuesta conversacional a lo que escribió (inbound/calificación). Debe responderse eligible: false con reason: "El prospecto respondió; espera respuesta normal de Tato, no seguimiento".
+   - Si el último mensaje saliente de Tato ya fue el primer seguimiento (ej. "Nombre?" o similar): corresponde FUP 2 ("🙃").
 3. DESCARTES ESTRICTOS (eligible: false ÚNICAMENTE en estos casos):
+   - Último mensaje del prospecto: el prospecto habló último. Requiere respuesta normal de Tato, NUNCA seguimiento ("Nombre?").
+   - Actividad reciente o conversación viva: si el último mensaje ocurrió hace minutos u horas recientes (< 24h) o la conversación está activa.
    - Etiquetas de descarte: NO CALIFICA, menor de edad, necesidad médica fuera de alcance.
    - Ya agendado: etiqueta o confirmación de llamada/reunión agendada.
    - Rechazo explícito: "no me interesa", "no quiero saber nada", "no me escribas", "no gracias".

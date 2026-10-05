@@ -12,9 +12,11 @@ from pydantic import BaseModel, ConfigDict, Field, StrictStr
 
 if __package__:
     from .codex_runner import CodexSessionRunner, _prompt
+    from .organization import OrganizationPacket
     from .raw_history import RawHistoryPacket
 else:
     from codex_runner import CodexSessionRunner, _prompt
+    from organization import OrganizationPacket
     from raw_history import RawHistoryPacket
 
 
@@ -166,16 +168,16 @@ def clean_model_output(content: str, is_json_expected: bool = False) -> str:
         return ''
     text, _ = extract_thinking_and_content(content)
 
-    if is_json_expected:
-        # Strip markdown code fences if present
-        if text.startswith('```'):
-            lines = text.splitlines()
-            if lines and lines[0].startswith('```'):
-                lines = lines[1:]
-            if lines and lines[-1].strip() == '```':
-                lines = lines[:-1]
-            text = '\n'.join(lines).strip()
+    # Strip markdown code fences if present
+    if text.startswith('```'):
+        lines = text.splitlines()
+        if lines and lines[0].startswith('```'):
+            lines = lines[1:]
+        if lines and lines[-1].strip() == '```':
+            lines = lines[:-1]
+        text = '\n'.join(lines).strip()
 
+    if is_json_expected:
         # If there's an embedded JSON object, extract it and sanitize to closed schema
         if '{' in text and '}' in text:
             start = text.find('{')
@@ -184,6 +186,8 @@ def clean_model_output(content: str, is_json_expected: bool = False) -> str:
             try:
                 parsed = json.loads(candidate)
                 if isinstance(parsed, dict):
+                    if 'assignments' in parsed and isinstance(parsed['assignments'], list):
+                        return json.dumps({'assignments': parsed['assignments']}, ensure_ascii=False)
                     msg_type = parsed.get('type')
                     if msg_type == 'needs_context' and 'question' in parsed:
                         if set(parsed.keys()) == {'type', 'question'}:
@@ -340,7 +344,7 @@ class ApiSessionRunner:
             session_hash = hashlib.sha256(prompt[:300].encode('utf-8')).hexdigest()[:16]
             headers['x-opencode-session'] = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"tato-{session_hash}")).lower()
 
-        is_json_expected = type(packet) is RawHistoryPacket
+        is_json_expected = type(packet) in (RawHistoryPacket, OrganizationPacket)
         payload: Dict[str, Any] = {
             'model': settings['model'],
             'messages': [{'role': 'user', 'content': prompt}],

@@ -82,6 +82,27 @@ class RealHistoryTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 _prompt(replace(packet, **fields))
 
+    def test_guidance_in_packet_and_prompt(self):
+        guidance_item = {
+            'phase': 'ruta',
+            'gate': 'disposicion_validada',
+            'situation': 'situacion ficticia',
+            'last_assistant_move': 'movimiento ficticio',
+            'proposed_move': 'propuesta ficticia',
+            'positive_voice': 'voz positiva ficticia',
+            'negative_repetition': 'evitar repeticion ficticia',
+        }
+        packet = RealPacket(parse_history('Prospecto: quiero empezar'), 'RULES', True, True, guidance=(guidance_item,))
+        prompt = _prompt(packet)
+        self.assertIn('CONDITIONAL GUIDANCE JSON', prompt)
+        self.assertIn('voz positiva ficticia', prompt)
+
+        # Invalid guidance length or structure rejected
+        with self.assertRaises(ValueError):
+            replace(packet, guidance=(guidance_item,) * 9).validate()
+        with self.assertRaises(ValueError):
+            replace(packet, guidance=({'wrong_key': 'x'},)).validate()
+
 
 if __name__ == '__main__':
     unittest.main()

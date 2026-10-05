@@ -12,10 +12,31 @@ from .followup_engine import (
     count_consecutive_tato_followups,
     evaluate_lead_static,
     extract_first_name,
+    is_recent_activity,
 )
+from .followup_ledger import FollowupLedger, fup_number_from_tags, get_ledger
 
 
 class FollowupEngineStaticTests(unittest.TestCase):
+    def test_recent_activity_rejection(self):
+        self.assertTrue(is_recent_activity("7min"))
+        self.assertTrue(is_recent_activity("40min"))
+        self.assertTrue(is_recent_activity("1h"))
+        self.assertTrue(is_recent_activity("ahora"))
+        self.assertFalse(is_recent_activity("1d"))
+        self.assertFalse(is_recent_activity("15 de septiembre"))
+        self.assertFalse(is_recent_activity("ayer"))
+
+        lead = LeadRecord(
+            id="rec_1",
+            name="Alejandro Cordoba",
+            last_date="7min",
+            messages=[LeadMessage(sender="lead", text="hola")],
+        )
+        res = evaluate_lead_static(lead)
+        self.assertIsNotNone(res)
+        self.assertFalse(res.eligible)
+        self.assertIn("reciente", res.reason.lower())
     def test_extract_first_name(self):
         self.assertEqual(extract_first_name("Axel Gomez"), "Axel")
         self.assertEqual(extract_first_name("Roberto Carlos Saavedra Rivera"), "Roberto")
@@ -116,6 +137,13 @@ class FollowupEngineStaticTests(unittest.TestCase):
             ],
         )
         mock_output = '{"eligible": true, "reason": "Segundo seguimiento", "followup_number": 2, "draft": "avísame si querés retomar?"}'
+        with patch("tools.editorial_rag.followup_engine.create_runner") as mock_create:
+            mock_runner = AsyncMock(return_value=mock_output)
+            mock_create.return_value = mock_runner
+            res = asyncio.run(evaluate_lead_llm(lead))
+            self.assertTrue(res.eligible)
+            self.assertEqual(res.followup_number, 2)
+            self.assertEqual(res.draft, "🙃")
 
     def test_extract_first_name_advanced(self):
         self.assertEqual(extract_first_name("~𝑨𝒍𝒗𝒂𝒓𝒐 𝑻𝒐𝒎𝒂𝒔~"), "Alvaro")
@@ -137,6 +165,20 @@ class FollowupEngineStaticTests(unittest.TestCase):
         self.assertFalse(res.eligible)
         self.assertIn("límite", res.reason.lower())
 
+    def test_inbound_message_strictly_ineligible(self):
+        lead = LeadRecord(
+            id="diego_1",
+            name="Diego Castro",
+            tags=[],
+            messages=[
+                LeadMessage(sender="lead", text="Hola Tato, me interesa"),
+            ],
+        )
+        res = evaluate_lead_static(lead)
+        self.assertIsNotNone(res)
+        self.assertFalse(res.eligible)
+        self.assertIn("prospecto", res.reason.lower())
+
     def test_context_safety_override(self):
         import asyncio
         from .followup_engine import evaluate_lead_llm
@@ -146,11 +188,11 @@ class FollowupEngineStaticTests(unittest.TestCase):
             name="Diego Castro",
             tags=[],
             messages=[
-                LeadMessage(sender="lead", text="Total"),
+                LeadMessage(sender="tato", text="Hola Diego, cómo venís entrenando hoy?"),
             ],
         )
-        # Model claims insufficient history/incoming message
-        mock_output = '{"eligible": false, "reason": "Historial insuficiente o ambiguo: solo hay un mensaje del prospecto (\'Total\') sin contexto de conversación.", "followup_number": 0, "draft": ""}'
+        # Model claims insufficient history
+        mock_output = '{"eligible": false, "reason": "Historial insuficiente o ambiguo: solo hay un mensaje sin contexto previo.", "followup_number": 0, "draft": ""}'
 
         with patch("tools.editorial_rag.followup_engine.create_runner") as mock_create:
             mock_runner = AsyncMock(return_value=mock_output)
@@ -198,7 +240,7 @@ class ManyChatApiTests(unittest.TestCase):
         payload = {
             "mock": True,
             "leads": [
-                {"id": "lead_1", "draft": "Buenas Alberto, ¿pudiste probar las anillas?"}
+                {"id": "lead_1", "draft": "Buenas Alberto, ¿pudiste probar las anillas?", "followup_number": 1}
             ],
         }
         res = self.client.post("/api/manychat/send-batch", json=payload, headers=self.headers)
@@ -206,3 +248,79 @@ class ManyChatApiTests(unittest.TestCase):
         data = res.json()
         self.assertIn("results", data)
         self.assertEqual(data["results"][0]["status"], "sent")
+        self.assertEqual(data["results"][0]["followup_number"], 1)
+
+        # Verify ledger recorded the entry
+        ledger = get_ledger()
+        entry = ledger.get("lead_1")
+        self.assertIsNotNone(entry)
+        self.assertEqual(entry["fup"], 1)
+
+
+class FollowupLedgerTests(unittest.TestCase):
+    def test_fup_tag_parsing(self):
+        self.assertEqual(fup_number_from_tags(["FUP 1"]), 1)
+        self.assertEqual(fup_number_from_tags(["fup-2"]), 2)
+        self.assertEqual(fup_number_from_tags(["FOP 1", "FUP 2"]), 2)
+        self.assertEqual(fup_number_from_tags(["seguimiento 3"]), 3)
+        self.assertEqual(fup_number_from_tags(["interesado", "anillas"]), 0)
+        self.assertEqual(fup_number_from_tags([]), 0)
+
+    def test_ledger_cooldown_window(self):
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as td:
+            ledger = FollowupLedger(Path(td) / "test-ledger.json")
+            now = 100000.0
+
+            ledger.record_sent("chat_1", 1, "Axel?", now=now)
+            ledger.record_sent("chat_2", 2, "🙃", now=now - 25000)  # ~7h ago
+
+            # 6 hour cooldown: chat_1 (<6h) is cooling down, chat_2 (7h ago) is past 6h
+            cooling = ledger.cooling_down_ids(cooldown_hours=6.0, now=now)
+            self.assertIn("chat_1", cooling)
+            self.assertNotIn("chat_2", cooling)
+
+            # Prior follow-up check: matches text
+            self.assertEqual(ledger.prior_followup("chat_1", "Axel?"), 1)
+            # If Tato's last message is something else (or lead spoke), it returns 0
+            self.assertEqual(ledger.prior_followup("chat_1", "otro mensaje"), 0)
+
+    def test_lead_with_prior_fup_advances_to_fup2(self):
+        import asyncio
+        from .followup_engine import evaluate_lead_llm
+
+        lead = LeadRecord(
+            id="fup1_lead",
+            name="Claudio Ramos",
+            prior_fup=1,
+            tags=["FUP 1"],
+            messages=[
+                LeadMessage(sender="lead", text="hola tato"),
+                LeadMessage(sender="tato", text="Claudio?"),
+            ],
+        )
+        mock_output = '{"eligible": true, "reason": "silencio", "followup_number": 1, "draft": "Claudio?"}'
+        with patch("tools.editorial_rag.followup_engine.create_runner") as mock_create:
+            mock_runner = AsyncMock(return_value=mock_output)
+            mock_create.return_value = mock_runner
+            res = asyncio.run(evaluate_lead_llm(lead))
+            self.assertTrue(res.eligible)
+            self.assertEqual(res.followup_number, 2)
+            self.assertEqual(res.draft, "🙃")
+
+    def test_lead_with_prior_fup2_is_disqualified(self):
+        lead = LeadRecord(
+            id="fup2_lead",
+            name="Claudio Ramos",
+            prior_fup=2,
+            tags=["FUP 2"],
+            messages=[
+                LeadMessage(sender="lead", text="hola tato"),
+                LeadMessage(sender="tato", text="🙃"),
+            ],
+        )
+        res = evaluate_lead_static(lead)
+        self.assertIsNotNone(res)
+        self.assertFalse(res.eligible)
+        self.assertIn("límite", res.reason.lower())

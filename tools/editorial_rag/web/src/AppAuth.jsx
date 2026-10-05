@@ -4,7 +4,7 @@ import { BookOpen, LogOut, Plug, RefreshCw, ShieldCheck, X } from 'lucide-react'
 const options = { cache: 'no-store', credentials: 'omit', redirect: 'error' };
 
 let pristineFetch = null;
-function getFetch() {
+export function getFetch() {
   if (typeof import.meta !== 'undefined' && import.meta.env?.MODE === 'test') {
     return fetch;
   }

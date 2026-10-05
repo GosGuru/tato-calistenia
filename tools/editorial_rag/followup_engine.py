@@ -30,6 +30,7 @@ class LeadRecord(BaseModel):
     last_date: Optional[str] = None
     tags: List[str] = Field(default_factory=list)
     messages: List[LeadMessage] = Field(default_factory=list)
+    prior_fup: int = 0  # follow-up number already sent in this cycle (ledger or FUP tag)
 
 
 class FollowupProposal(BaseModel):
@@ -74,6 +75,27 @@ def format_history_for_eval(lead: LeadRecord) -> str:
     return "\n".join(lines)
 
 
+def is_recent_activity(date_str: Optional[str], min_hours: float = 4.0) -> bool:
+    """Check if date indicates recent activity (minutes, seconds, or few hours)."""
+    if not date_str:
+        return False
+    t = date_str.strip().lower()
+    if re.search(r'\b(ahora|now|reciente)\b', t):
+        return True
+    if re.search(r'\b\d+\s*(?:s|seg)\b', t):
+        return True
+    m_min = re.search(r'\b(\d+)\s*(?:min|m)\b', t)
+    if m_min:
+        return True
+    m_hr = re.search(r'\b(\d+)\s*(?:h|hs|hr|hrs|hora|horas)\b', t)
+    if m_hr:
+        try:
+            return float(m_hr.group(1)) < min_hours
+        except ValueError:
+            return False
+    return False
+
+
 def evaluate_lead_static(lead: LeadRecord) -> Optional[FollowupProposal]:
     """Fast deterministic eligibility pre-checks before calling an LLM."""
     lower_tags = {t.lower().strip() for t in lead.tags}
@@ -88,6 +110,17 @@ def evaluate_lead_static(lead: LeadRecord) -> Optional[FollowupProposal]:
             selected=False,
         )
 
+    if is_recent_activity(lead.last_date):
+        return FollowupProposal(
+            id=lead.id,
+            name=lead.name,
+            handle=lead.handle,
+            last_date=lead.last_date,
+            eligible=False,
+            reason=f"Actividad reciente ({lead.last_date}); no corresponde seguimiento aún",
+            selected=False,
+        )
+
     if not lead.messages:
         return FollowupProposal(
             id=lead.id,
@@ -96,6 +129,61 @@ def evaluate_lead_static(lead: LeadRecord) -> Optional[FollowupProposal]:
             last_date=lead.last_date,
             eligible=False,
             reason="Historial vacío",
+            selected=False,
+        )
+
+    # Filter human messages
+    human_msgs = [m for m in lead.messages if m.sender != 'system']
+    if not human_msgs:
+        return FollowupProposal(
+            id=lead.id,
+            name=lead.name,
+            handle=lead.handle,
+            last_date=lead.last_date,
+            eligible=False,
+            reason="Sin mensajes conversacionales en el historial",
+            selected=False,
+        )
+
+    # Check for obvious clear rejections in lead's latest message first
+    lead_msgs = [m for m in human_msgs if m.sender == 'lead']
+    if lead_msgs:
+        last_text = lead_msgs[-1].text.lower()
+        if any(r in last_text for r in ['no me interesa', 'no me escribas', 'borrame', 'no quiero saber nada', 'no gracias']):
+            return FollowupProposal(
+                id=lead.id,
+                name=lead.name,
+                handle=lead.handle,
+                last_date=lead.last_date,
+                eligible=False,
+                reason="Rechazo claro del lead en el último mensaje",
+                selected=False,
+            )
+
+    # CRITICAL: A follow-up ONLY applies if Tato sent the last message!
+    # If the last human message was from the prospect, Tato owes them a conversational reply (inbound/qualification).
+    # Never propose or send a follow-up ("Nombre?") to a lead who wrote to Tato.
+    last_human_msg = human_msgs[-1]
+    if last_human_msg.sender == 'lead':
+        return FollowupProposal(
+            id=lead.id,
+            name=lead.name,
+            handle=lead.handle,
+            last_date=lead.last_date,
+            eligible=False,
+            reason="El último mensaje fue del prospecto; espera respuesta de Tato (inbound), no seguimiento",
+            selected=False,
+        )
+
+    if lead.prior_fup >= 2:
+        return FollowupProposal(
+            id=lead.id,
+            name=lead.name,
+            handle=lead.handle,
+            last_date=lead.last_date,
+            eligible=False,
+            reason="Límite alcanzado: ya se registró FUP 2 sin respuesta",
+            followup_number=lead.prior_fup,
             selected=False,
         )
 
@@ -113,8 +201,8 @@ def evaluate_lead_static(lead: LeadRecord) -> Optional[FollowupProposal]:
         )
 
     # Check if Tato already sent FUP 2 (🙃)
-    if lead.messages and lead.messages[-1].sender == 'tato':
-        last_tato_text = lead.messages[-1].text.strip()
+    if last_human_msg.sender == 'tato':
+        last_tato_text = last_human_msg.text.strip()
         if '🙃' in last_tato_text:
             return FollowupProposal(
                 id=lead.id,
@@ -124,21 +212,6 @@ def evaluate_lead_static(lead: LeadRecord) -> Optional[FollowupProposal]:
                 eligible=False,
                 reason="Límite alcanzado: ya se envió FUP 2 (🙃) sin respuesta",
                 followup_number=2,
-                selected=False,
-            )
-
-    # Check for obvious clear rejections in lead's latest message
-    last_lead_msgs = [m for m in lead.messages if m.sender == 'lead']
-    if last_lead_msgs:
-        last_text = last_lead_msgs[-1].text.lower()
-        if any(r in last_text for r in ['no me interesa', 'no me escribas', 'borrame', 'no quiero saber nada', 'no gracias']):
-            return FollowupProposal(
-                id=lead.id,
-                name=lead.name,
-                handle=lead.handle,
-                last_date=lead.last_date,
-                eligible=False,
-                reason="Rechazo claro del lead en el último mensaje",
                 selected=False,
             )
 
@@ -223,18 +296,42 @@ async def evaluate_lead_llm(lead: LeadRecord, provider_config: Optional[Provider
         reason = str(data.get('reason', '')).strip()
 
         # Safety override: lack of historical context must NEVER block FUP in ManyChat inbox
+        # BUT active conversations or recent inbound messages must NEVER be forced into FUP
         if not is_eligible:
             lower_reason = reason.lower()
-            is_blocked_by_context = any(w in lower_reason for w in [
-                'insuficiente', 'ambiguo', 'poco contexto', 'sin contexto', 'falta de contexto',
-                'solo hay un mensaje', 'del prospecto', 'esperando respuesta', 'sin mensaje saliente',
-                'no fup', 'requiere respuesta', 'inicial'
-            ])
-            is_genuine_stop = any(w in lower_reason for w in ['rechazo', 'no califica', 'agendado', 'límite', 'limite', 'menor'])
+            is_recent_or_active = (
+                any(w in lower_reason for w in [
+                    'reciente', 'minuto', 'minutos', 'actividad reciente', 'esperando respuesta',
+                    'conversación viva', 'conversacion viva', 'acaba de responder', 'acaba de escribir',
+                    'pocas horas', 'horas recientes', 'no corresponde seguimiento'
+                ])
+                or is_recent_activity(lead.last_date)
+            )
+            has_lead_last = any(m.sender == 'lead' for m in lead.messages[-1:])
+            is_blocked_by_context = (
+                any(w in lower_reason for w in [
+                    'insuficiente', 'ambiguo', 'poco contexto', 'sin contexto', 'falta de contexto',
+                    'solo hay un mensaje'
+                ])
+                and not is_recent_or_active
+                and not has_lead_last
+            )
+            is_genuine_stop = any(w in lower_reason for w in ['rechazo', 'no califica', 'agendado', 'límite', 'limite', 'menor', 'reciente'])
             if is_blocked_by_context and not is_genuine_stop:
                 is_eligible = True
                 fup_num = 1
                 reason = "Listo para FUP 1 (reactivación en bandeja Tú)"
+
+        # Double check: if the last human message was from the lead, it's strictly ineligible
+        human_msgs = [m for m in lead.messages if m.sender != 'system']
+        if human_msgs and human_msgs[-1].sender == 'lead':
+            is_eligible = False
+            reason = "El último mensaje fue del prospecto; espera respuesta de Tato (inbound), no seguimiento"
+            fup_num = 0
+
+        # A recorded FUP (ledger or tag) fixes the sequence: next is always prior + 1
+        if is_eligible and lead.prior_fup >= 1:
+            fup_num = lead.prior_fup + 1
 
         # Enforce Holly sequence strictly
         draft = ''

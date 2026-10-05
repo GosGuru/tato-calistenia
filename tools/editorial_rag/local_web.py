@@ -1,5 +1,6 @@
 """Loopback-only reviewed DM and synthetic screens. Explicit per-call consent."""
 import asyncio
+import json
 import os
 import re
 import secrets
@@ -10,10 +11,11 @@ from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import JSONResponse, Response, StreamingResponse
 from pydantic import (
     BaseModel,
     ConfigDict,
+    Field,
     StrictBool,
     StrictStr,
     field_validator,
@@ -50,6 +52,7 @@ from .followup_engine import (
     LeadRecord,
     evaluate_lead_llm,
 )
+from .followup_ledger import get_ledger
 from .manychat_browser import get_manychat_browser
 
 HOST = '127.0.0.1:8765'
@@ -147,8 +150,8 @@ class LocalBoundary:
                     return
                 body.extend(message.get('body', b''))
                 path = scope.get('path')
-                limit = (32768 if path in ('/api/auth/login', '/api/models/test', '/api/manychat/launch') else MAX_BODY_BYTES
-                         if path in ('/api/draft', '/api/organize', '/api/raw-draft', '/api/manychat/scan', '/api/manychat/send-batch') else 256)
+                limit = (32768 if path in ('/api/auth/login', '/api/models/test', '/api/manychat/launch', '/api/manychat/stop-scan') else MAX_BODY_BYTES
+                         if path in ('/api/draft', '/api/organize', '/api/raw-draft', '/api/manychat/scan', '/api/manychat/scan-stream', '/api/manychat/send-batch') else 256)
                 if len(body) > limit:
                     return await error(413)(scope, receive, secured_send)
                 if not message.get('more_body', False):
@@ -159,8 +162,16 @@ class LocalBoundary:
             except UnicodeDecodeError:
                 return await error(422)(scope, receive, secured_send)
 
+            original_receive = receive
+            body_sent = False
+
             async def buffered_receive():
-                return {'type': 'http.request', 'body': bytes(body), 'more_body': False}
+                nonlocal body_sent
+                if not body_sent:
+                    body_sent = True
+                    return {'type': 'http.request', 'body': bytes(body), 'more_body': False}
+                return await original_receive()
+
             receive = buffered_receive
         await self.app(scope, receive, secured_send)
 
@@ -265,7 +276,11 @@ class ManyChatLaunchRequest(BaseModel):
 class ManyChatScanRequest(BaseModel):
     model_config = ConfigDict(extra='ignore')
     date_filter: str = 'septiembre'
-    limit: int = 30
+    limit: int = Field(default=30, ge=1, le=200)
+    min_age_hours: float = Field(default=6.0, ge=0, le=720)
+    cooldown_hours: float = Field(default=6.0, ge=0, le=720)
+    tab: str = 'mine'  # 'mine' | 'unassigned' | 'all' | 'current'
+    current_view_only: bool = False
     mock: bool = False
     provider_config: ProviderConfig | None = None
 
@@ -274,6 +289,7 @@ class ManyChatSendItem(BaseModel):
     model_config = ConfigDict(extra='ignore')
     id: str
     draft: str
+    followup_number: int = 1
 
 
 class ManyChatSendBatchRequest(BaseModel):
@@ -561,7 +577,13 @@ def create_app(auth=None):
             })
         else:
             try:
-                leads = await browser.scan_conversations(limit=body.limit)
+                leads = await browser.scan_conversations(
+                    limit=body.limit,
+                    min_age_hours=body.min_age_hours,
+                    cooldown_hours=body.cooldown_hours,
+                    tab=body.tab,
+                    current_view_only=body.current_view_only,
+                )
             except Exception as exc:
                 return JSONResponse({
                     'status': 'error',
@@ -570,13 +592,15 @@ def create_app(auth=None):
                     'count': 0,
                 })
 
+        stats = {} if body.mock else dict(getattr(browser, 'last_scan_stats', {}) or {})
+
         if not leads:
-            return JSONResponse({
-                'status': 'ok',
-                'leads': [],
-                'count': 0,
-                'notice': 'No se encontraron conversaciones activas en ManyChat para escanear.',
-            })
+            notice = 'No se encontraron conversaciones para escanear.'
+            if stats:
+                notice = (f"Ningún chat cumple el filtro: {stats.get('seen', 0)} vistos, "
+                          f"{stats.get('too_recent', 0)} con actividad de menos de {body.min_age_hours:g} h, "
+                          f"{stats.get('unknown_age', 0)} sin fecha interpretable.")
+            return JSONResponse({'status': 'ok', 'leads': [], 'count': 0, 'notice': notice, 'stats': stats})
 
         sem = asyncio.Semaphore(10)
 
@@ -586,20 +610,59 @@ def create_app(auth=None):
                 return prop.model_dump()
 
         proposals = await asyncio.gather(*[_eval_one(lead) for lead in leads])
-        return JSONResponse({'status': 'ok', 'leads': list(proposals), 'count': len(proposals)})
+        return JSONResponse({'status': 'ok', 'leads': list(proposals), 'count': len(proposals), 'stats': stats})
+
+    @app.post('/api/manychat/scan-stream')
+    async def manychat_scan_stream(body: ManyChatScanRequest):
+        browser = get_manychat_browser()
+        if not body.mock and not browser.is_active:
+            async def _not_active():
+                yield json.dumps({
+                    'type': 'error',
+                    'error': 'El navegador no está conectado a ManyChat. Hacé clic en "Conectar ManyChat" primero, o usá "Demo de prueba" para simular.'
+                }) + '\n'
+            return StreamingResponse(_not_active(), media_type='application/x-ndjson')
+
+        async def _generator():
+            try:
+                async for event in browser.scan_conversations_stream(
+                    limit=body.limit,
+                    min_age_hours=body.min_age_hours,
+                    cooldown_hours=body.cooldown_hours,
+                    tab=body.tab,
+                    current_view_only=body.current_view_only,
+                    provider_config=body.provider_config,
+                    mock=body.mock,
+                ):
+                    yield json.dumps(event) + '\n'
+            except Exception as exc:
+                yield json.dumps({'type': 'error', 'error': f'Error en el escaneo: {str(exc)[:120]}'}) + '\n'
+
+        return StreamingResponse(_generator(), media_type='application/x-ndjson')
+
+    @app.post('/api/manychat/stop-scan')
+    async def manychat_stop_scan():
+        browser = get_manychat_browser()
+        browser.request_stop()
+        return {'status': 'ok', 'stopped': True}
 
     @app.post('/api/manychat/send-batch')
     async def manychat_send_batch(body: ManyChatSendBatchRequest):
         browser = get_manychat_browser()
+        ledger = get_ledger()
         results: list[dict] = []
         for item in body.leads:
+            fup_num = getattr(item, 'followup_number', 1) or 1
+            tag_name = f"FUP {fup_num}"
             if body.mock or not browser.is_active:
                 await asyncio.sleep(0.3)
-                results.append({'id': item.id, 'status': 'sent', 'text': item.draft})
+                ledger.record_sent(item.id, fup_num, item.draft)
+                results.append({'id': item.id, 'status': 'sent', 'text': item.draft, 'followup_number': fup_num})
             else:
                 try:
-                    res = await browser.send_message_to_lead(item.id, item.draft)
-                    results.append({'id': item.id, 'status': 'sent', 'text': item.draft})
+                    res = await browser.send_message_to_lead(item.id, item.draft, tag_name=tag_name)
+                    ledger.record_sent(item.id, fup_num, item.draft)
+                    results.append({'id': item.id, 'status': 'sent', 'text': item.draft, 'followup_number': fup_num})
                 except Exception as exc:
                     results.append({'id': item.id, 'status': 'failed', 'error': str(exc)[:120]})
         return JSONResponse({'results': results})

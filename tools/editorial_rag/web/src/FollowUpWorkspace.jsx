@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
   AlertCircle,
   Bot,
@@ -15,19 +15,25 @@ import {
   Square,
   User,
 } from 'lucide-react';
-import { localRequest } from './AppAuth.jsx';
+import { localRequest, getFetch } from './AppAuth.jsx';
 import { getActiveProviderPayload } from './ModelSelector.jsx';
 
 export default function FollowUpWorkspace({ token, modelConfig, onDisconnect }) {
   const [browserStatus, setBrowserStatus] = useState({ active: false, logged_in: false });
   const [connectingBrowser, setConnectingBrowser] = useState(false);
   const [scanning, setScanning] = useState(false);
+  const [scanProgress, setScanProgress] = useState({ message: '', current: 0, total: 0, percentage: 0 });
   const [sendingBatch, setSendingBatch] = useState(false);
   const [leads, setLeads] = useState([]);
   const [dateFilter, setDateFilter] = useState('septiembre');
   const [limit, setLimit] = useState(20);
+  const [minAgeHours, setMinAgeHours] = useState(6);
+  const [cooldownHours, setCooldownHours] = useState(6);
+  const [tab, setTab] = useState('mine');
+  const [currentViewOnly, setCurrentViewOnly] = useState(false);
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
+  const abortControllerRef = useRef(null);
 
   // Fetch browser status
   async function checkBrowserStatus() {
@@ -42,7 +48,10 @@ export default function FollowUpWorkspace({ token, modelConfig, onDisconnect }) 
   }
 
   useEffect(() => {
-    if (token) checkBrowserStatus();
+    if (!token) return;
+    checkBrowserStatus();
+    const interval = setInterval(checkBrowserStatus, 4000);
+    return () => clearInterval(interval);
   }, [token]);
 
   // Launch browser for human login / session
@@ -74,14 +83,57 @@ export default function FollowUpWorkspace({ token, modelConfig, onDisconnect }) 
     }
   }
 
-  // Scan conversations and generate proposals
+  // Stop ongoing scan and keep collected leads
+  async function stopScan() {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    setScanProgress(prev => ({
+      ...prev,
+      message: 'Deteniendo escaneo... Conservando contactos cargados.',
+    }));
+    try {
+      await localRequest('/api/manychat/stop-scan', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': token,
+        },
+        body: JSON.stringify({}),
+      });
+    } catch (e) {
+      // Non-critical if network or abort happened
+    }
+    setScanning(false);
+    setNotice(prev => prev || 'Escaneo detenido por el usuario. Se conservaron los contactos analizados.');
+  }
+
+  // Scan conversations with real-time streaming and progressive lead loading
   async function scanLeads(isMock = false) {
+    if (scanning) return;
+    if (!isMock && !browserStatus.active) {
+      setError('El navegador no está conectado a ManyChat. Hacé clic en "Conectar ManyChat" primero, o usá "Demo de prueba" para simular.');
+      return;
+    }
     setScanning(true);
+    setLeads([]);
     setError('');
     setNotice('');
+    setScanProgress({
+      message: isMock ? 'Iniciando simulación...' : 'Iniciando escaneo en ManyChat...',
+      current: 0,
+      total: 0,
+      percentage: 0,
+    });
+
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
     try {
       const providerPayload = getActiveProviderPayload(modelConfig);
-      const data = await localRequest('/api/manychat/scan', {
+      const fetchFn = getFetch ? getFetch() : fetch;
+      const response = await fetchFn('/api/manychat/scan-stream', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -90,28 +142,92 @@ export default function FollowUpWorkspace({ token, modelConfig, onDisconnect }) 
         body: JSON.stringify({
           date_filter: dateFilter,
           limit: Number(limit),
+          min_age_hours: Number(minAgeHours),
+          cooldown_hours: Number(cooldownHours),
+          tab: tab,
+          current_view_only: Boolean(currentViewOnly),
           mock: isMock,
           provider_config: providerPayload,
         }),
+        signal: abortController.signal,
       });
 
-      if (data.status === 'error') {
-        setError(data.error || 'Error al escanear ManyChat.');
-        return;
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
       }
 
-      const fetched = data.leads || [];
-      setLeads(fetched);
-      const eligibleCount = fetched.filter(l => l.eligible).length;
-      if (fetched.length === 0) {
-        setNotice(data.notice || 'No se encontraron conversaciones para el período seleccionado.');
-      } else {
-        setNotice(`Escaneo completo: ${fetched.length} contactos revisados, ${eligibleCount} elegibles para seguimiento.`);
+      if (!response.body) {
+        throw new Error('Streaming no soportado por el navegador');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '';
+
+      const handleEvent = (event) => {
+        if (!event || !event.type) return;
+        if (event.type === 'status') {
+          setScanProgress(prev => ({
+            ...prev,
+            message: event.message,
+            total: event.total !== undefined ? event.total : prev.total,
+          }));
+        } else if (event.type === 'progress') {
+          const pct = event.total > 0 ? Math.round((event.current / event.total) * 100) : 0;
+          setScanProgress({
+            message: event.message,
+            current: event.current,
+            total: event.total,
+            percentage: pct,
+          });
+        } else if (event.type === 'lead') {
+          setLeads(prev => {
+            const exists = prev.some(l => l.id === event.lead.id);
+            if (exists) return prev.map(l => l.id === event.lead.id ? event.lead : l);
+            return [...prev, event.lead];
+          });
+        } else if (event.type === 'stopped') {
+          setNotice(event.message || 'Escaneo detenido. Se conservaron los contactos analizados.');
+        } else if (event.type === 'done') {
+          setNotice(event.message || 'Escaneo completado.');
+        } else if (event.type === 'error') {
+          setError(event.error || 'Error durante el escaneo.');
+        }
+      };
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          try {
+            const ev = JSON.parse(line);
+            handleEvent(ev);
+          } catch (err) {
+            console.error('Error parseando evento NDJSON:', err, line);
+          }
+        }
+      }
+
+      if (buffer.trim()) {
+        try {
+          const ev = JSON.parse(buffer);
+          handleEvent(ev);
+        } catch (e) {}
       }
     } catch (e) {
-      setError('Error al escanear ManyChat o evaluar los leads.');
+      if (e.name === 'AbortError' || (e.message && e.message.includes('abort'))) {
+        setNotice(prev => prev || 'Escaneo detenido. Se conservaron los contactos analizados.');
+      } else {
+        setError('Error al escanear ManyChat o evaluar los leads.');
+      }
     } finally {
       setScanning(false);
+      abortControllerRef.current = null;
     }
   }
 
@@ -171,7 +287,7 @@ export default function FollowUpWorkspace({ token, modelConfig, onDisconnect }) 
             'X-CSRF-Token': token,
           },
           body: JSON.stringify({
-            leads: [{ id: current.id, draft: current.draft }],
+            leads: [{ id: current.id, draft: current.draft, followup_number: current.followup_number || 1 }],
             mock: isMock,
           }),
         });
@@ -294,13 +410,70 @@ export default function FollowUpWorkspace({ token, modelConfig, onDisconnect }) 
               <option value={10}>10 chats</option>
               <option value={20}>20 chats</option>
               <option value={50}>50 chats</option>
+              <option value={100}>100 chats</option>
             </select>
           </div>
 
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.85rem' }}>
+            <label htmlFor="min-age-select">Inactivos desde hace:</label>
+            <select
+              id="min-age-select"
+              value={minAgeHours}
+              onChange={e => setMinAgeHours(e.target.value)}
+              style={{ background: '#262626', color: '#fff', border: '1px solid #444', borderRadius: '4px', padding: '0.3rem 0.6rem', fontSize: '0.85rem' }}
+            >
+              <option value={0}>Todos (respetar mis filtros)</option>
+              <option value={6}>6 h o más</option>
+              <option value={12}>12 h o más</option>
+              <option value={24}>24 h o más</option>
+              <option value={48}>48 h o más</option>
+            </select>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.85rem' }}>
+            <label htmlFor="tab-select">Bandeja:</label>
+            <select
+              id="tab-select"
+              value={tab}
+              onChange={e => setTab(e.target.value)}
+              style={{ background: '#262626', color: '#fff', border: '1px solid #444', borderRadius: '4px', padding: '0.3rem 0.6rem', fontSize: '0.85rem' }}
+            >
+              <option value="mine">Tú (Asignados)</option>
+              <option value="unassigned">No asignados</option>
+              <option value="all">Todos</option>
+              <option value="current">Vista actual</option>
+            </select>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.85rem' }}>
+            <label htmlFor="cooldown-select">Espera FUP:</label>
+            <select
+              id="cooldown-select"
+              value={cooldownHours}
+              onChange={e => setCooldownHours(Number(e.target.value))}
+              style={{ background: '#262626', color: '#fff', border: '1px solid #444', borderRadius: '4px', padding: '0.3rem 0.6rem', fontSize: '0.85rem' }}
+            >
+              <option value={6}>6 h (habilitar FUP 2)</option>
+              <option value={12}>12 h</option>
+              <option value={24}>24 h</option>
+            </select>
+          </div>
+
+          <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem', color: '#d1d5db', cursor: 'pointer' }}>
+            <input
+              type="checkbox"
+              checked={currentViewOnly}
+              onChange={e => setCurrentViewOnly(e.target.checked)}
+              style={{ cursor: 'pointer', accentColor: '#2563eb' }}
+            />
+            Solo pantalla actual
+          </label>
+
           <button
             type="button"
-            onClick={() => scanLeads(false)}
-            disabled={scanning || sendingBatch}
+            onClick={scanning ? stopScan : () => scanLeads(false)}
+            disabled={sendingBatch}
+            title={scanning ? 'Detener escaneo y conservar los contactos ya analizados' : 'Escanear ManyChat con los filtros actuales'}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -308,15 +481,25 @@ export default function FollowUpWorkspace({ token, modelConfig, onDisconnect }) 
               padding: '0.4rem 0.9rem',
               borderRadius: '6px',
               fontSize: '0.85rem',
-              fontWeight: 500,
-              background: '#059669',
+              fontWeight: 600,
+              background: scanning ? '#dc2626' : '#059669',
               color: '#fff',
               border: 'none',
-              cursor: 'pointer'
+              cursor: sendingBatch ? 'not-allowed' : 'pointer',
+              transition: 'background 0.2s ease',
             }}
           >
-            {scanning ? <Loader2 className="animate-spin" size={14} /> : <RefreshCw size={14} />}
-            Escanear ManyChat
+            {scanning ? (
+              <>
+                <Square size={13} fill="currentColor" />
+                Detener escaneo
+              </>
+            ) : (
+              <>
+                <RefreshCw size={14} />
+                Escanear ManyChat
+              </>
+            )}
           </button>
 
           <button
@@ -332,9 +515,9 @@ export default function FollowUpWorkspace({ token, modelConfig, onDisconnect }) 
               borderRadius: '6px',
               fontSize: '0.8rem',
               background: '#374151',
-              color: '#d1d5db',
+              color: scanning || sendingBatch ? '#6b7280' : '#d1d5db',
               border: '1px solid #4b5563',
-              cursor: 'pointer'
+              cursor: scanning || sendingBatch ? 'not-allowed' : 'pointer'
             }}
           >
             <Play size={13} />
@@ -382,6 +565,50 @@ export default function FollowUpWorkspace({ token, modelConfig, onDisconnect }) 
           </div>
         )}
       </div>
+
+      {/* Live Scan Progress Banner */}
+      {scanning && (
+        <div style={{
+          background: '#0f172a',
+          border: '1px solid #2563eb',
+          borderRadius: '8px',
+          padding: '0.85rem 1.25rem',
+          marginBottom: '1.25rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.5rem',
+          boxShadow: '0 4px 12px rgba(37, 99, 235, 0.15)',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: '#93c5fd', fontSize: '0.88rem', fontWeight: 500 }}>
+              <Loader2 className="animate-spin" size={16} />
+              <span>{scanProgress.message || 'Escaneando ManyChat en tiempo real...'}</span>
+            </div>
+            {scanProgress.total > 0 && (
+              <span style={{ fontSize: '0.8rem', color: '#cbd5e1', fontWeight: 600, background: '#1e293b', padding: '0.2rem 0.6rem', borderRadius: '4px' }}>
+                {scanProgress.current} / {scanProgress.total} ({scanProgress.percentage}%)
+              </span>
+            )}
+          </div>
+          {scanProgress.total > 0 && (
+            <div style={{
+              width: '100%',
+              height: '6px',
+              background: '#1e293b',
+              borderRadius: '9999px',
+              overflow: 'hidden',
+            }}>
+              <div style={{
+                width: `${Math.min(100, Math.max(5, scanProgress.percentage))}%`,
+                height: '100%',
+                background: '#3b82f6',
+                borderRadius: '9999px',
+                transition: 'width 0.3s ease-out',
+              }} />
+            </div>
+          )}
+        </div>
+      )}
 
       {notice && (
         <div style={{ padding: '0.75rem 1rem', marginBottom: '1rem', borderRadius: '6px', background: '#064e3b', color: '#a7f3d0', fontSize: '0.85rem' }}>
@@ -509,7 +736,7 @@ export default function FollowUpWorkspace({ token, modelConfig, onDisconnect }) 
                               await localRequest('/api/manychat/send-batch', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
-                                body: JSON.stringify({ leads: [{ id: lead.id, draft: lead.draft }], mock: isMock }),
+                                body: JSON.stringify({ leads: [{ id: lead.id, draft: lead.draft, followup_number: lead.followup_number || 1 }], mock: isMock }),
                               });
                               setLeads(prev => prev.map(l => l.id === lead.id ? { ...l, status: 'sent', selected: false } : l));
                             } catch (e) {
@@ -539,11 +766,32 @@ export default function FollowUpWorkspace({ token, modelConfig, onDisconnect }) 
           </table>
         </div>
       ) : (
-        <div style={{ textAlign: 'center', padding: '3rem 1rem', border: '1px dashed #333', borderRadius: '8px', color: '#6b7280' }}>
-          <p style={{ margin: 0, fontSize: '0.95rem' }}>No hay contactos cargados.</p>
-          <p style={{ margin: '0.5rem 0 0', fontSize: '0.85rem' }}>
-            Tocá <strong>"Escanear ManyChat"</strong> para traer los chats del período seleccionado o <strong>"Demo de prueba"</strong> para simular el lote.
-          </p>
+        <div style={{
+          textAlign: 'center',
+          padding: '3rem 1rem',
+          border: scanning ? '1px dashed #2563eb' : '1px dashed #333',
+          borderRadius: '8px',
+          color: scanning ? '#93c5fd' : '#6b7280',
+          background: scanning ? 'rgba(37, 99, 235, 0.05)' : 'transparent',
+        }}>
+          {scanning ? (
+            <>
+              <Loader2 className="animate-spin" size={26} style={{ margin: '0 auto 0.75rem', color: '#3b82f6' }} />
+              <p style={{ margin: 0, fontSize: '0.95rem', fontWeight: 500 }}>
+                {scanProgress.message || 'Iniciando escaneo de ManyChat...'}
+              </p>
+              <p style={{ margin: '0.5rem 0 0', fontSize: '0.85rem', color: '#94a3b8' }}>
+                Los contactos aparecerán acá en tiempo real a medida que se lean y califiquen.
+              </p>
+            </>
+          ) : (
+            <>
+              <p style={{ margin: 0, fontSize: '0.95rem' }}>No hay contactos cargados.</p>
+              <p style={{ margin: '0.5rem 0 0', fontSize: '0.85rem' }}>
+                Tocá <strong>"Escanear ManyChat"</strong> para traer los chats del período seleccionado o <strong>"Demo de prueba"</strong> para simular el lote.
+              </p>
+            </>
+          )}
         </div>
       )}
     </div>
