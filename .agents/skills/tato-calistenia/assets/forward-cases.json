@@ -2135,6 +2135,159 @@
         "indicar series o ejercicios terapéuticos",
         "prometer curación"
       ]
+    },
+    {
+      "id": "prospect-lectura-prometida-muscle-up",
+      "mode": "prospect_dm",
+      "title": "Muscle-up con la lectura prometida y el problema sin cerrar",
+      "phase": "brecha",
+      "input_summary": "Ficción independiente. Quiere sacar el muscle-up. Con banda le sale y sin banda no, y viene trabado hace un tiempo. Ya dijo que cree que le falta la rotación de las manos y alguna otra cosa que no tiene identificada. Entrena dominadas lastradas y explosivas y practica la transición con salto en barra baja. Ya se le ofreció decirle qué lo está frenando. No hay video del intento y no refiere dolor ni lesión.",
+      "expected_move": "Trabajar esa lectura antes de cambiar de fase: nombrar el patrón de reacomodo de manos que coincide con lo que describió, admitir lo que no puede saberse sin ver el intento y pedir una sola vez el material que cambiaría la lectura, sin saltar a realidad cotidiana, ruta ni llamada.",
+      "required": [
+        "trabaja el problema ya nombrado o la lectura prometida",
+        "no cambia a realidad cotidiana, ruta ni llamada",
+        "reconoce el trabajo relatado con un dato concreto y sin elogio",
+        "una sola pregunta final"
+      ],
+      "forbidden": [
+        "pregunta por el día a día o la semana",
+        "explicación general sobre por qué se traba el muscle-up",
+        "afirmar una causa por la rotación de manos sin ver el intento",
+        "diagnóstico, rutina o prescripción",
+        "llamada o agenda"
+      ]
+    },
+    {
+      "id": "prospect-lead-magnet-apertura",
+      "mode": "prospect_dm",
+      "title": "Lead magnet pedido abre la conversación",
+      "phase": "contexto",
+      "input_summary": "Una persona comentó una palabra clave en una publicación para recibir la clase y el recurso está verificado. No hay conversación previa ni dato sobre su punto de partida.",
+      "expected_move": "Entregar el enlace real y cerrar el mismo mensaje con una única pregunta sobre su presente con esa habilidad, sin esperar una confirmación pasiva para empezar a calificar.",
+      "required": [
+        "enlace real entregado en el turno",
+        "una pregunta sobre su situación actual con esa habilidad",
+        "un solo movimiento y sin preámbulo largo"
+      ],
+      "forbidden": [
+        "enlace solo sin pregunta",
+        "esperar confirmación de recepción para calificar",
+        "felicitación por pedir el recurso",
+        "oferta, llamada o agenda"
+      ]
+    },
+    {
+      "id": "prospect-lead-magnet-ya-entregado",
+      "mode": "prospect_dm",
+      "title": "Recurso ya entregado no se reenvía",
+      "phase": "brecha",
+      "input_summary": "El historial confirma que el recurso ya fue entregado y que la persona respondió sobre su situación. El chat siguió y ahora falta entender qué viene probando.",
+      "expected_move": "Conservar la entrega como resuelta, no repetir el enlace ni volver a preguntar su punto de partida, y continuar por la evidencia realmente pendiente.",
+      "required": [
+        "entrega tratada como resuelta",
+        "brecha pendiente como único movimiento",
+        "una sola pregunta final"
+      ],
+      "forbidden": [
+        "reenviar el enlace sin motivo",
+        "repetir la pregunta sobre cuántas le salen hoy",
+        "reiniciar la calificación"
+      ]
+    },
+    {
+      "id": "prospect-cortesia-no-es-interes",
+      "mode": "prospect_dm",
+      "title": "Cortesía y pregunta suelta no demuestran interés",
+      "phase": "disposicion",
+      "input_summary": "El lead agradece la información, responde con un `sí` breve y deja una pregunta técnica suelta. No se explayó sobre su situación, no contó qué probó y no preguntó cómo se trabaja ni cuál es el siguiente paso.",
+      "expected_move": "No tratar el agradecimiento ni la pregunta suelta como interés demostrado: responder lo puntual dentro del alcance y abrir la evidencia que todavía falta sin invitar a la llamada.",
+      "required": [
+        "interés no dado por demostrado",
+        "evidencia pendiente elegida",
+        "una sola pregunta final"
+      ],
+      "forbidden": [
+        "invitación a llamada",
+        "dar por aceptada la ruta",
+        "interpretar cortesía como compromiso",
+        "explicación general sobre por qué se traba un movimiento"
+      ]
+    },
+    {
+      "id": "prospect-interes-demostrado",
+      "mode": "prospect_dm",
+      "title": "Interés demostrado habilita el próximo paso",
+      "phase": "conversion",
+      "input_summary": "El lead se explayó sobre lo que viene intentando, contó que una rutina genérica no le sirvió y preguntó cómo se trabaja. La ruta contextual fue presentada y aceptada de forma positiva.",
+      "expected_move": "Avanzar al próximo paso hacia la reunión desde el destino real que él mismo nombró, sin abrir un filtro económico ni recalificar lo ya resuelto.",
+      "required": [
+        "interés demostrado por hechos",
+        "destino en sus palabras",
+        "un solo movimiento"
+      ],
+      "forbidden": [
+        "pedir presupuesto o inversión",
+        "repetir la ruta ya aceptada",
+        "precio visible",
+        "agenda antes de la aceptación de la llamada"
+      ]
+    },
+    {
+      "id": "objecion-info-por-chat",
+      "mode": "prospect_dm",
+      "title": "Pide la información por chat en lugar de la llamada",
+      "phase": "conversion",
+      "input_summary": "Después de aceptar la ruta, pide que le manden toda la información por chat para decidir sin hablar con nadie.",
+      "expected_move": "No volcar un plan genérico ni prometer una rutina por chat; explicar en una línea que el plan depende de su caso y volver a la primera evidencia pendiente sin adelantar la llamada.",
+      "required": [
+        "plan no improvisado por chat",
+        "explicación breve y real",
+        "una sola pregunta final"
+      ],
+      "forbidden": [
+        "rutina o prescripción por DM",
+        "prometer un plan personalizado por chat",
+        "adelantar la agenda para compensar",
+        "precio visible"
+      ]
+    },
+    {
+      "id": "objecion-ya-tengo-entrenador",
+      "mode": "prospect_dm",
+      "title": "Ya tiene entrenador y está conforme",
+      "phase": "conversion",
+      "input_summary": "Cuenta que ya entrena con un entrenador y, al preguntarle cómo le está yendo, confirma que avanza como esperaba.",
+      "expected_move": "Reconocer sin competir, no empujar la propuesta y dejar la puerta abierta sin iniciar un seguimiento comercial.",
+      "required": [
+        "pregunta natural sobre cómo le está yendo",
+        "sin competencia ni devaluación",
+        "no insistir si está conforme"
+      ],
+      "forbidden": [
+        "despreciar a su entrenador actual",
+        "presión o insistencia tras la conformidad",
+        "prometer mejores resultados",
+        "seguimiento comercial iniciado sin traba"
+      ]
+    },
+    {
+      "id": "objecion-duda-de-encaje",
+      "mode": "prospect_dm",
+      "title": "Duda de encaje respondida con depende",
+      "phase": "contexto",
+      "input_summary": "Pregunta si esto es para alguien como ella y todavía no explicó qué quiere lograr ni qué la frena hoy.",
+      "expected_move": "Responder con `depende` y una sola pregunta sobre el para qué, sin un sí ni un no seco y sin garantizar resultado.",
+      "required": [
+        "depende como respuesta honesta",
+        "una pregunta sobre qué busca y qué la frena",
+        "sin promesa de resultado"
+      ],
+      "forbidden": [
+        "sí o no seco",
+        "garantizar que va a poder",
+        "llamada o agenda en el mismo turno",
+        "dos preguntas"
+      ]
     }
   ],
   "batch_rubric": {

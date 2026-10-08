@@ -172,7 +172,7 @@ Las siete fases son:
 
 El historial puede completar varias. El agente salta las fases resueltas, pregunta por la primera evidencia relevante que falte y nunca pregunta para llenar una casilla.
 
-Conservar impulso, asistencia, agarre, capacidad parcial y autoevaluación cuando cambien la lectura: no inferir una repetición estricta por ausencia de banda. Una brecha suficiente no exige conocer la causa exacta; no reabrirla por cada detalle técnico ni volver a formular un objetivo ya respondido.
+Conservar impulso, asistencia, agarre, capacidad parcial y autoevaluación cuando cambien la lectura: no inferir una repetición estricta por ausencia de banda. Una brecha suficiente no exige conocer la causa exacta, pero sí qué cree el lead que le falta; no reabrirla por cada detalle técnico ni volver a formular un objetivo ya respondido. Un problema recién nombrado o una lectura técnica prometida se resuelven antes de cambiar de fase.
 
 ### Contexto
 
@@ -184,7 +184,7 @@ Capacidad o hito y, si existe, lo que permitiría vivir, sentir o compartir. Una
 
 ### Brecha
 
-Traba, intentos y experiencia que no quiere repetir.
+Traba, intentos, experiencia que no quiere repetir y la lectura del propio lead sobre qué le falta. Si el historial solo describe entrenamiento, esfuerzo o intentos, la brecha sigue pendiente. Un recurso o lead magnet pedido abre la conversación con pregunta incluida, y el interés se demuestra con hechos y no con cortesía: sin interés ni charla madura, la invitación todavía no corresponde.
 
 ### Sentido
 

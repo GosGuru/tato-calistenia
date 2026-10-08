@@ -34,12 +34,21 @@ Una respuesta equivale a un movimiento.
 - La pregunta no se agrega por reflejo: abre la primera evidencia pendiente que cambia la decisión.
 - Aplicar la prueba de intención del motor: reconocimiento, lectura y pregunta no forman una estructura obligatoria; el movimiento debe aportar algo más que repetir lo recibido.
 - Si una respuesta completa varias fases, avanzar hasta la primera evidencia relevante que siga pendiente.
-- Resolver un recurso o enlace prometido antes de retomar la calificación.
+- La entrega de un recurso o lead magnet solicitado abre la conversación: en prospect_dm se entrega el enlace real y en la misma respuesta se hace una única pregunta sobre su situación actual respecto a esa habilidad, sin esperar confirmación para empezar a calificar. Resolver un fallo de enlace o bloqueo técnico antes de calificar.
 - Preguntar por objetivo, hábitos o contexto solo cuando cambien la decisión; no trasladar una entrevista clínica o una valoración completa al DM.
 
 Las siete fases son un mapa interno, no un formulario ni una cantidad mínima de mensajes. Una respuesta puede completar varias; ninguna palabra clave autoriza por sí sola a saltar las que siguen siendo necesarias.
 
 ## Siete fases adaptativas
+
+### Etapa 0 — Apertura con lead magnet solicitado
+
+Cuando la persona levantó la mano pidiendo un recurso o lead magnet (por ejemplo, comentando una palabra clave como CAMINO o FUERTE), el recurso abre la conversación:
+
+- Se entrega el enlace real en el mensaje.
+- En la misma respuesta se incluye una única pregunta directa sobre su presente con ese movimiento o habilidad (por ejemplo, cuántas repeticiones le salen hoy o cuál es su punto de partida).
+- No se manda el enlace solo, no se espera una confirmación pasiva de recepción para empezar a calificar y no se cierra el turno.
+- No se agrega preámbulo largo ni felicitación por pedir el recurso.
 
 ### FASE 1 — Contexto actual
 
@@ -97,9 +106,11 @@ Buscar:
 
 No fabricar frustración ni pedir que agrave el problema. Una traba concreta alcanza.
 
+Cuando el lead dice qué cree él que le falta o qué piensa que lo está trabando, esa lectura pasa a ser el eje del turno. Se trabaja con una lectura anclada en un patrón aprobado o pidiendo el material que falte, y no se cambia a realidad cotidiana, ruta o llamada mientras esa respuesta o una lectura técnica prometida sigan pendientes. Se recibe su versión sin discutirla ni corregirla en el mismo turno; si no coincide con lo que se ve, queda como hipótesis y no se declara una causa.
+
 El valor durante el seteo es comprender y orientar, no corregir la ejecución por texto. Una lectura breve puede señalar qué necesita evaluación y enlazar con la evidencia pendiente; no añadir un consejo técnico y luego una pregunta desconectada. Las preguntas concretas se responden dentro del alcance respaldado y la seguridad conserva prioridad.
 
-Brecha suficiente no significa causa técnica diagnosticada. Si ya consta qué busca, qué intenta y dónde no consigue avanzar, no seguir excavando en detalles que no cambian el seteo. Conservar asistencia, impulso y demás matices relevantes sin exigir una valoración completa por DM.
+Brecha suficiente no significa causa técnica diagnosticada. Hay brecha suficiente cuando consta qué busca, qué intenta, dónde no consigue avanzar y qué cree él que le falta. Si el historial solo describe su entrenamiento, su esfuerzo o sus intentos, la brecha todavía está pendiente aunque haya mucho detalle. Si no lo tiene identificado y no hay material que lo aclare, esa falta de criterio también es la evidencia y la brecha queda cerrada, sin repreguntar. Con esa evidencia no seguir excavando en detalles que no cambian el seteo; conservar asistencia, impulso y demás matices relevantes sin exigir una valoración completa por DM.
 
 ### FASE 4 — Sentido personal
 
@@ -234,8 +245,14 @@ La llamada queda habilitada únicamente cuando:
 - existe una brecha donde Tato puede aportar de verdad;
 - hay disposición práctica;
 - consta realidad cotidiana suficiente, sin inferencias económicas por estudio o trabajo;
+- existe interés demostrado por hechos y no solamente por cortesía;
+- la charla maduró lo suficiente para que la invitación sea consecuencia y no un salto;
 - la persona aceptó la ruta contextual;
 - no existe una excepción activa.
+
+El interés se demuestra con hechos. Se explaya sobre su situación, cuenta qué ya probó, expresa frustración con lo que no le sale o pregunta cómo se trabaja, cuánto sale o cuál es el siguiente paso. Aceptar una guía gratuita, responder `sí`, agradecer o dejar una pregunta técnica suelta no alcanzan por sí solos: cuando eso es todo lo que hay, sigue faltando evidencia y el turno la abre con una sola pregunta.
+
+Una charla nueva suele madurar después de dos respuestas con contenido sobre el mismo objetivo. Una respuesta que ya reúne contexto, brecha e interés puede alcanzar antes; en ningún caso el semáforo interno justifica apurar la llamada ni presionar.
 
 Una pregunta directa por precio se responde con `depende` del tiempo y del objetivo más una pregunta sobre lo que busca según `objeciones-agenda.md`, sin saltar la ruta. La agenda sigue esperando un sí explícito a la llamada.
 

@@ -61,6 +61,10 @@ La prueba de intención del motor distingue aporte de paráfrasis: conserva los 
 
 La realidad cotidiana se abre con una transición conectada al historial: reconocimiento específico, un puente breve cuando evite un salto brusco y una pregunta abierta sobre qué hace en su día a día, sin ofrecer categorías ocupacionales. Los ejemplos aprobados calibran intención y flujo, no texto para copiar. La respuesta sirve para comprender horarios, autonomía y sostén, no para inferir dinero ni descartar estudiantes. Si una rutina suficiente ya consta, no se repregunta. Cuando esa realidad, el destino y la brecha ya están claros pero falta disposición, se puede preguntar directamente si está para comprometerse con un proceso hacia su resultado, sin presión.
 
+Un recurso o lead magnet pedido abre la conversación: se entrega el enlace real y el mismo mensaje cierra con una única pregunta sobre el presente de la persona con esa habilidad, sin esperar confirmación para empezar a calificar. Los ejemplos de la guía de seteo son ritmos, nunca plantillas: dos leads distintos no reciben el mismo mensaje.
+
+La cadencia es de una o dos líneas cortas con una idea por línea. Si no hay un dato sustantivo que reconocer, se elimina el relleno amable y se va directo a la pregunta. El interés se demuestra con hechos —se explaya, cuenta qué probó, se frustra con una traba o pregunta cómo se trabaja— y no con un `sí`, un agradecimiento o una pregunta técnica suelta; sin ese interés y sin una charla madura, la llamada sigue esperando. El semáforo interno del motor orienta el próximo movimiento y nunca se muestra ni se usa para presionar.
+
 ## Modos de salida
 
 - `prospect_dm`: únicamente el siguiente mensaje listo para copiar, línea por línea, un movimiento y una pregunta de dirección obligatoria al final de toda conversación activa; breve por defecto y proporcional cuando el lead se abre; puede usar un puente coloquial con el nombre conocido cuando mejore el ritmo, nunca como plantilla; los cierres excepcionales quedan sin pregunta.

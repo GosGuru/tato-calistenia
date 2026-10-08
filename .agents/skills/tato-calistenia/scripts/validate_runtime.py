@@ -94,6 +94,11 @@ REQUIRED_MARKERS = {
         "comprometerse con un proceso",
         "### Evadir no es rechazar",
         "Cada turno debe perseguir algo",
+        "### 6.1 Semáforo, interés y madurez",
+        "semaforo_conversacion",
+        "interes_demostrado",
+        "madurez_charla",
+        "El interés se demuestra con hechos",
     ],
     "tracking-eod.md": [
         "## Privacidad y almacenamiento",
@@ -144,6 +149,8 @@ REQUIRED_MARKERS = {
         "Ser estudiante no descarta",
         "ejemplos aprobados",
         "comprobación directa",
+        "### Etapa 0 — Apertura con lead magnet solicitado",
+        "existe interés demostrado por hechos",
     ],
     "voz-escrita-tato.md": [
         "## Huella comprobada de Tato",
@@ -161,6 +168,7 @@ REQUIRED_MARKERS = {
         "transición en varias líneas",
         "## Evadir no es rechazar",
         "Cada turno persigue algo",
+        "Cadencia de una o dos líneas cortas",
     ],
     "operativa-maseteo.md": [
         "## Alcance",
@@ -181,6 +189,10 @@ REQUIRED_MARKERS = {
         OFFICIAL_CAL_URL,
         "## Follow-up en cualquier fase",
         "como máximo dos",
+        "Ventana: el primero a las 24 o 48 horas",
+        "## Pide la información por chat",
+        "## Ya tiene entrenador",
+        "## Duda de encaje",
     ],
     "handoff-llamada.md": [
         "## Formato de salida",
@@ -416,6 +428,7 @@ REQUIRED_FORWARD_IDS = {
     "prospect-inicio-estricto-confirmado",
     "prospect-brecha-tecnica-suficiente",
     "prospect-brecha-tecnica-pendiente",
+    "prospect-lectura-prometida-muscle-up",
     "prospect-objetivo-ya-expresado",
     "prospect-ruta-tras-compromiso",
     "prospect-continuidad-sin-bucle-tecnico",
@@ -439,6 +452,13 @@ REQUIRED_FORWARD_IDS = {
     "precio-tema-no-iniciado",
     "prospect-evasion-aplazamiento",
     "prospect-rechazo-claro-cierre",
+    "prospect-lead-magnet-apertura",
+    "prospect-lead-magnet-ya-entregado",
+    "prospect-cortesia-no-es-interes",
+    "prospect-interes-demostrado",
+    "objecion-info-por-chat",
+    "objecion-ya-tengo-entrenador",
+    "objecion-duda-de-encaje",
 }
 
 

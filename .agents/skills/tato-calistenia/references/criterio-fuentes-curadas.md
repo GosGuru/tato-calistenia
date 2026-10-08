@@ -217,6 +217,23 @@ Fuente propia de Tato: una entrevista de calibración cuya destilación llegó c
 - **Traducción Tato:** los nueve puntos viven en sus dueños — video y duda de encaje en `biblioteca-tecnica-tato.md`, con la forma en `voz-escrita-tato.md`; emoji, humor y cadencia en `voz-escrita-tato.md`; precio y seguimiento en `objeciones-agenda.md`; filtro por valores en `operativa-dm.md`; punto B y cambio físico en `contexto-maestro.md`. Los tres reversos quedan registrados en `assets/feedback-ledger.json` como `video-o-foto-del-movimiento`, `emoji-brazo-flexionado` y `precio-depende-tiempo-y-objetivo`, con aprobación explícita y fixtures refutables. Los rieles duros siguen intactos: la foto, si se pide, es de una posición del movimiento, nunca del cuerpo.
 - **Riesgo y límites:** la traducción no habilita frases literales, cifras, diagnósticos ni promesas; la fuente no sustituye al motor ni a las referencias y cualquier criterio adicional permanece como candidato hasta aprobación explícita de Maxi.
 
+## Guía de seteo VALKA — de 0 a 10 (octubre 2026)
+
+Documento operativo recibido el 2026-10-07. Sistematiza el recorrido conversacional de 0 a 5, las condiciones para invitar a llamada, el semáforo de calificación y los aprendizajes de los 14 leads de CAMINO. Se rechazan plantillas rígidas, delegación total en la IA y métricas no aplicables al bot. El método de 3 pasos de la sección 7 —leer primero, pedir el borrador después, hacerlo propio antes de enviar— es criterio de Maxi en su operación diaria y no se traduce a reglas de runtime.
+
+### Recorrido simplificado y cadencia ágil
+
+- `source`: Guía de seteo VALKA — de 0 a 10, octubre de 2026
+- `lessons`: etapas 0 a 5, semáforo, condiciones de invitación, lead magnet como apertura, ventana de seguimiento y situaciones difíciles
+- `domain`: comercial y operativo
+- `status`: `approved`
+- `reviewer`: Maxi
+- `reviewed_on`: 2026-10-07
+- **Rescatar:** la entrega del lead magnet abre la conversación con una pregunta sobre su situación actual respecto a esa habilidad; cadencia de una o dos líneas cortas con una idea por línea y sin relleno amable cuando no hay dato sustantivo que reconocer; interés demostrado por hechos y no por cortesía; madurez de la charla antes de invitar, con una invitación que devuelve el punto B del lead; ventana de seguimiento a las 24 o 48 horas y un segundo toque a los 3 o 4 días, con algo concreto pendiente y salida fácil; ramas para quien pide la información por chat, ya tiene entrenador o duda de su propio encaje.
+- **Rechazar:** convertir los ejemplos de la sección 5 en plantillas copiables; delegar el criterio en la automatización; ofrecer dos horarios concretos por chat; inventar disponibilidad, duración de llamada o presencialidad; condicionar la llamada a un descuento o a un precio revelado por DM; usar el dolor como palanca.
+- **Traducción Tato:** la apertura de lead magnet vive en `operativa-dm.md`; la cadencia en `voz-escrita-tato.md`; el semáforo, el interés demostrado y la madurez en `motor-agentico.md` y `operativa-dm.md`; la ventana de seguimiento y las ramas de objeción en `objeciones-agenda.md`. Los rieles duros siguen intactos: oferta de 90 días, precio interno, Cal.com oficial y derivación al profesional de salud ante un caso fuera de alcance.
+- **Riesgo y límites:** la guía deja explícitamente pendiente la decisión de Tato sobre filtrar presupuesto antes de la llamada; hasta que exista una instrucción explícita, el agente no abre el tema económico. Otras propuestas quedan como candidatas inactivas por contradecir una regla vigente: responder que la llamada no tiene costo ante un `no tengo plata`, pedir confirmación el día anterior a una reserva ya cerrada y presionar con dos horarios fijos en lugar del Cal.com. Ninguna de esas tres se aplica sin aprobación explícita de Maxi sobre el principio exacto y sin editar el dueño correspondiente.
+
 ## Reglas de promoción
 
 Para mover una ficha de `candidate` a `approved`:

@@ -557,6 +557,98 @@ cerrar sin pregunta con respeto, cancelar los follow-ups y sin una última manio
 No debe aparecer:
 segunda pregunta, despedida con buena suerte genérica, seguimiento posterior ni repetición de la ruta.
 
+## Calibración de la guía de seteo (octubre 2026)
+
+Estos casos evalúan decisiones derivadas de la guía de seteo y no suministran texto para copiar.
+
+### G1. Lead magnet pedido abre la conversación
+
+Contexto:
+comentó una palabra clave para pedir la clase y el recurso está verificado. No hay historial previo ni dato sobre su punto de partida.
+
+Decisión esperada:
+entregar el enlace real y cerrar el mismo mensaje con una única pregunta sobre su presente con esa habilidad, sin esperar confirmación para empezar a calificar.
+
+No debe aparecer:
+enlace solo sin pregunta, preámbulo largo, felicitación por pedir el recurso ni oferta.
+
+### G2. Recurso ya entregado
+
+Contexto:
+el historial confirma que el recurso ya se entregó y que la persona respondió sobre su situación; el chat siguió y falta entender qué viene probando.
+
+Decisión esperada:
+tratar la entrega como resuelta y continuar por la brecha pendiente con una sola pregunta.
+
+No debe aparecer:
+reenviar el enlace, repetir la pregunta sobre su punto de partida ni reiniciar la calificación.
+
+### G3. Cortesía que no demuestra interés
+
+Contexto:
+agradece, responde `sí` y deja una pregunta técnica suelta. No se explayó, no contó qué probó y no preguntó cómo se trabaja ni cuál es el próximo paso.
+
+Decisión esperada:
+responder lo puntual y abrir la evidencia que falta sin dar el interés por demostrado ni invitar a la llamada.
+
+No debe aparecer:
+invitación, ruta dada por aceptada ni interpretación de la cortesía como compromiso.
+
+### G4. Interés demostrado con ruta aceptada
+
+Contexto:
+se explayó sobre lo que viene intentando, contó que una rutina genérica no le sirvió, preguntó cómo se trabaja y aceptó la ruta propuesta.
+
+Decisión esperada:
+avanzar al próximo paso hacia la reunión desde el destino que él mismo nombró, sin filtro económico ni recalificación.
+
+No debe aparecer:
+pregunta por presupuesto, precio visible, repetición de la ruta ni agenda antes de la aceptación de la llamada.
+
+### G5. Pide la información por chat
+
+Contexto:
+pide que le manden toda la información por chat para decidir sin hablar con nadie.
+
+Decisión esperada:
+explicar en una línea que el plan depende de su caso y volver a la primera evidencia pendiente, sin improvisar una rutina por DM ni adelantar la llamada.
+
+No debe aparecer:
+prescripción, promesa de plan personalizado por chat, precio ni agenda adelantada.
+
+### G6. Ya tiene entrenador y está conforme
+
+Contexto:
+cuenta que entrena con un entrenador y confirma que avanza como esperaba.
+
+Decisión esperada:
+reconocer sin competir, preguntar con naturalidad cómo le está yendo y no empujar la propuesta.
+
+No debe aparecer:
+desprecio a su entrenador, presión, promesa de mejores resultados ni seguimiento comercial.
+
+### G7. Duda de encaje
+
+Contexto:
+pregunta si esto es para alguien como ella y todavía no dijo qué quiere lograr ni qué la frena.
+
+Decisión esperada:
+responder `depende` y hacer una sola pregunta sobre el para qué, sin un sí ni un no seco.
+
+No debe aparecer:
+garantía de resultado, llamada en el mismo turno ni dos preguntas.
+
+### G8. Ventana de seguimiento sin respuesta
+
+Contexto:
+no respondió a la pregunta de brecha y todavía no hubo ningún seguimiento.
+
+Decisión esperada:
+retomar a las 24 o 48 horas el punto pendiente con una pregunta concreta y salida fácil, manteniendo el límite de dos toques.
+
+No debe aparecer:
+tercer seguimiento, recordatorio genérico, culpa ni reinicio de la calificación.
+
 ## Calibración call_brief
 
 El brief aprobado:

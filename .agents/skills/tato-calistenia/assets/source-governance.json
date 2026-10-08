@@ -26,6 +26,7 @@
     {"id": "trainology-cuatro-fichas", "status": "approved", "translated_refs": [".agents/skills/tato-calistenia/references/biblioteca-tecnica-tato.md"]},
     {"id": "voz-traduccion-vigente", "status": "approved", "translated_refs": [".agents/skills/tato-calistenia/references/voz-escrita-tato.md"]},
     {"id": "entrevista-tato-octubre-2026", "status": "approved", "translated_refs": [".agents/skills/tato-calistenia/references/biblioteca-tecnica-tato.md", ".agents/skills/tato-calistenia/references/voz-escrita-tato.md", ".agents/skills/tato-calistenia/references/objeciones-agenda.md", ".agents/skills/tato-calistenia/references/operativa-dm.md", ".agents/skills/tato-calistenia/references/contexto-maestro.md"]},
+    {"id": "guia-seteo-valka-octubre-2026", "status": "approved", "translated_refs": [".agents/skills/tato-calistenia/references/operativa-dm.md", ".agents/skills/tato-calistenia/references/voz-escrita-tato.md", ".agents/skills/tato-calistenia/references/motor-agentico.md", ".agents/skills/tato-calistenia/references/objeciones-agenda.md"]},
     {"id": "corpus-saliente-auditado", "status": "historical", "translated_refs": []},
     {"id": "julio-cinco-documentos-historicos", "status": "historical", "translated_refs": []},
     {"id": "agente-historico-otro-nicho", "status": "rejected", "translated_refs": []},
